@@ -1,0 +1,17 @@
+{
+  "name": "stylio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "STYLIO — AI-powered fashion e-commerce (monorepo root)",
+  "scripts": {
+    "setup": "npm --prefix backend install --no-audit --no-fund && npm --prefix frontend install --no-audit --no-fund && pip install -r ml-service/requirements.txt",
+    "seed": "npm --prefix backend run seed",
+    "dev:ml": "cd ml-service && uvicorn app.main:app --host 0.0.0.0 --port 8000",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:all": "concurrently -k -n ML,BACKEND,FRONTEND -c yellow,cyan,magenta \"npm run dev:ml\" \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

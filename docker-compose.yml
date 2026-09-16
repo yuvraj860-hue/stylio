@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  # ── ML Service ──────────────────────────────────────────────────────────────
+  ml-service:
+    build: ./ml-service
+    container_name: stylio-ml-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml-service/data:/app/data
+      - stylio-model-cache:/app/hf-cache
+    networks:
+      - stylio-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+
+  # ── Express Backend ─────────────────────────────────────────────────────────
+  backend:
+    build: ./backend
+    container_name: stylio-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=${MONGO_URI:-mongodb://mongo:27017/stylio}
+      - JWT_SECRET=${JWT_SECRET:-changeme-in-production}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      - ML_SERVICE_URL=http://ml-service:8000
+      - NODE_ENV=production
+    depends_on:
+      ml-service:
+        condition: service_started
+      mongo:
+        condition: service_started
+    networks:
+      - stylio-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5000/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+  # ── Frontend ────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE: /api
+        VITE_ML_BASE: /api/ml
+    container_name: stylio-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - stylio-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+  # ── MongoDB ─────────────────────────────────────────────────────────────────
+  mongo:
+    image: mongo:6
+    container_name: stylio-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - stylio-mongo-data:/data/db
+    networks:
+      - stylio-net
+    restart: unless-stopped
+
+networks:
+  stylio-net:
+    driver: bridge
+
+volumes:
+  stylio-mongo-data:
+  stylio-model-cache:

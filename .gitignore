@@ -1,0 +1,45 @@
+# ── Dependencies ───────────────────────────────────────────────────────────────
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# ── Build output ───────────────────────────────────────────────────────────────
+dist/
+build/
+.cache/
+
+# ── Environment ────────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Data (datasets, uploads, large files) ──────────────────────────────────────
+data/
+ml-service/data/
+uploads/*
+!uploads/.gitkeep
+
+# ── IDE / Editor ───────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs ───────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── ChromaDB (built by index scripts) ──────────────────────────────────────────
+chroma/
+
+# ── OS ─────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,117 @@
+import { useState } from 'react'
+import { Link, NavLink } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
+import SearchBar from './SearchBar'
+import { CartIcon, UserIcon, MenuIcon, CloseIcon } from './icons'
+
+export default function Navbar() {
+  const { isAuthenticated, user } = useAuth()
+  const { count, openCart } = useCart()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileQuery, setMobileQuery] = useState('')
+
+  const linkClass = ({ isActive }) =>
+    `nav-link ${isActive ? 'nav-link-active' : ''}`
+
+  return (
+    <header className="navbar">
+      <div className="navbar__inner">
+        <Link to="/" className="navbar__logo" aria-label="STYLIO home">
+          STYL<span>IO</span>
+        </Link>
+
+        <nav className="navbar__links" aria-label="Primary">
+          <NavLink to="/shop" className={linkClass}>
+            Shop
+          </NavLink>
+          <NavLink to="/shop?sort=new" className={linkClass}>
+            New In
+          </NavLink>
+          <Link to="/account" className="nav-link">
+            My Account
+          </Link>
+        </nav>
+
+        <div className="navbar__search">
+          <SearchBar />
+        </div>
+
+        <div className="navbar__actions">
+          <button
+            className="icon-btn"
+            onClick={openCart}
+            aria-label={`Open cart, ${count} items`}
+          >
+            <CartIcon />
+            {count > 0 && <span className="cart-badge">{count}</span>}
+          </button>
+
+          <Link
+            to={isAuthenticated ? '/account' : '/login'}
+            className="icon-btn"
+            aria-label={isAuthenticated ? 'My account' : 'Sign in'}
+          >
+            <UserIcon />
+          </Link>
+          {isAuthenticated && user && (
+            <Link
+              to="/account"
+              className="icon-btn navbar__avatar"
+              style={{ fontFamily: 'var(--font-display)' }}
+              title={user.name}
+            >
+              {(user.name || 'U').charAt(0).toUpperCase()}
+            </Link>
+          )}
+
+          <button
+            className="icon-btn navbar__burger"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+          >
+            {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="mobile-menu"
+        className={`navbar__mobile-menu ${mobileOpen ? 'open' : ''}`}
+      >
+        <Link to="/shop" onClick={() => setMobileOpen(false)}>
+          Shop
+        </Link>
+        <Link to="/shop?sort=new" onClick={() => setMobileOpen(false)}>
+          New In
+        </Link>
+        <Link to={isAuthenticated ? '/account' : '/login'} onClick={() => setMobileOpen(false)}>
+          {isAuthenticated ? 'My Account' : 'Sign In'}
+        </Link>
+        <form
+          className="search-bar"
+          style={{ marginTop: 6 }}
+          onSubmit={(e) => {
+            e.preventDefault()
+            setMobileOpen(false)
+            if (mobileQuery.trim()) {
+              window.location.href = `/shop?search=${encodeURIComponent(mobileQuery.trim())}`
+            }
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Search…"
+            value={mobileQuery}
+            onChange={(e) => setMobileQuery(e.target.value)}
+          />
+          <button type="submit" className="upload-btn">
+            Search
+          </button>
+        </form>
+      </div>
+    </header>
+  )
+}
