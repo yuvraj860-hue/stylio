@@ -22,15 +22,12 @@ export default function Navbar() {
         </Link>
 
         <nav className="navbar__links" aria-label="Primary">
-          <NavLink to="/shop" className={linkClass}>
+          <NavLink to="/shop" exact className={linkClass}>
             Shop
           </NavLink>
           <NavLink to="/shop?sort=new" className={linkClass}>
             New In
           </NavLink>
-          <Link to="/account" className="nav-link">
-            My Account
-          </Link>
         </nav>
 
         <div className="navbar__search">
@@ -47,23 +44,26 @@ export default function Navbar() {
             {count > 0 && <span className="cart-badge">{count}</span>}
           </button>
 
-          <Link
-            to={isAuthenticated ? '/account' : '/login'}
-            className="icon-btn"
-            aria-label={isAuthenticated ? 'My account' : 'Sign in'}
-          >
-            <UserIcon />
-          </Link>
-          {isAuthenticated && user && (
-            <Link
-              to="/account"
-              className="icon-btn navbar__avatar"
-              style={{ fontFamily: 'var(--font-display)' }}
-              title={user.name}
-            >
-              {(user.name || 'U').charAt(0).toUpperCase()}
-            </Link>
-          )}
+{isAuthenticated 
+  ? (
+    <Link
+      to="/account"
+      className="icon-btn navbar__avatar"
+      style={{ fontFamily: 'var(--font-display)' }}
+      title={user.name}
+    >
+      {(user.name || 'U').charAt(0).toUpperCase()}
+    </Link>
+  )
+  : (
+    <Link
+      to="/login"
+      className="icon-btn"
+      aria-label="Sign in"
+    >
+      <UserIcon />
+    </Link>
+  )}
 
           <button
             className="icon-btn navbar__burger"
