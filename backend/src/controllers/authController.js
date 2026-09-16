@@ -3,6 +3,7 @@ import User from '../models/User.js';
 import env from '../config/env.js';
 import AppError from '../utils/AppError.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import { sendWelcomeEmail } from '../utils/mailer.js';
 
 const signToken = (id) =>
   jwt.sign({ id }, env.JWT_SECRET, { expiresIn: '7d' });
@@ -20,6 +21,10 @@ export const register = asyncHandler(async (req, res) => {
   }
 
   const user = await User.create({ name, email, password });
+
+  void sendWelcomeEmail(user).catch((err) =>
+    console.warn(`Welcome email skipped: ${err.message}`)
+  );
 
   res.status(201).json({
     token: signToken(user._id),

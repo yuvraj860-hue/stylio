@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
   const backendTarget = env.VITE_API_TARGET || 'http://localhost:5000'
   const mlTarget = env.VITE_ML_TARGET || 'http://localhost:8000'
 
-  return {
+return {
     plugins: [react()],
     server: {
       port: 5173,

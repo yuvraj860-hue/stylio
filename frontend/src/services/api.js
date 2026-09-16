@@ -156,7 +156,7 @@ export const orderApi = {
 
 /* ------------------------- Stylist ------------------------- */
 export const stylistApi = {
-  chat: (message) => apiPost('/stylist/chat', { message })
+  chat: (message, history = []) => apiPost('/stylist/chat', { message, history })
 }
 
 /* ------------------------- Visual search (ML) ------------------------- */

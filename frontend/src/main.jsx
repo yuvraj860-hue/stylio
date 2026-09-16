@@ -23,3 +23,27 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </React.StrictMode>
 )
+
+// ── Service Worker (PWA) ──────────────────────────────────────────────
+if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/service-worker.js', { scope: '/' })
+      .then((registration) => {
+        registration.onupdatefound = () => {
+          const installingWorker = registration.installing
+          installingWorker.onstatechange = () => {
+            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New content is available, show toast
+              window.dispatchEvent(
+                new CustomEvent('stylio:toast', {
+                  detail: { message: 'New version available — reload to update' },
+                })
+              )
+            }
+          }
+        }
+      })
+      .catch((err) => console.error('SW registration failed: ', err))
+  })
+}

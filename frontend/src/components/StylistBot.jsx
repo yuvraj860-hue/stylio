@@ -47,7 +47,11 @@ export default function StylistBot() {
     setTyping(true)
 
     try {
-      const data = await stylistApi.chat(clean)
+      const history = messages.slice(-10).map((m) => ({
+        role: m.role === 'bot' ? 'assistant' : 'user',
+        content: m.content
+      }))
+      const data = await stylistApi.chat(clean, history)
       const reply =
         (typeof data === 'string' && data) ||
         (data && (data.reply || data.message || data.response)) ||

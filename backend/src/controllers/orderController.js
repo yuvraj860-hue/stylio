@@ -6,6 +6,7 @@ import Cart from '../models/Cart.js';
 import env from '../config/env.js';
 import AppError from '../utils/AppError.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import { sendOrderConfirmationEmail } from '../utils/mailer.js';
 
 const stripeConfigured = Boolean(env.STRIPE_SECRET_KEY);
 const stripeClient = stripeConfigured ? new Stripe(env.STRIPE_SECRET_KEY) : null;
@@ -191,7 +192,7 @@ const recomputeCartTotal = async (cart) => {
 };
 
 const confirmOrder = async (paymentId, requesterId = null, alreadyVerified = false) => {
-  let order = await Order.findOne({ paymentId: paymentIntentId });
+  let order = await Order.findOne({ paymentId });
   if (!order) {
     throw new AppError('Order not found for this payment', 404);
   }
@@ -237,6 +238,10 @@ const confirmOrder = async (paymentId, requesterId = null, alreadyVerified = fal
   order.paymentStatus = 'paid';
   order.status = 'placed';
   await order.save();
+
+  void sendOrderConfirmationEmail(order).catch((err) =>
+    console.warn(`Order email skipped (${order._id}): ${err.message}`)
+  );
   return order;
 };
 

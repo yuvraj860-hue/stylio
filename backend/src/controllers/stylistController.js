@@ -1,6 +1,7 @@
 import Product from '../models/Product.js';
 import apiClient from '../utils/apiClient.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import { groqChat } from '../utils/groqClient.js';
 
 const findRecommendations = async (categoryMatch, limit = 2) => {
   const matchers = Array.isArray(categoryMatch) ? categoryMatch : [categoryMatch];
@@ -82,8 +83,40 @@ const staticReply = async (message) => {
   return `Great pick! ${replyMessage(popular)} Or tell me more about the occasion, style, and budget.`;
 };
 
+const buildCatalogContext = async () => {
+  const products = await Product.find({ active: true })
+    .sort({ createdAt: -1 })
+    .limit(25)
+    .select('name brand category price colors sizes');
+  if (!products.length) return null;
+
+  const byCategory = {};
+  const allNames = [];
+  for (const p of products) {
+    (byCategory[p.category] = byCategory[p.category] || []).push(
+      `${p.name} (${p.brand}) — ₹${p.price}`
+    );
+    allNames.push(p.name);
+  }
+
+  const lines = ['Available pieces in the STYLIO store:'];
+  Object.keys(byCategory).forEach((cat) => {
+    const items = byCategory[cat].slice(0, 6).join('; ');
+    lines.push(`- ${cat}: ${items || 'various pieces'}`);
+  });
+  if (allNames.length) {
+    const prices = products.filter((p) => p.price > 0).map((p) => p.price);
+    if (prices.length) {
+      lines.push(
+        `Price range: ₹${Math.min(...prices)} to ₹${Math.max(...prices)}.`
+      );
+    }
+  }
+  return lines.join('\n');
+};
+
 export const chat = asyncHandler(async (req, res) => {
-  const { message } = req.body;
+  const { message, history } = req.body;
   if (!message || typeof message !== 'string') {
     res.status(400).json({ status: 400, message: 'message is required' });
     return;
@@ -91,13 +124,21 @@ export const chat = asyncHandler(async (req, res) => {
 
   let reply;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 3000);
+  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
     try {
-      const ml = await apiClient.post('/api/ml/chat', { message }, { signal: controller.signal });
-      reply = ml.reply || ml.message || null;
+      const catalog = await buildCatalogContext();
+      reply = await groqChat({ message, history, catalog, signal: controller.signal });
     } catch (err) {
       reply = null;
+    }
+    if (!reply) {
+      try {
+        const ml = await apiClient.post('/api/ml/chat', { message }, { signal: controller.signal });
+        reply = ml.reply || ml.message || null;
+      } catch (err) {
+        reply = null;
+      }
     }
     if (!reply) {
       reply = await staticReply(message);
