@@ -5,6 +5,8 @@ import {
   getOrders,
   confirmPayment,
   webhook,
+  createRazorpayOrder,
+  verifyRazorpayPayment,
 } from '../controllers/orderController.js';
 import { protect } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
@@ -27,6 +29,26 @@ router.post(
     'shippingAddress.city': { required: true },
   }),
   createOrder
+);
+
+router.post(
+  '/razorpay-checkout',
+  validate({
+    'items': { required: true },
+    'shippingAddress.street': { required: true },
+    'shippingAddress.city': { required: true },
+  }),
+  createRazorpayOrder
+);
+
+router.post(
+  '/razorpay-verify',
+  validate({
+    razorpayOrderId: { required: true },
+    razorpayPaymentId: { required: true },
+    razorpaySignature: { required: true },
+  }),
+  verifyRazorpayPayment
 );
 
 router.post(

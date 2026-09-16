@@ -10,6 +10,30 @@ import asyncHandler from '../utils/asyncHandler.js';
 const stripeConfigured = Boolean(env.STRIPE_SECRET_KEY);
 const stripeClient = stripeConfigured ? new Stripe(env.STRIPE_SECRET_KEY) : null;
 
+const razorpayConfigured = Boolean(env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET);
+const razorpayAuth = () =>
+  `Basic ${Buffer.from(`${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`).toString('base64')}`;
+
+const createRazorpayOrderApi = async ({ amount, receipt, notes }) => {
+  const res = await fetch('https://api.razorpay.com/v1/orders', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: razorpayAuth(),
+    },
+    body: JSON.stringify({
+      amount,
+      currency: 'INR',
+      receipt,
+      notes: notes || {},
+    }),
+  });
+  if (!res.ok) {
+    throw new AppError('Razorpay order creation failed', 502);
+  }
+  return res.json();
+};
+
 const buildItemsFromBody = async (requestedItems) => {
   if (!Array.isArray(requestedItems) || requestedItems.length === 0) {
     throw new AppError('At least one item is required', 400);
@@ -166,7 +190,7 @@ const recomputeCartTotal = async (cart) => {
   await cart.save();
 };
 
-const confirmOrder = async (paymentIntentId, requesterId = null) => {
+const confirmOrder = async (paymentId, requesterId = null, alreadyVerified = false) => {
   let order = await Order.findOne({ paymentId: paymentIntentId });
   if (!order) {
     throw new AppError('Order not found for this payment', 404);
@@ -190,7 +214,7 @@ const confirmOrder = async (paymentIntentId, requesterId = null) => {
   }
   order = claimed;
 
-  const paid = await verifyPaymentWithStripe(paymentIntentId);
+  const paid = alreadyVerified || (await verifyPaymentWithStripe(paymentId));
   if (!paid) {
     await Order.findByIdAndUpdate(order._id, { paymentStatus: 'failed' });
     throw new AppError('Payment not completed', 402);
@@ -215,6 +239,91 @@ const confirmOrder = async (paymentIntentId, requesterId = null) => {
   await order.save();
   return order;
 };
+
+export const createRazorpayOrder = asyncHandler(async (req, res) => {
+  const { items: requestedItems, shippingAddress } = req.body;
+
+  if (razorpayConfigured === false) {
+    return res.status(400).json({ status: 400, message: 'Razorpay not configured on the server' });
+  }
+
+  if (!shippingAddress || !shippingAddress.street || !shippingAddress.city) {
+    throw new AppError('Valid shippingAddress with street and city is required', 400);
+  }
+
+  const { items } = await buildItemsFromBody(requestedItems);
+  const total = Math.round(
+    items.reduce((sum, i) => sum + i.price * i.qty, 0) * 100
+  ) / 100;
+
+  const signature = itemSignature(items);
+  const recent = await Order.findOne({
+    userId: req.user._id,
+    paymentStatus: 'pending',
+    itemSignature: signature,
+    createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) },
+  });
+
+  if (recent && recent.paymentId) {
+    return res.status(200).json({
+      orderId: recent.paymentId,
+      amount: Math.round(recent.total * 100),
+      currency: 'INR',
+      keyId: env.RAZORPAY_KEY_ID,
+    });
+  }
+
+  const order = await Order.create({
+    userId: req.user._id,
+    items,
+    total,
+    itemSignature: signature,
+    shippingAddress: {
+      name: shippingAddress.name || req.user.name || '',
+      email: shippingAddress.email || req.user.email || '',
+      phone: shippingAddress.phone || '',
+      street: shippingAddress.street,
+      city: shippingAddress.city,
+      state: shippingAddress.state || '',
+      zip: shippingAddress.zip || '',
+      country: shippingAddress.country || '',
+    },
+    paymentStatus: 'pending',
+    status: 'placed',
+  });
+
+  const rzpOrder = await createRazorpayOrderApi({
+    amount: Math.round(total * 100),
+    receipt: `order_${order._id.toString()}`,
+    notes: { orderId: String(order._id), userId: String(req.user._id) },
+  });
+
+  order.paymentId = rzpOrder.id;
+  await order.save();
+
+  res.status(200).json({
+    orderId: rzpOrder.id,
+    amount: rzpOrder.amount,
+    currency: rzpOrder.currency,
+    keyId: env.RAZORPAY_KEY_ID,
+  });
+});
+
+export const verifyRazorpayPayment = asyncHandler(async (req, res) => {
+  const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+
+  const generatedSignature = crypto
+    .createHmac('sha256', env.RAZORPAY_KEY_SECRET)
+    .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+    .digest('hex');
+
+  if (generatedSignature !== razorpaySignature) {
+    throw new AppError('Invalid Razorpay signature', 400);
+  }
+
+  const order = await confirmOrder(razorpayOrderId, req.user._id, true);
+  res.status(200).json(order);
+});
 
 export const confirmPayment = asyncHandler(async (req, res) => {
   const { paymentIntentId } = req.body;

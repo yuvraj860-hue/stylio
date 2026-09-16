@@ -14,6 +14,8 @@ const env = {
   JWT_SECRET: JWT_SECRET || 'stylio_dev_secret_change_me',
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || '',
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || '',
   ML_SERVICE_URL: process.env.ML_SERVICE_URL || 'http://localhost:8000',
   CORS_ORIGIN: process.env.CORS_ORIGIN || '',
   NODE_ENV,

@@ -30,6 +30,9 @@ services:
       - MONGO_URI=${MONGO_URI:-mongodb://mongo:27017/stylio}
       - JWT_SECRET=${JWT_SECRET:-changeme-in-production}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID:-}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET:-}
       - ML_SERVICE_URL=http://ml-service:8000
       - NODE_ENV=production
     depends_on:

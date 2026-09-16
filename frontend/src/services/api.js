@@ -147,6 +147,10 @@ export const orderApi = {
   checkout: (items, shippingAddress) =>
     apiPost('/orders/checkout', { items, shippingAddress }),
   confirm: (paymentIntentId) => apiPost('/orders', { paymentIntentId }),
+  razorpayCheckout: (items, shippingAddress) =>
+    apiPost('/orders/razorpay-checkout', { items, shippingAddress }),
+  razorpayVerify: (payload) =>
+    apiPost('/orders/razorpay-verify', payload),
   myOrders: () => apiGet('/orders')
 }
 

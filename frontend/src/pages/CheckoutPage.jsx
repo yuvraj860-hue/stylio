@@ -3,16 +3,101 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import { orderApi } from '../services/api'
 import { fmt } from '../utils/format'
 
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
+const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || ''
 const SHIPPING_COST = 0
 const FREE_SHIPPING_THRESHOLD = 1500
 
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`)
+    if (existing) return resolve(true)
+    const script = document.createElement('script')
+    script.src = src
+    script.onload = () => resolve(true)
+    script.onerror = () => reject(new Error('Failed to load the payment gateway'))
+    document.body.appendChild(script)
+  })
+}
+
 async function detectMockMode() {
-  if (!STRIPE_KEY) return 'mock'
-  return 'live'
+  if (RAZORPAY_KEY) return 'razorpay'
+  if (STRIPE_KEY) return 'live'
+  return 'mock'
+}
+
+function RazorpayPaymentSection({ itemPayload, shippingPayload, user, totalDue, onPaid }) {
+  const [processing, setProcessing] = useState(false)
+  const [sectionError, setSectionError] = useState(null)
+
+  const handleRazorpay = async (e) => {
+    e.preventDefault()
+    setProcessing(true)
+    setSectionError(null)
+    try {
+      const order = await orderApi.razorpayCheckout(itemPayload(), shippingPayload())
+      const { orderId, amount, currency } = order
+      if (!orderId) throw new Error('Order setup failed. Please try again.')
+
+      await loadScript('https://checkout.razorpay.com/v1/checkout.js')
+
+      const options = {
+        key: RAZORPAY_KEY,
+        order_id: orderId,
+        amount,
+        currency: currency || 'INR',
+        name: 'STYLIO',
+        description: 'Fashion, made for you',
+        handler: async (response) => {
+          try {
+            await orderApi.razorpayVerify({
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            })
+            await onPaid(response.razorpay_order_id)
+          } catch (err) {
+            setSectionError(err.message || 'Payment could not be confirmed. Please check your order.')
+          }
+        },
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+        },
+        modal: {
+          ondismiss: () => setProcessing(false),
+        },
+        theme: { color: '#111111' },
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.on('payment.failed', (resp) => {
+        const errObj = resp.error || {}
+        setSectionError(errObj.description || 'Payment failed. Please try again.')
+        setProcessing(false)
+      })
+      rzp.open()
+    } catch (err) {
+      setSectionError(err.message || "We couldn't start the payment. Please try again.")
+      setProcessing(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleRazorpay}>
+      <p className="text-muted" style={{ fontSize: '0.88rem', marginBottom: 'var(--space-5)' }}>
+        Pay securely with UPI, cards, net banking and wallets via Razorpay.
+      </p>
+      {sectionError && <div className="alert alert-error" style={{ marginBottom: 'var(--space-4)' }}>{sectionError}</div>}
+      <button className="btn btn-dark btn-block" type="submit" disabled={processing}>
+        {processing ? 'Redirecting to payment…' : `Pay ${fmt(totalDue)} with Razorpay`}
+      </button>
+    </form>
+  )
 }
 
 function StripePaymentSection({ itemPayload, shippingPayload, email, totalDue, onPaid }) {
@@ -72,6 +157,7 @@ function StripePaymentSection({ itemPayload, shippingPayload, email, totalDue, o
 
 function CheckoutForm() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const { items, subtotal, clearCart } = useCart()
 
   const [mode, setMode] = useState(null)
@@ -231,6 +317,16 @@ const fieldClass = (field) => (formErrors[field] ? 'input-invalid' : '')
                 </div>
               )}
 
+              {mode === 'razorpay' && (
+                <RazorpayPaymentSection
+                  itemPayload={itemPayload}
+                  shippingPayload={shippingPayload}
+                  user={user}
+                  totalDue={totalDue()}
+                  onPaid={confirmOrder}
+                />
+              )}
+
               {mode === 'live' && (
                 <StripePaymentSection
                   itemPayload={itemPayload}
@@ -244,8 +340,8 @@ const fieldClass = (field) => (formErrors[field] ? 'input-invalid' : '')
               {mode === 'mock' && (
                 <form onSubmit={handleMockOrder}>
                   <p className="text-muted" style={{ fontSize: '0.88rem', marginBottom: 'var(--space-5)' }}>
-                    Stripe isn't configured in this environment, so this demo checkout places your
-                    order directly without a real charge.
+                    No payment gateway is configured in this environment, so this demo checkout places
+                    your order directly without a real charge.
                   </p>
                   <button className="btn btn-dark btn-block" type="submit" disabled={processing}>
                     {processing ? 'Placing order…' : `Place Order — ${fmt(totalDue())}`}
