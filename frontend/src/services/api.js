@@ -1,5 +1,14 @@
-const API_BASE = (import.meta.env.VITE_API_BASE || '/api').replace(/\/$/, '')
-const ML_BASE = (import.meta.env.VITE_ML_BASE || '/api/ml').replace(/\/$/, '')
+const API_RAW = (import.meta.env.VITE_API_BASE || '').replace(/\/$/, '')
+const ML_RAW = (import.meta.env.VITE_ML_BASE || '').replace(/\/$/, '')
+
+const withApiSlash = (base, fallback) => {
+  if (!base) return fallback
+  if (/(\/api\/?)$/.test(base)) return base
+  return `${base}/api`
+}
+
+const API_BASE = withApiSlash(API_RAW, '/api')
+const ML_BASE = ML_RAW || '/api/ml'
 
 class ApiError extends Error {
   constructor(message, status) {
