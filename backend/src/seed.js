@@ -233,57 +233,68 @@ const products = [
   },
 ];
 
-const seed = async () => {
+const seedDatabase = async () => {
+  console.log('[seed] Seeding STYLIO database...');
+
+  const existing = await Product.countDocuments({});
+  if (existing > 0) {
+    console.log(`[seed] Database already has ${existing} products — skipping seed.`);
+    return false;
+  }
+
+  const adminData = {
+    name: 'STYLIO Admin',
+    email: 'admin@stylio.com',
+    password: 'admin123',
+    role: 'admin',
+    wishlist: [],
+  };
+
+  let admin = await User.findOne({ email: adminData.email });
+  if (admin) {
+    admin.name = adminData.name;
+    admin.password = adminData.password;
+    admin.role = adminData.role;
+    await admin.save();
+  } else {
+    admin = await User.create(adminData);
+  }
+  console.log(`[seed] Admin ready: admin@stylio.com / admin123 (${admin._id})`);
+
+  await Product.deleteMany({});
+  const inserted = await Product.insertMany(products);
+  console.log(`[seed] Inserted ${inserted.length} products`);
+
+  await indexProductsInML(inserted);
+
+  const byCategory = inserted.reduce((acc, p) => {
+    acc[p.category] = (acc[p.category] || 0) + 1;
+    return acc;
+  }, {});
+  console.log('[seed] Category counts:', byCategory);
+
+  console.log('[seed] Seeding complete.');
+  return true;
+};
+
+export const seedIfNeeded = async () => {
   try {
     await connectDB();
-    console.log('Seeding STYLIO database...');
-
-    const ifEmptyOnly = process.argv.includes('--if-empty') || process.env.SEED_IF_EMPTY === '1';
-    const existing = await Product.countDocuments({});
-    if (ifEmptyOnly && existing > 0) {
-      console.log(`Database already has ${existing} products — skipping seed (--if-empty).`);
-      await mongoose.disconnect();
-      return;
-    }
-
-    const adminData = {
-      name: 'STYLIO Admin',
-      email: 'admin@stylio.com',
-      password: 'admin123',
-      role: 'admin',
-      wishlist: [],
-    };
-
-    let admin = await User.findOne({ email: adminData.email });
-    if (admin) {
-      admin.name = adminData.name;
-      admin.password = adminData.password;
-      admin.role = adminData.role;
-      await admin.save();
-    } else {
-      admin = await User.create(adminData);
-    }
-    console.log(`Admin ready: admin@stylio.com / admin123 (${admin._id})`);
-
-    await Product.deleteMany({});
-    const inserted = await Product.insertMany(products);
-    console.log(`Inserted ${inserted.length} products`);
-
-    await indexProductsInML(inserted);
-
-    const byCategory = inserted.reduce((acc, p) => {
-      acc[p.category] = (acc[p.category] || 0) + 1;
-      return acc;
-    }, {});
-    console.log('Category counts:', byCategory);
-
-    console.log('Seeding complete.');
+    const done = await seedDatabase();
     await mongoose.disconnect();
+    return done;
   } catch (err) {
-    console.error('Seed failed:', err.message);
+    console.error('[seed] Seed failed:', err.message);
     await mongoose.disconnect();
-    process.exit(1);
+    throw err;
   }
 };
 
-seed();
+export default seedDatabase;
+
+const isDirectRun = process.argv[1] && import.meta.url.endsWith(process.argv[1].split(/[\\/]/).pop());
+if (isDirectRun) {
+  seedIfNeeded()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+}
