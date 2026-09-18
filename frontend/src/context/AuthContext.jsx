@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useUser, SignInButton, SignOutButton } from '@clerk/clerk-react'
+import { useUser, SignInButton, SignOutButton, UserProfile } from '@clerk/clerk-react'
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children, clerkPublishableKey }) {
   const { user, isLoaded, isSigningIn } = useUser()
   const [isClerkReady, setIsClerkReady] = useState(false)
 
@@ -31,26 +31,32 @@ export function AuthProvider({ children }) {
       >
         <span>Signing in...</span>
       </div>
-)
-}
+    )
+  }
 
   return (
     <div>
-      {user ? (
-        <SignOutButton className="btn" onClick={() => {}}>
+      {isSignedIn && user ? (
+        <SignOutButton
+          className="btn"
+          onClick={() => {}}
+        >
           Sign out
         </SignOutButton>
       ) : (
-        <SignInButton className="btn" onClick={() => {}}>
+        <SignInButton
+          className="btn"
+          onClick={() => {}}
+        >
           Sign in
         </SignInButton>
       )}
+      {user && <UserProfile />}
     </div>
   )
 }
 
-// Compatibility hook — reads user from Clerk context.
-// Prefer using Clerk's useUser() directly in new code.
+// Compatibility hook for existing components
 export function useAuth() {
   const { user: clerkUser, isLoaded } = useUser()
   const isAuthenticated = !isLoaded || !!clerkUser

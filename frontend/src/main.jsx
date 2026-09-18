@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <ClerkProvider
           publishableKey={import.meta.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY}
         >
-          <AuthProvider>
+          <AuthProvider clerkPublishableKey={import.meta.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY}>
             <CurrencyProvider>
               <CartProvider>
                 <App />
