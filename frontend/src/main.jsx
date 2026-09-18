@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ErrorBoundary>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ClerkProvider
-          publishableKey={import.meta.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+          publishableKey={import.meta.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY}
         >
           <AuthProvider>
             <CurrencyProvider>
