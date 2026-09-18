@@ -27,7 +27,7 @@ export default function Navbar() {
         </Link>
 
         <nav className="navbar__links" aria-label="Primary">
-          <NavLink to="/shop" exact className={linkClass}>
+          <NavLink to="/shop" className={linkClass}>
             Shop
           </NavLink>
           <NavLink to="/shop?sort=new" className={linkClass}>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useUser } from '@clerk/clerk-react'
+import { useUser, SignInButton, SignOutButton } from '@clerk/clerk-react'
 
 export function AuthProvider({ children }) {
   const { user, isLoaded, isSigningIn } = useUser()
