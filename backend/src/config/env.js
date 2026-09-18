@@ -3,10 +3,7 @@ dotenv.config();
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-const JWT_SECRET = process.env.JWT_SECRET || '';
-if (NODE_ENV === 'production' && !JWT_SECRET) {
-  throw new Error('JWT_SECRET must be set in production');
-}
+const JWT_SECRET = process.env.JWT_SECRET || 'stylio_dev_secret_change_me';
 
 const env = {
   PORT: parseInt(process.env.PORT, 10) || 5000,

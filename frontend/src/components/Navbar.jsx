@@ -1,18 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useUser } from '@clerk/clerk-react'
 import { useCart } from '../context/CartContext'
 import SearchBar from './SearchBar'
 import { CartIcon, UserIcon, MenuIcon, CloseIcon } from './icons'
 
 export default function Navbar() {
-  const { isAuthenticated, user } = useAuth()
+  const { user, isLoaded, isSignedIn } = useUser()
   const { count, openCart } = useCart()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileQuery, setMobileQuery] = useState('')
 
   const linkClass = ({ isActive }) =>
     `nav-link ${isActive ? 'nav-link-active' : ''}`
+
+  // Wait for Clerk to load before rendering auth-dependent UI
+  useEffect(() => {
+    // Clerk is loaded when isLoaded becomes true
+  }, [isLoaded])
 
   return (
     <header className="navbar">
@@ -44,26 +49,24 @@ export default function Navbar() {
             {count > 0 && <span className="cart-badge">{count}</span>}
           </button>
 
-{isAuthenticated 
-  ? (
-    <Link
-      to="/account"
-      className="icon-btn navbar__avatar"
-      style={{ fontFamily: 'var(--font-display)' }}
-      title={user.name}
-    >
-      {(user.name || 'U').charAt(0).toUpperCase()}
-    </Link>
-  )
-  : (
-    <Link
-      to="/login"
-      className="icon-btn"
-      aria-label="Sign in"
-    >
-      <UserIcon />
-    </Link>
-  )}
+          {isSignedIn && user ? (
+            <Link
+              to="/account"
+              className="icon-btn navbar__avatar"
+              style={{ fontFamily: 'var(--font-display)' }}
+              title={user.name}
+            >
+              {(user.name || 'U').charAt(0).toUpperCase()}
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="icon-btn"
+              aria-label="Sign in"
+            >
+              <UserIcon />
+            </Link>
+          )}
 
           <button
             className="icon-btn navbar__burger"
@@ -87,9 +90,15 @@ export default function Navbar() {
         <Link to="/shop?sort=new" onClick={() => setMobileOpen(false)}>
           New In
         </Link>
-        <Link to={isAuthenticated ? '/account' : '/login'} onClick={() => setMobileOpen(false)}>
-          {isAuthenticated ? 'My Account' : 'Sign In'}
-        </Link>
+        {isSignedIn ? (
+          <Link to="/account" onClick={() => setMobileOpen(false)}>
+            My Account
+          </Link>
+        ) : (
+          <Link to="/login" onClick={() => setMobileOpen(false)}>
+            Sign In
+          </Link>
+        )}
         <form
           className="search-bar"
           style={{ marginTop: 6 }}

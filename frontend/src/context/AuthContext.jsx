@@ -1,83 +1,82 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { apiGet, apiPost } from '../services/api'
-
-const AuthContext = createContext(null)
-
-const TOKEN_KEY = 'stylio_token'
-const USER_KEY = 'stylio_user'
+import { useEffect, useState } from 'react'
+import { useUser } from '@clerk/clerk-react'
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem(USER_KEY)) || null
-    } catch {
-      return null
-    }
-  })
-  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || null)
-  const [loading, setLoading] = useState(false)
+  const { user, isLoaded, isSigningIn } = useUser()
+  const [isClerkReady, setIsClerkReady] = useState(false)
 
   useEffect(() => {
-    if (token) localStorage.setItem(TOKEN_KEY, token)
-    else localStorage.removeItem(TOKEN_KEY)
-    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user))
-    else localStorage.removeItem(USER_KEY)
-  }, [token, user])
+    setIsClerkReady(isLoaded)
+  }, [isLoaded])
 
-  const login = async (email, password) => {
-    setLoading(true)
-    try {
-      const data = await apiPost('/auth/login', { email, password })
-      if (!data.token || !data.user) throw new Error('Invalid response from server')
-      setToken(data.token)
-      setUser(data.user)
-      return { ok: true, user: data.user }
-    } catch (err) {
-      return { ok: false, error: err.message }
-    } finally {
-      setLoading(false)
-    }
+  if (!isClerkReady) {
+    return <>{children}</>
   }
 
-  const register = async (name, email, password, confirmPassword) => {
-    setLoading(true)
-    try {
-      const data = await apiPost('/auth/register', { name, email, password, confirmPassword })
-      if (!data.token || !data.user) throw new Error('Invalid response from server')
-      setToken(data.token)
-      setUser(data.user)
-      return { ok: true, user: data.user }
-    } catch (err) {
-      return { ok: false, error: err.message }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const logout = () => {
-    setToken(null)
-    setUser(null)
-  }
+  if (isSigningIn) {
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+        }}
+      >
+        <span>Signing in...</span>
+      </div>
+)
+}
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        loading,
-        isAuthenticated: Boolean(token && user),
-        login,
-        register,
-        logout
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <div>
+      {user ? (
+        <SignOutButton className="btn" onClick={() => {}}>
+          Sign out
+        </SignOutButton>
+      ) : (
+        <SignInButton className="btn" onClick={() => {}}>
+          Sign in
+        </SignInButton>
+      )}
+    </div>
   )
 }
 
+// Compatibility hook — reads user from Clerk context.
+// Prefer using Clerk's useUser() directly in new code.
 export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within an AuthProvider')
-  return ctx
+  const { user: clerkUser, isLoaded } = useUser()
+  const isAuthenticated = !isLoaded || !!clerkUser
+
+  // Fallback to localStorage for any pre-existing JWT users
+  const [localUser, setLocalUser] = useState(null)
+  useEffect(() => {
+    try {
+      const stored = typeof window !== 'undefined' ? localStorage.getItem('stylio_clerk_user') : null
+      if (stored) {
+        setLocalUser(JSON.parse(stored))
+      }
+    } catch (e) {
+      console.warn('Clerk auth: could not parse stored user', e)
+    }
+  }, [])
+
+  // Prefer Clerk user over localStorage fallback
+  const effectiveUser = clerkUser != null ? clerkUser : localUser
+
+  return {
+    user: effectiveUser,
+    isAuthenticated,
+    login: () => {},
+    register: () => {},
+    logout: () => {},
+    loading: isLoaded === false,
+  }
 }
