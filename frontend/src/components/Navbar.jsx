@@ -49,9 +49,9 @@ export default function Navbar() {
               to="/account"
               className="icon-btn navbar__avatar"
               style={{ fontFamily: 'var(--font-display)' }}
-              title={user.name}
+              title={user.fullName || user.firstName || 'Account'}
             >
-              {(user.name || 'U').charAt(0).toUpperCase()}
+              {(user.firstName || user.fullName || 'U').charAt(0).toUpperCase()}
             </Link>
           ) : (
             <Link
