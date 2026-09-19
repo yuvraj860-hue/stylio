@@ -114,6 +114,24 @@ export function useAuth() {
     }
   }, [signUp, setActiveSignUp])
 
+  const loginWithGoogle = useCallback(async () => {
+    if (!signIn) {
+      return { ok: false, error: 'Authentication not ready. Please try again.' }
+    }
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: 'oauth_google',
+        redirectUrl: window.location.origin,
+      })
+      return { ok: true }
+    } catch (err) {
+      return {
+        ok: false,
+        error: err.message || 'Google sign-in failed.',
+      }
+    }
+  }, [signIn])
+
   const logout = useCallback(async () => {
     setRequestLoading(true)
     try {
@@ -141,6 +159,7 @@ export function useAuth() {
     user: effectiveUser,
     isAuthenticated: isSignedIn || !!localUser,
     login,
+    loginWithGoogle,
     register,
     logout,
     loading: !isLoaded || requestLoading,
