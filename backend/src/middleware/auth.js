@@ -11,6 +11,7 @@ export const protect = asyncHandler(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
   if (!token) {
+    console.warn('[auth] No token provided');
     throw new AppError('Not authorized, no token provided', 401);
   }
 
@@ -21,6 +22,7 @@ export const protect = asyncHandler(async (req, res, next) => {
         secretKey: env.CLERK_SECRET_KEY,
       });
       const clerkId = payload.sub;
+      console.log('[auth] Clerk token verified, clerkId:', clerkId);
 
       let user = await User.findOne({ clerkId });
       if (!user) {
@@ -32,12 +34,15 @@ export const protect = asyncHandler(async (req, res, next) => {
           password: 'clerk_managed',
           clerkId,
         });
+        console.log('[auth] Created new Clerk user:', user._id);
       }
       req.user = user;
       return next();
     } catch (err) {
-      // Not a valid Clerk token, try legacy JWT
+      console.warn('[auth] Clerk token verification failed:', err.message);
     }
+  } else {
+    console.warn('[auth] No CLERK_SECRET_KEY configured');
   }
 
   // Fallback: legacy JWT
