@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useUser, useSignIn, useSignUp, useClerk } from '@clerk/clerk-react'
+import { useCallback, useEffect, useState } from 'react'
+import { useUser, useSignIn, useSignUp, useClerk, useAuth as useClerkAuth } from '@clerk/clerk-react'
 import { setClerkTokenGetter } from '../services/api'
 
 export function AuthProvider({ children }) {
@@ -38,21 +38,15 @@ export function useAuth() {
   const { signIn, setActive: setActiveSignIn } = useSignIn()
   const { signUp, setActive: setActiveSignUp } = useSignUp()
   const clerk = useClerk()
+  const { getToken } = useClerkAuth()
 
   const [requestLoading, setRequestLoading] = useState(false)
 
   useEffect(() => {
-    setClerkTokenGetter(async () => {
-      try {
-        if (clerk && clerk.session) {
-          return await clerk.session.getToken()
-        }
-      } catch (e) {
-        // token fetch failed
-      }
-      return null
-    })
-  }, [clerk])
+    if (getToken) {
+      setClerkTokenGetter(getToken)
+    }
+  }, [getToken])
 
   const login = useCallback(async (email, password) => {
     if (!signIn) {
