@@ -19,6 +19,7 @@ const env = {
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:5173',
   ML_SERVICE_URL: process.env.ML_SERVICE_URL || 'http://localhost:8000',
   CORS_ORIGIN: process.env.CORS_ORIGIN || '',
+  CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || '',
   NODE_ENV,
 };
 

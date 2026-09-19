@@ -19,10 +19,15 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: false,
       minlength: [6, 'Password must be at least 6 characters'],
       maxlength: [72, 'Password cannot exceed 72 characters'],
       select: false,
+    },
+    clerkId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     role: {
       type: String,

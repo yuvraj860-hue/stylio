@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { verifyToken } from '@clerk/backend';
 import User from '../models/User.js';
 import env from '../config/env.js';
 import AppError from '../utils/AppError.js';
@@ -13,6 +14,33 @@ export const protect = asyncHandler(async (req, res, next) => {
     throw new AppError('Not authorized, no token provided', 401);
   }
 
+  // Try Clerk token first
+  if (env.CLERK_SECRET_KEY) {
+    try {
+      const payload = await verifyToken(token, {
+        secretKey: env.CLERK_SECRET_KEY,
+      });
+      const clerkId = payload.sub;
+
+      let user = await User.findOne({ clerkId });
+      if (!user) {
+        user = await User.create({
+          name: payload.given_name
+            ? `${payload.given_name} ${payload.family_name || ''}`.trim()
+            : (payload.email || 'Clerk User'),
+          email: (payload.email || payload.email_addresses && payload.email_addresses[0]) || '',
+          password: 'clerk_managed',
+          clerkId,
+        });
+      }
+      req.user = user;
+      return next();
+    } catch (err) {
+      // Not a valid Clerk token, try legacy JWT
+    }
+  }
+
+  // Fallback: legacy JWT
   let decoded;
   try {
     decoded = jwt.verify(token, env.JWT_SECRET);
@@ -34,6 +62,31 @@ export const optionalAuth = asyncHandler(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
   if (token) {
+    // Try Clerk token
+    if (env.CLERK_SECRET_KEY) {
+      try {
+        const payload = await verifyToken(token, {
+          secretKey: env.CLERK_SECRET_KEY,
+        });
+        let user = await User.findOne({ clerkId: payload.sub });
+        if (!user) {
+          user = await User.create({
+            name: payload.given_name
+              ? `${payload.given_name} ${payload.family_name || ''}`.trim()
+              : (payload.email || 'Clerk User'),
+            email: (payload.email || '') ,
+            password: 'clerk_managed',
+            clerkId: payload.sub,
+          });
+        }
+        req.user = user;
+        return next();
+      } catch (err) {
+        // Not a valid Clerk token
+      }
+    }
+
+    // Fallback: legacy JWT
     try {
       const decoded = jwt.verify(token, env.JWT_SECRET);
       req.user = await User.findById(decoded.id);

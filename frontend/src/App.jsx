@@ -90,10 +90,13 @@ export default function App() {
 
   useEffect(() => {
     setUnauthorizedHandler(() => {
-      logout()
-      navigate('/login')
+      window.dispatchEvent(
+        new CustomEvent('stylio:toast', {
+          detail: { message: 'Your session has expired. Please sign in again.' },
+        })
+      )
     })
-  }, [navigate, logout])
+  }, [])
 
   return (
     <div className="app">

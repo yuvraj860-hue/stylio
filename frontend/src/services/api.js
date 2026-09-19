@@ -18,9 +18,14 @@ class ApiError extends Error {
 }
 
 let onUnauthorized = null
+let clerkTokenGetter = null
 
 export function setUnauthorizedHandler(fn) {
   onUnauthorized = fn
+}
+
+export function setClerkTokenGetter(fn) {
+  clerkTokenGetter = fn
 }
 
 function showError(message) {
@@ -33,6 +38,26 @@ function showError(message) {
 
 function getToken() {
   return localStorage.getItem('stylio_token')
+}
+
+async function getAuthHeaders() {
+  const headers = { 'Content-Type': 'application/json' }
+  const legacy = getToken()
+  if (legacy) {
+    headers['Authorization'] = `Bearer ${legacy}`
+    return headers
+  }
+  if (clerkTokenGetter) {
+    try {
+      const token = await clerkTokenGetter()
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+    } catch (e) {
+      // Clerk token fetch failed, proceed without auth
+    }
+  }
+  return headers
 }
 
 async function handleResponse(res) {
@@ -61,43 +86,36 @@ async function handleResponse(res) {
 }
 
 export async function apiGet(path) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {})
-    }
-  })
+  const headers = await getAuthHeaders()
+  const res = await fetch(`${API_BASE}${path}`, { headers })
   return handleResponse(res)
 }
 
 export async function apiPost(path, body) {
+  const headers = await getAuthHeaders()
   const res = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {})
-    },
+    headers,
     body: JSON.stringify(body)
   })
   return handleResponse(res)
 }
 
 export async function apiPut(path, body) {
+  const headers = await getAuthHeaders()
   const res = await fetch(`${API_BASE}${path}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {})
-    },
+    headers,
     body: JSON.stringify(body)
   })
   return handleResponse(res)
 }
 
 export async function apiDelete(path) {
+  const headers = await getAuthHeaders()
   const res = await fetch(`${API_BASE}${path}`, {
     method: 'DELETE',
-    headers: getToken() ? { Authorization: `Bearer ${getToken()}` } : {}
+    headers: headers['Authorization'] ? { Authorization: headers['Authorization'] } : {}
   })
   return handleResponse(res)
 }

@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useUser, useSignIn, useSignUp, useClerk } from '@clerk/clerk-react'
+import { setClerkTokenGetter } from '../services/api'
 
 export function AuthProvider({ children }) {
   const { isLoaded, isSigningIn } = useUser()
@@ -38,19 +39,20 @@ export function useAuth() {
   const { signUp, setActive: setActiveSignUp } = useSignUp()
   const clerk = useClerk()
 
-  const [localUser, setLocalUser] = useState(null)
   const [requestLoading, setRequestLoading] = useState(false)
 
   useEffect(() => {
-    try {
-      const stored = typeof window !== 'undefined' ? localStorage.getItem('stylio_clerk_user') : null
-      if (stored) {
-        setLocalUser(JSON.parse(stored))
+    setClerkTokenGetter(async () => {
+      try {
+        if (clerk && clerk.session) {
+          return await clerk.session.getToken()
+        }
+      } catch (e) {
+        // token fetch failed
       }
-    } catch (e) {
-      console.warn('Clerk auth: could not parse stored user', e)
-    }
-  }, [])
+      return null
+    })
+  }, [clerk])
 
   const login = useCallback(async (email, password) => {
     if (!signIn) {
@@ -136,7 +138,6 @@ export function useAuth() {
     setRequestLoading(true)
     try {
       await clerk.signOut()
-      localStorage.removeItem('stylio_clerk_user')
       return { ok: true }
     } catch (err) {
       return { ok: false, error: err.message || 'Sign out failed.' }
@@ -153,11 +154,11 @@ export function useAuth() {
         lastName: clerkUser.lastName,
         id: clerkUser.id,
       }
-    : localUser
+    : null
 
   return {
     user: effectiveUser,
-    isAuthenticated: isSignedIn || !!localUser,
+    isAuthenticated: isSignedIn,
     login,
     loginWithGoogle,
     register,
