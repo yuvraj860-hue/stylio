@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useUser } from '@clerk/clerk-react'
 import { useCart } from '../context/CartContext'
@@ -13,11 +13,6 @@ export default function Navbar() {
 
   const linkClass = ({ isActive }) =>
     `nav-link ${isActive ? 'nav-link-active' : ''}`
-
-  // Wait for Clerk to load before rendering auth-dependent UI
-  useEffect(() => {
-    // Clerk is loaded when isLoaded becomes true
-  }, [isLoaded])
 
   return (
     <header className="navbar">

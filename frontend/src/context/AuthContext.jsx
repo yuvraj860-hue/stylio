@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useUser, SignInButton, SignOutButton, UserProfile } from '@clerk/clerk-react'
+import { useUser } from '@clerk/clerk-react'
 
-export function AuthProvider({ children, clerkPublishableKey }) {
-  const { user, isLoaded, isSigningIn } = useUser()
-  const [isClerkReady, setIsClerkReady] = useState(false)
+export function AuthProvider({ children }) {
+  const { isLoaded, isSigningIn } = useUser()
 
-  useEffect(() => {
-    setIsClerkReady(isLoaded)
-  }, [isLoaded])
-
-  if (!isClerkReady) {
+  if (!isLoaded) {
     return <>{children}</>
   }
 
@@ -34,34 +29,12 @@ export function AuthProvider({ children, clerkPublishableKey }) {
     )
   }
 
-  return (
-    <div>
-      {isSignedIn && user ? (
-        <SignOutButton
-          className="btn"
-          onClick={() => {}}
-        >
-          Sign out
-        </SignOutButton>
-      ) : (
-        <SignInButton
-          className="btn"
-          onClick={() => {}}
-        >
-          Sign in
-        </SignInButton>
-      )}
-      {user && <UserProfile />}
-    </div>
-  )
+  return <>{children}</>
 }
 
-// Compatibility hook for existing components
 export function useAuth() {
-  const { user: clerkUser, isLoaded } = useUser()
-  const isAuthenticated = !isLoaded || !!clerkUser
+  const { user: clerkUser, isLoaded, isSignedIn } = useUser()
 
-  // Fallback to localStorage for any pre-existing JWT users
   const [localUser, setLocalUser] = useState(null)
   useEffect(() => {
     try {
@@ -74,15 +47,14 @@ export function useAuth() {
     }
   }, [])
 
-  // Prefer Clerk user over localStorage fallback
   const effectiveUser = clerkUser != null ? clerkUser : localUser
 
   return {
     user: effectiveUser,
-    isAuthenticated,
+    isAuthenticated: isSignedIn || !!effectiveUser,
     login: () => {},
     register: () => {},
     logout: () => {},
-    loading: isLoaded === false,
+    loading: !isLoaded,
   }
 }
