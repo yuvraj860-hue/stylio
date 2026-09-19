@@ -10,6 +10,9 @@ return {
     plugins: [react()],
     server: {
       port: 5173,
+      headers: {
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), browsing-topics=(), interest-cohort=()'
+      },
       proxy: {
         '/api/ml': {
           target: mlTarget,
