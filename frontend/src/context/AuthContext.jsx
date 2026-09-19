@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useUser, useSignIn, useSignUp, useClerk } from '@clerk/clerk-react'
 
 export function AuthProvider({ children }) {
@@ -39,6 +39,8 @@ export function useAuth() {
   const clerk = useClerk()
 
   const [localUser, setLocalUser] = useState(null)
+  const [requestLoading, setRequestLoading] = useState(false)
+
   useEffect(() => {
     try {
       const stored = typeof window !== 'undefined' ? localStorage.getItem('stylio_clerk_user') : null
@@ -50,10 +52,11 @@ export function useAuth() {
     }
   }, [])
 
-  const login = async (email, password) => {
+  const login = useCallback(async (email, password) => {
     if (!signIn) {
       return { ok: false, error: 'Authentication not ready. Please try again.' }
     }
+    setRequestLoading(true)
     try {
       const result = await signIn.create({
         identifier: email,
@@ -71,13 +74,16 @@ export function useAuth() {
         ok: false,
         error: (err.errors && err.errors[0] && err.errors[0].message) || err.message || 'Sign in failed.',
       }
+    } finally {
+      setRequestLoading(false)
     }
-  }
+  }, [signIn, setActiveSignIn])
 
-  const register = async (name, email, password) => {
+  const register = useCallback(async (name, email, password) => {
     if (!signUp) {
       return { ok: false, error: 'Authentication not ready. Please try again.' }
     }
+    setRequestLoading(true)
     try {
       const parts = name.trim().split(' ')
       const firstName = parts[0] || name
@@ -103,18 +109,23 @@ export function useAuth() {
         ok: false,
         error: (err.errors && err.errors[0] && err.errors[0].message) || err.message || 'Registration failed.',
       }
+    } finally {
+      setRequestLoading(false)
     }
-  }
+  }, [signUp, setActiveSignUp])
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
+    setRequestLoading(true)
     try {
       await clerk.signOut()
       localStorage.removeItem('stylio_clerk_user')
       return { ok: true }
     } catch (err) {
       return { ok: false, error: err.message || 'Sign out failed.' }
+    } finally {
+      setRequestLoading(false)
     }
-  }
+  }, [clerk])
 
   const effectiveUser = clerkUser
     ? {
@@ -132,6 +143,6 @@ export function useAuth() {
     login,
     register,
     logout,
-    loading: !isLoaded,
+    loading: !isLoaded || requestLoading,
   }
 }
