@@ -6,12 +6,12 @@ import {
   removeItem,
   clearCart,
 } from '../controllers/cartController.js';
-import { protect } from '../middleware/auth.js';
+import { clerkAuth } from '../middleware/clerkAuth.js';
 import { validateId, validate } from '../middleware/validate.js';
 
 const router = Router();
 
-router.use(protect);
+router.use(clerkAuth);
 
 router.get('/', getCart);
 

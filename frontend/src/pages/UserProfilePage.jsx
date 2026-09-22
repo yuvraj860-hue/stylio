@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { useCart } from '../context/CartContext'
-import { orderApi } from '../services/api'
-import { fmt } from '../utils/format'
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { UserProfile, useUser } from '@clerk/clerk-react';
+import { useCart } from '../context/CartContext';
+import { orderApi } from '../services/api';
+import { fmt } from '../utils/format';
 
 function formatDate(value) {
-  if (!value) return '—'
-  const d = new Date(value)
-  if (Number.isNaN(d.getTime())) return '—'
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+  if (!value) return '—';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 const STATUS_LABEL = {
@@ -17,48 +17,51 @@ const STATUS_LABEL = {
   processing: 'Processing',
   shipped: 'Shipped',
   delivered: 'Delivered',
-  cancelled: 'Cancelled'
-}
+  cancelled: 'Cancelled',
+};
 
 function statusBadgeClass(status) {
-  const s = String(status || '').toLowerCase()
-  if (s === 'delivered') return 'badge-muted'
-  if (s === 'cancelled') return 'badge-error'
-  return 'badge-gold'
+  const s = String(status || '').toLowerCase();
+  if (s === 'delivered') return 'badge-muted';
+  if (s === 'cancelled') return 'badge-error';
+  return 'badge-gold';
 }
 
-export default function AccountPage() {
-  const { user, logout } = useAuth()
-  const { items, clearCart } = useCart()
-  const [orders, setOrders] = useState(null)
-  const [orderError, setOrderError] = useState(null)
+export default function UserProfilePage() {
+  const { user, isLoaded } = useUser();
+  const { items, clearCart } = useCart();
+  const [orders, setOrders] = useState(null);
+  const [orderError, setOrderError] = useState(null);
 
   useEffect(() => {
-    let cancelled = false
+    if (!isLoaded) return;
+    let cancelled = false;
     orderApi
       .myOrders()
       .then((data) => {
-        if (cancelled) return
+        if (cancelled) return;
         const list = Array.isArray(data)
           ? data
           : Array.isArray(data && data.orders)
             ? data.orders
             : Array.isArray(data && data.data)
               ? data.data
-              : []
-        setOrders(list)
+              : [];
+        setOrders(list);
       })
       .catch((err) => {
-        if (!cancelled) setOrderError(err.message)
-      })
+        if (!cancelled) setOrderError(err.message);
+      });
     return () => {
-      cancelled = true
-    }
-  }, [])
+      cancelled = true;
+    };
+  }, [isLoaded]);
 
-  const initials = (user && user.name)
-    ? user.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
-    : 'S'
+  const initials = (user && user.fullName)
+    ? user.fullName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
+    : (user && user.firstName)
+      ? user.firstName.charAt(0).toUpperCase()
+      : 'S';
 
   return (
     <section className="section">
@@ -74,9 +77,11 @@ export default function AccountPage() {
           <aside className="account-side">
             <div className="avatar-circle">{initials}</div>
             <div>
-              <div style={{ fontWeight: 500 }}>{user && user.name ? user.name : 'Stylio Member'}</div>
+              <div style={{ fontWeight: 500 }}>
+                {user && user.fullName ? user.fullName : user?.firstName || 'Stylio Member'}
+              </div>
               <div className="text-muted" style={{ fontSize: '0.85rem' }}>
-                {user && user.email ? user.email : ''}
+                {user && user.emailAddresses?.[0]?.emailAddress || ''}
               </div>
             </div>
             <Link to="/shop" className="btn btn-outline btn-block">
@@ -87,13 +92,18 @@ export default function AccountPage() {
                 Clear Bag
               </button>
             )}
-            <button className="btn btn-ghost btn-block" onClick={logout}>
-              Sign Out
-            </button>
           </aside>
 
           <div>
-            <div className="section-head" style={{ marginBottom: 'var(--space-4)' }}>
+            <UserProfile
+              appearance={{
+                elements: {
+                  card: 'user-profile-card',
+                },
+              }}
+            />
+
+            <div className="section-head" style={{ marginTop: 'var(--space-8)', marginBottom: 'var(--space-4)' }}>
               <div>
                 <div className="eyebrow">Order History</div>
                 <h2 style={{ fontSize: '1.5rem' }}>Your Orders</h2>
@@ -141,13 +151,13 @@ export default function AccountPage() {
                     {Array.isArray(order.items) && order.items.length > 0
                       ? order.items
                           .map((i) => {
-                            const name = (i && (i.product && i.product.name)) || (i && i.name) || 'Item'
-                            const qty = i && (i.qty || i.quantity)
-                            const parts = [name]
-                            if (qty) parts.push(`× ${qty}`)
-                            if (i && i.size) parts.push(i.size)
-                            if (i && i.color) parts.push(i.color)
-                            return parts.join(' ')
+                            const name = (i && (i.product && i.product.name)) || (i && i.name) || 'Item';
+                            const qty = i && (i.qty || i.quantity);
+                            const parts = [name];
+                            if (qty) parts.push(`× ${qty}`);
+                            if (i && i.size) parts.push(i.size);
+                            if (i && i.color) parts.push(i.color);
+                            return parts.join(' ');
                           })
                           .join(' · ')
                       : 'Order contents pending'}
@@ -174,5 +184,5 @@ export default function AccountPage() {
         </div>
       </div>
     </section>
-  )
+  );
 }

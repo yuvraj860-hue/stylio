@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import Cart from '../models/Cart.js';
+import User from '../models/User.js';
 import env from '../config/env.js';
 import AppError from '../utils/AppError.js';
 import asyncHandler from '../utils/asyncHandler.js';
@@ -74,13 +75,26 @@ const itemSignature = (items) =>
     .sort()
     .join('|');
 
-export const createOrder = asyncHandler(async (req, res) => {
+const getMongoUserId = async (clerkId) => {
+  let user = await User.findOne({ clerkId });
+  if (!user) {
+    user = await User.create({
+      clerkId,
+      name: 'Clerk User',
+      email: `${clerkId}@clerk.user`,
+    });
+  }
+  return user._id;
+};
+
+const createOrder = asyncHandler(async (req, res) => {
   const { items: requestedItems, shippingAddress } = req.body;
 
   if (!shippingAddress || !shippingAddress.street || !shippingAddress.city) {
     throw new AppError('Valid shippingAddress with street and city is required', 400);
   }
 
+  const mongoUserId = await getMongoUserId(req.auth.userId);
   const { items } = await buildItemsFromBody(requestedItems);
   const total = Math.round(
     items.reduce((sum, i) => sum + i.price * i.qty, 0) * 100
@@ -88,7 +102,7 @@ export const createOrder = asyncHandler(async (req, res) => {
 
   const signature = itemSignature(items);
   const recent = await Order.findOne({
-    userId: req.user._id,
+    userId: mongoUserId,
     paymentStatus: 'pending',
     itemSignature: signature,
     createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) },
@@ -102,13 +116,13 @@ export const createOrder = asyncHandler(async (req, res) => {
   }
 
   const order = await Order.create({
-    userId: req.user._id,
+    userId: mongoUserId,
     items,
     total,
     itemSignature: signature,
     shippingAddress: {
-      name: shippingAddress.name || req.user.name || '',
-      email: shippingAddress.email || req.user.email || '',
+      name: shippingAddress.name || '',
+      email: shippingAddress.email || '',
       street: shippingAddress.street,
       city: shippingAddress.city,
       state: shippingAddress.state || '',
@@ -131,7 +145,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   const paymentIntent = await stripeClient.paymentIntents.create({
     amount: Math.round(total * 100),
     currency: 'inr',
-    metadata: { orderId: String(order._id), userId: String(req.user._id) },
+    metadata: { orderId: String(order._id), userId: String(mongoUserId) },
   });
 
   order.paymentId = paymentIntent.id;
@@ -191,14 +205,17 @@ const recomputeCartTotal = async (cart) => {
   await cart.save();
 };
 
-const confirmOrder = async (paymentId, requesterId = null, alreadyVerified = false) => {
+const confirmOrder = async (paymentId, clerkId = null, alreadyVerified = false) => {
   let order = await Order.findOne({ paymentId });
   if (!order) {
     throw new AppError('Order not found for this payment', 404);
   }
 
-  if (requesterId && String(order.userId) !== String(requesterId)) {
-    throw new AppError('Not authorized for this order', 403);
+  if (clerkId) {
+    const mongoUserId = await getMongoUserId(clerkId);
+    if (String(order.userId) !== String(mongoUserId)) {
+      throw new AppError('Not authorized for this order', 403);
+    }
   }
 
   if (order.paymentStatus === 'paid') {
@@ -256,6 +273,7 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
     throw new AppError('Valid shippingAddress with street and city is required', 400);
   }
 
+  const mongoUserId = await getMongoUserId(req.auth.userId);
   const { items } = await buildItemsFromBody(requestedItems);
   const total = Math.round(
     items.reduce((sum, i) => sum + i.price * i.qty, 0) * 100
@@ -263,7 +281,7 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
 
   const signature = itemSignature(items);
   const recent = await Order.findOne({
-    userId: req.user._id,
+    userId: mongoUserId,
     paymentStatus: 'pending',
     itemSignature: signature,
     createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) },
@@ -279,13 +297,13 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
   }
 
   const order = await Order.create({
-    userId: req.user._id,
+    userId: mongoUserId,
     items,
     total,
     itemSignature: signature,
     shippingAddress: {
-      name: shippingAddress.name || req.user.name || '',
-      email: shippingAddress.email || req.user.email || '',
+      name: shippingAddress.name || '',
+      email: shippingAddress.email || '',
       phone: shippingAddress.phone || '',
       street: shippingAddress.street,
       city: shippingAddress.city,
@@ -300,7 +318,7 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
   const rzpOrder = await createRazorpayOrderApi({
     amount: Math.round(total * 100),
     receipt: `order_${order._id.toString()}`,
-    notes: { orderId: String(order._id), userId: String(req.user._id) },
+    notes: { orderId: String(order._id), userId: String(mongoUserId) },
   });
 
   order.paymentId = rzpOrder.id;
@@ -326,7 +344,7 @@ export const verifyRazorpayPayment = asyncHandler(async (req, res) => {
     throw new AppError('Invalid Razorpay signature', 400);
   }
 
-  const order = await confirmOrder(razorpayOrderId, req.user._id, true);
+  const order = await confirmOrder(razorpayOrderId, req.auth.userId, true);
   res.status(200).json(order);
 });
 
@@ -335,18 +353,19 @@ export const confirmPayment = asyncHandler(async (req, res) => {
   if (!paymentIntentId) {
     throw new AppError('paymentIntentId is required', 400);
   }
-  const order = await confirmOrder(paymentIntentId, req.user._id);
+  const order = await confirmOrder(paymentIntentId, req.auth.userId);
   res.status(200).json(order);
 });
 
 export const getOrders = asyncHandler(async (req, res) => {
+  const mongoUserId = await getMongoUserId(req.auth.userId);
   const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 20, 1), 100);
   const skip = (page - 1) * limit;
 
   const [orders, total] = await Promise.all([
-    Order.find({ userId: req.user._id }).sort({ createdAt: -1 }).skip(skip).limit(limit),
-    Order.countDocuments({ userId: req.user._id }),
+    Order.find({ userId: mongoUserId }).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Order.countDocuments({ userId: mongoUserId }),
   ]);
 
   res.status(200).json({

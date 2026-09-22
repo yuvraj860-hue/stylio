@@ -3,12 +3,9 @@ dotenv.config();
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'stylio_dev_secret_change_me';
-
 const env = {
   PORT: parseInt(process.env.PORT, 10) || 5000,
   MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017/stylio',
-  JWT_SECRET: JWT_SECRET || 'stylio_dev_secret_change_me',
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || '',
@@ -20,6 +17,7 @@ const env = {
   ML_SERVICE_URL: process.env.ML_SERVICE_URL || 'http://localhost:8000',
   CORS_ORIGIN: process.env.CORS_ORIGIN || '',
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || '',
+  CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY || '',
   NODE_ENV,
 };
 

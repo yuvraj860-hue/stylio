@@ -1,7 +1,20 @@
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
+import User from '../models/User.js';
 import AppError from '../utils/AppError.js';
 import asyncHandler from '../utils/asyncHandler.js';
+
+const getMongoUserId = async (clerkId) => {
+  let user = await User.findOne({ clerkId });
+  if (!user) {
+    user = await User.create({
+      clerkId,
+      name: 'Clerk User',
+      email: `${clerkId}@clerk.user`,
+    });
+  }
+  return user._id;
+};
 
 const findCart = async (userId) => Cart.findOne({ userId });
 
@@ -53,7 +66,8 @@ const enrichCart = async (cart) => {
 };
 
 export const getCart = asyncHandler(async (req, res) => {
-  const cart = await ensureCart(req.user._id);
+  const mongoUserId = await getMongoUserId(req.auth.userId);
+  const cart = await ensureCart(mongoUserId);
   const result = await enrichCart(cart);
   res.status(200).json(result);
 });
@@ -67,7 +81,8 @@ export const addItem = asyncHandler(async (req, res) => {
   }
 
   const requestedQty = Math.max(parseInt(qty, 10) || 1, 1);
-  const cart = await ensureCart(req.user._id);
+  const mongoUserId = await getMongoUserId(req.auth.userId);
+  const cart = await ensureCart(mongoUserId);
 
   const existing = cart.items.find(
     (i) =>
@@ -102,7 +117,8 @@ export const addItem = asyncHandler(async (req, res) => {
 });
 
 export const updateItemQty = asyncHandler(async (req, res) => {
-  const cart = await ensureCart(req.user._id);
+  const mongoUserId = await getMongoUserId(req.auth.userId);
+  const cart = await ensureCart(mongoUserId);
   const item = cart.items.id(req.params.id);
   if (!item) {
     throw new AppError('Cart item not found', 404);
@@ -128,7 +144,8 @@ export const updateItemQty = asyncHandler(async (req, res) => {
 });
 
 export const removeItem = asyncHandler(async (req, res) => {
-  const cart = await ensureCart(req.user._id);
+  const mongoUserId = await getMongoUserId(req.auth.userId);
+  const cart = await ensureCart(mongoUserId);
   const item = cart.items.id(req.params.id);
   if (!item) {
     throw new AppError('Cart item not found', 404);
@@ -141,7 +158,8 @@ export const removeItem = asyncHandler(async (req, res) => {
 });
 
 export const clearCart = asyncHandler(async (req, res) => {
-  const cart = await ensureCart(req.user._id);
+  const mongoUserId = await getMongoUserId(req.auth.userId);
+  const cart = await ensureCart(mongoUserId);
   cart.items = [];
   cart.total = 0;
   await cart.save();

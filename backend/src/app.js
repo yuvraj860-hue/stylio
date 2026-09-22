@@ -46,18 +46,6 @@ const apiLimiter = rateLimit({
 });
 app.use('/api', apiLimiter);
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    status: 429,
-    message: 'Too many auth attempts, please try again later',
-  },
-});
-app.use('/api/auth', authLimiter);
-
 app.use(express.json({ limit: '1mb' }));
 
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));

@@ -8,7 +8,7 @@ import {
   createRazorpayOrder,
   verifyRazorpayPayment,
 } from '../controllers/orderController.js';
-import { protect } from '../middleware/auth.js';
+import { clerkAuth, clerkOptionalAuth } from '../middleware/clerkAuth.js';
 import { validate } from '../middleware/validate.js';
 
 const router = Router();
@@ -19,14 +19,16 @@ router.post(
   webhook
 );
 
-router.use(protect);
+router.use(clerkAuth);
 
 router.post(
   '/checkout',
   validate({
-    'items': { required: true },
-    'shippingAddress.street': { required: true },
-    'shippingAddress.city': { required: true },
+    items: { required: true },
+    shippingAddress: {
+      street: { required: true },
+      city: { required: true },
+    },
   }),
   createOrder
 );
@@ -34,9 +36,11 @@ router.post(
 router.post(
   '/razorpay-checkout',
   validate({
-    'items': { required: true },
-    'shippingAddress.street': { required: true },
-    'shippingAddress.city': { required: true },
+    items: { required: true },
+    shippingAddress: {
+      street: { required: true },
+      city: { required: true },
+    },
   }),
   createRazorpayOrder
 );

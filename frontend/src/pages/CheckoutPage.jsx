@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { useCart } from '../context/CartContext'
-import { useAuth } from '../context/AuthContext'
+import { useUser } from '@clerk/clerk-react'
 import { orderApi } from '../services/api'
 import { fmt } from '../utils/format'
 
@@ -65,8 +65,8 @@ function RazorpayPaymentSection({ itemPayload, shippingPayload, user, totalDue, 
           }
         },
         prefill: {
-          name: user?.name || '',
-          email: user?.email || '',
+          name: user?.fullName || user?.firstName || '',
+          email: user?.emailAddresses?.[0]?.emailAddress || '',
         },
         modal: {
           ondismiss: () => setProcessing(false),
@@ -157,7 +157,7 @@ function StripePaymentSection({ itemPayload, shippingPayload, email, totalDue, o
 
 function CheckoutForm() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user } = useUser()
   const { items, subtotal, clearCart } = useCart()
 
   const [mode, setMode] = useState(null)

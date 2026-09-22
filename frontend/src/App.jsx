@@ -1,40 +1,39 @@
-import { useEffect, useState } from 'react'
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'
-import { setUnauthorizedHandler } from './services/api'
-import { useAuth } from './context/AuthContext'
-import Navbar from './components/Navbar'
-import CartDrawer from './components/CartDrawer'
-import StylistBot from './components/StylistBot'
-import Toast from './components/Toast'
-import HomePage from './pages/HomePage'
-import ShopPage from './pages/ShopPage'
-import ProductPage from './pages/ProductPage'
-import CheckoutPage from './pages/CheckoutPage'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import AccountPage from './pages/AccountPage'
+import { useEffect, useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthGuard, GuestGuard } from './components/AuthGuard';
+import Navbar from './components/Navbar';
+import CartDrawer from './components/CartDrawer';
+import StylistBot from './components/StylistBot';
+import Toast from './components/Toast';
+import HomePage from './pages/HomePage';
+import ShopPage from './pages/ShopPage';
+import ProductPage from './pages/ProductPage';
+import CheckoutPage from './pages/CheckoutPage';
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
+import UserProfilePage from './pages/UserProfilePage';
 
 function ToastHost() {
-  const [message, setMessage] = useState(null)
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    let timeout = null
+    let timeout = null;
     const onToast = (e) => {
-      const msg = e && e.detail && e.detail.message
-      if (!msg) return
-      setMessage(msg)
-      clearTimeout(timeout)
-      timeout = setTimeout(() => setMessage(null), 3200)
-    }
-    window.addEventListener('stylio:toast', onToast)
+      const msg = e && e.detail && e.detail.message;
+      if (!msg) return;
+      setMessage(msg);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setMessage(null), 3200);
+    };
+    window.addEventListener('stylio:toast', onToast);
     return () => {
-      clearTimeout(timeout)
-      window.removeEventListener('stylio:toast', onToast)
-    }
-  }, [])
+      clearTimeout(timeout);
+      window.removeEventListener('stylio:toast', onToast);
+    };
+  }, []);
 
-  if (!message) return null
-  return <Toast message={message} />
+  if (!message) return null;
+  return <Toast message={message} />;
 }
 
 function Footer() {
@@ -62,41 +61,10 @@ function Footer() {
       </div>
       <div className="footer__bottom">© 2026 STYLIO. All rights reserved.</div>
     </footer>
-  )
-}
-
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth()
-  if (loading) {
-    return (
-      <div style={{ padding: '80px 0', textAlign: 'center' }}>
-        <div className="spinner" />
-      </div>
-    )
-  }
-  if (!isAuthenticated) return <Navigate to="/login" replace />
-  return children
-}
-
-function PublicOnlyRoute({ children }) {
-  const { isAuthenticated } = useAuth()
-  if (isAuthenticated) return <Navigate to="/account" replace />
-  return children
+  );
 }
 
 export default function App() {
-  const navigate = useNavigate()
-  const { logout } = useAuth()
-
-  useEffect(() => {
-    setUnauthorizedHandler(() => {
-      window.dispatchEvent(
-        new CustomEvent('stylio:toast', {
-          detail: { message: 'Your session has expired. Please sign in again.' },
-        })
-      )
-    })
-  }, [])
 
   return (
     <div className="app">
@@ -109,33 +77,19 @@ export default function App() {
           <Route
             path="/checkout"
             element={
-              <ProtectedRoute>
+              <AuthGuard>
                 <CheckoutPage />
-              </ProtectedRoute>
+              </AuthGuard>
             }
           />
-          <Route
-            path="/login"
-            element={
-              <PublicOnlyRoute>
-                <LoginPage />
-              </PublicOnlyRoute>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <PublicOnlyRoute>
-                <RegisterPage />
-              </PublicOnlyRoute>
-            }
-          />
+          <Route path="/sign-in/*" element={<SignInPage />} />
+          <Route path="/sign-up/*" element={<SignUpPage />} />
           <Route
             path="/account"
             element={
-              <ProtectedRoute>
-                <AccountPage />
-              </ProtectedRoute>
+              <AuthGuard>
+                <UserProfilePage />
+              </AuthGuard>
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -146,5 +100,5 @@ export default function App() {
       <StylistBot />
       <ToastHost />
     </div>
-  )
+  );
 }

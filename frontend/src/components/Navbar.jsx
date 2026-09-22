@@ -1,18 +1,18 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { useUser } from '@clerk/clerk-react'
-import { useCart } from '../context/CartContext'
-import SearchBar from './SearchBar'
-import { CartIcon, UserIcon, MenuIcon, CloseIcon } from './icons'
+import { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { useUser, UserButton, SignInButton, SignOutButton } from '@clerk/clerk-react';
+import { useCart } from '../context/CartContext';
+import SearchBar from './SearchBar';
+import { CartIcon, UserIcon, MenuIcon, CloseIcon } from './icons';
 
 export default function Navbar() {
-  const { user, isLoaded, isSignedIn } = useUser()
-  const { count, openCart } = useCart()
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [mobileQuery, setMobileQuery] = useState('')
+  const { user, isLoaded, isSignedIn } = useUser();
+  const { count, openCart } = useCart();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileQuery, setMobileQuery] = useState('');
 
   const linkClass = ({ isActive }) =>
-    `nav-link ${isActive ? 'nav-link-active' : ''}`
+    `nav-link ${isActive ? 'nav-link-active' : ''}`;
 
   return (
     <header className="navbar">
@@ -54,13 +54,19 @@ export default function Navbar() {
               {(user.firstName || user.fullName || 'U').charAt(0).toUpperCase()}
             </Link>
           ) : (
-            <Link
-              to="/login"
-              className="icon-btn"
-              aria-label="Sign in"
+            <SignInButton
+              mode="redirect"
+              signInUrl="/sign-in"
+              afterSignInUrl="/account"
             >
-              <UserIcon />
-            </Link>
+              <Link
+                to="/sign-in"
+                className="icon-btn"
+                aria-label="Sign in"
+              >
+                <UserIcon />
+              </Link>
+            </SignInButton>
           )}
 
           <button
@@ -86,22 +92,52 @@ export default function Navbar() {
           New In
         </Link>
         {isSignedIn ? (
-          <Link to="/account" onClick={() => setMobileOpen(false)}>
-            My Account
-          </Link>
+          <>
+            <Link to="/account" onClick={() => setMobileOpen(false)}>
+              My Account
+            </Link>
+            <SignOutButton
+              mode="redirect"
+              signOutUrl="/"
+              afterSignOutUrl="/"
+            >
+              <Link
+                to="/"
+                className="btn btn-ghost btn-block"
+                style={{ marginTop: 8, textAlign: 'left' }}
+              >
+                Sign Out
+              </Link>
+            </SignOutButton>
+          </>
         ) : (
-          <Link to="/login" onClick={() => setMobileOpen(false)}>
-            Sign In
-          </Link>
+          <>
+            <SignInButton
+              mode="redirect"
+              signInUrl="/sign-in"
+              afterSignInUrl="/account"
+            >
+              <Link
+                to="/sign-in"
+                className="btn btn-outline btn-block"
+                style={{ marginTop: 8, textAlign: 'left' }}
+              >
+                Sign In
+              </Link>
+            </SignInButton>
+            <Link to="/sign-up" className="btn btn-dark btn-block" style={{ marginTop: 8, textAlign: 'left' }}>
+              Create Account
+            </Link>
+          </>
         )}
         <form
           className="search-bar"
           style={{ marginTop: 6 }}
           onSubmit={(e) => {
-            e.preventDefault()
-            setMobileOpen(false)
+            e.preventDefault();
+            setMobileOpen(false);
             if (mobileQuery.trim()) {
-              window.location.href = `/shop?search=${encodeURIComponent(mobileQuery.trim())}`
+              window.location.href = `/shop?search=${encodeURIComponent(mobileQuery.trim())}`;
             }
           }}
         >
@@ -117,5 +153,5 @@ export default function Navbar() {
         </form>
       </div>
     </header>
-  )
+  );
 }
