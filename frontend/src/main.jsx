@@ -6,7 +6,28 @@ import { CurrencyProvider } from './context/CurrencyContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './styles/global.css';
-import { ClerkProvider } from '@clerk/clerk-react';
+import { ClerkProvider, useClerk } from '@clerk/clerk-react';
+import { setClerkTokenGetter } from './services/api';
+
+function ClerkTokenProvider({ children }) {
+  const clerk = useClerk();
+  React.useEffect(() => {
+    if (!clerk) return;
+    setClerkTokenGetter(async () => {
+      try {
+        const session = clerk.session;
+        if (session && typeof session.getToken === 'function') {
+          return await session.getToken();
+        }
+      } catch (e) {
+        console.warn('Clerk token fetch failed:', e);
+      }
+      return null;
+    });
+    return () => setClerkTokenGetter(null);
+  }, [clerk]);
+  return <>{children}</>;
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -15,11 +36,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <ClerkProvider
           publishableKey={import.meta.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY}
         >
-          <CurrencyProvider>
-            <CartProvider>
-              <App />
-            </CartProvider>
-          </CurrencyProvider>
+          <ClerkTokenProvider>
+            <CurrencyProvider>
+              <CartProvider>
+                <App />
+              </CartProvider>
+            </CurrencyProvider>
+          </ClerkTokenProvider>
         </ClerkProvider>
       </BrowserRouter>
     </ErrorBoundary>
