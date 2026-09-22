@@ -87,7 +87,7 @@ const getMongoUserId = async (clerkId) => {
   return user._id;
 };
 
-const createOrder = asyncHandler(async (req, res) => {
+export const createOrder = asyncHandler(async (req, res) => {
   const { items: requestedItems, shippingAddress } = req.body;
 
   if (!shippingAddress || !shippingAddress.street || !shippingAddress.city) {
