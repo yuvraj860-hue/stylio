@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, NavLink } from 'react-router-dom';
-import { useUser } from '@clerk/clerk-react';
-import { HomeIcon, PackageIcon, ClockIcon, CloseIcon, MenuIcon, SettingsIcon, MenuAlt2Icon } from './AdminIcons';
+import { useUser, SignOutButton } from '@clerk/clerk-react';
+import { HomeIcon, PackageIcon, ClockIcon, CloseIcon, MenuIcon, SettingsIcon, MenuAlt2Icon, LogOutIcon } from './AdminIcons';
 
 export default function DeliveryLayout({ children }) {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -71,6 +71,16 @@ export default function DeliveryLayout({ children }) {
             <SettingsIcon size={20} />
             <span>Settings</span>
           </Link>
+          <SignOutButton signOutUrl="/" afterSignOutUrl="/">
+            <button
+              type="button"
+              className="nav-item"
+              style={{ width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', color: 'inherit' }}
+            >
+              <LogOutIcon size={20} />
+              <span>Log Out</span>
+            </button>
+          </SignOutButton>
         </div>
       </aside>
 
@@ -94,6 +104,17 @@ export default function DeliveryLayout({ children }) {
               <span className="user-name">{user?.fullName || user?.firstName || 'Delivery'}</span>
               <span className="user-role">{user?.publicMetadata?.role || 'delivery'}</span>
             </div>
+            <SignOutButton signOutUrl="/" afterSignOutUrl="/">
+              <button
+                type="button"
+                className="view-site-btn"
+                style={{ cursor: 'pointer', background: 'transparent', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#ef4444' }}
+                title="Log Out"
+              >
+                <LogOutIcon size={18} />
+                <span>Log Out</span>
+              </button>
+            </SignOutButton>
           </div>
         </header>
 

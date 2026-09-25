@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useUser, UserButton, SignInButton, SignOutButton } from '@clerk/clerk-react';
 import { useCart } from '../context/CartContext';
 import SearchBar from './SearchBar';
-import { CartIcon, UserIcon, MenuIcon, CloseIcon } from './icons';
+import { CartIcon, UserIcon, MenuIcon, CloseIcon, LogOutIcon } from './icons';
 
 export default function Navbar() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -28,6 +28,11 @@ export default function Navbar() {
           <NavLink to="/shop?sort=new" className={linkClass}>
             New In
           </NavLink>
+          {isSignedIn && (
+            <NavLink to="/orders" className={linkClass}>
+              My Orders
+            </NavLink>
+          )}
           {isSignedIn && ['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
             <NavLink to="/admin" className={linkClass} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
               Admin Panel
@@ -55,14 +60,27 @@ export default function Navbar() {
           </button>
 
           {isSignedIn && user ? (
-            <Link
-              to="/account"
-              className="icon-btn navbar__avatar"
-              style={{ fontFamily: 'var(--font-display)' }}
-              title={user.fullName || user.firstName || 'Account'}
-            >
-              {(user.firstName || user.fullName || 'U').charAt(0).toUpperCase()}
-            </Link>
+            <>
+              <Link
+                to="/account"
+                className="icon-btn navbar__avatar"
+                style={{ fontFamily: 'var(--font-display)' }}
+                title={`${user.fullName || user.firstName || 'Account'} - Profile`}
+              >
+                {(user.firstName || user.fullName || 'U').charAt(0).toUpperCase()}
+              </Link>
+              <SignOutButton signOutUrl="/" afterSignOutUrl="/">
+                <button
+                  type="button"
+                  className="navbar__logout-btn"
+                  title="Sign Out"
+                  aria-label="Sign Out"
+                >
+                  <LogOutIcon size={15} />
+                  <span>Logout</span>
+                </button>
+              </SignOutButton>
+            </>
           ) : (
             <SignInButton
               mode="redirect"
@@ -113,21 +131,25 @@ export default function Navbar() {
                 Delivery Portal
               </Link>
             )}
+            <Link to="/orders" onClick={() => setMobileOpen(false)}>
+              My Orders
+            </Link>
             <Link to="/account" onClick={() => setMobileOpen(false)}>
               My Account
             </Link>
             <SignOutButton
-              mode="redirect"
               signOutUrl="/"
               afterSignOutUrl="/"
             >
-              <Link
-                to="/"
-                className="btn btn-ghost btn-block"
-                style={{ marginTop: 8, textAlign: 'left' }}
+              <button
+                type="button"
+                className="btn btn-outline btn-block"
+                style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                onClick={() => setMobileOpen(false)}
               >
-                Sign Out
-              </Link>
+                <LogOutIcon size={16} />
+                <span>Log Out</span>
+              </button>
             </SignOutButton>
           </>
         ) : (

@@ -14,6 +14,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
 import UserProfilePage from './pages/UserProfilePage';
+import OrdersPage from './pages/OrdersPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
@@ -98,6 +99,14 @@ export default function App() {
             element={
               <AuthGuard>
                 <UserProfilePage />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <AuthGuard>
+                <OrdersPage />
               </AuthGuard>
             }
           />
