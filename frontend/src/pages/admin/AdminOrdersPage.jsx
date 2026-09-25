@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { adminApi } from '../../services/adminApi';
 import { fmt } from '../../utils/format';
 import { SearchIcon, FilterIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, EyeIcon, PackageIcon, TruckIcon } from '../../components/AdminIcons';
+import { PrinterIcon } from '../../components/icons';
+import InvoiceModal from '../../components/InvoiceModal';
 
 const statusColors = {
   placed: 'badge-gold',
@@ -23,6 +25,7 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [invoiceOrder, setInvoiceOrder] = useState(null);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
   const [filters, setFilters] = useState({ search: '', status: '', paymentStatus: '' });
   const [sort, setSort] = useState({ field: 'createdAt', order: 'desc' });
@@ -286,11 +289,27 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
             </div>
-            <div className="modal-footer">
+            <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => setInvoiceOrder(selectedOrder)}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', fontSize: '0.82rem' }}
+              >
+                <PrinterIcon size={16} />
+                <span>Print / Tax Invoice</span>
+              </button>
               <button onClick={() => setSelectedOrder(null)} className="btn btn-ghost">Close</button>
             </div>
           </div>
         </div>
+      )}
+
+      {invoiceOrder && (
+        <InvoiceModal
+          order={invoiceOrder}
+          onClose={() => setInvoiceOrder(null)}
+        />
       )}
 
       <div className="pagination">

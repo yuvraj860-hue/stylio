@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { orderApi } from '../services/api';
 import SafeImage from '../components/SafeImage';
-import { OrdersIcon } from '../components/icons';
+import InvoiceModal from '../components/InvoiceModal';
+import { OrdersIcon, InvoiceIcon } from '../components/icons';
 import { fmt } from '../utils/format';
 
 function getStatusBadge(status) {
@@ -20,6 +21,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [invoiceOrder, setInvoiceOrder] = useState(null);
 
   const fetchOrders = async () => {
     try {
@@ -179,14 +181,32 @@ export default function OrdersPage() {
                         .join(', ') || 'Address on file'}
                     </span>
                   </div>
-                  <Link to="/shop" className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}>
-                    Shop Similar
-                  </Link>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      className="order-invoice-btn"
+                      onClick={() => setInvoiceOrder(order)}
+                      title="Download or Print Tax Invoice"
+                    >
+                      <InvoiceIcon size={15} />
+                      <span>Invoice / Receipt</span>
+                    </button>
+                    <Link to="/shop" className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}>
+                      Shop Similar
+                    </Link>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
+      )}
+
+      {invoiceOrder && (
+        <InvoiceModal
+          order={invoiceOrder}
+          onClose={() => setInvoiceOrder(null)}
+        />
       )}
     </div>
   );

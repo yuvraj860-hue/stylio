@@ -182,6 +182,12 @@ export const visualSearchApi = {
   },
 };
 
+/* ------------------------- Wishlist ------------------------- */
+export const wishlistApi = {
+  get: () => apiGet('/user/wishlist'),
+  toggle: (productId) => apiPost(`/user/wishlist/${productId}`),
+};
+
 export function friendlyError(err) {
   if (err && err.status >= 400 && err.status < 500) {
     showError(err.message);

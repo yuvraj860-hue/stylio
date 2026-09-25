@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useUser, UserButton, SignInButton, SignOutButton } from '@clerk/clerk-react';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import SearchBar from './SearchBar';
-import { CartIcon, UserIcon, MenuIcon, CloseIcon, LogOutIcon } from './icons';
+import { CartIcon, UserIcon, MenuIcon, CloseIcon, LogOutIcon, HeartIcon } from './icons';
 
 export default function Navbar() {
   const { user, isLoaded, isSignedIn } = useUser();
   const { count, openCart } = useCart();
+  const { count: wishlistCount } = useWishlist();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileQuery, setMobileQuery] = useState('');
 
@@ -27,6 +29,9 @@ export default function Navbar() {
           </NavLink>
           <NavLink to="/shop?sort=new" className={linkClass}>
             New In
+          </NavLink>
+          <NavLink to="/wishlist" className={linkClass}>
+            Wishlist
           </NavLink>
           {isSignedIn && (
             <NavLink to="/orders" className={linkClass}>
@@ -50,6 +55,16 @@ export default function Navbar() {
         </div>
 
         <div className="navbar__actions">
+          <Link
+            to="/wishlist"
+            className="icon-btn"
+            aria-label={`Open wishlist, ${wishlistCount} items`}
+            title="Wishlist"
+          >
+            <HeartIcon size={20} />
+            {wishlistCount > 0 && <span className="cart-badge">{wishlistCount}</span>}
+          </Link>
+
           <button
             className="icon-btn"
             onClick={openCart}
@@ -118,6 +133,9 @@ export default function Navbar() {
         </Link>
         <Link to="/shop?sort=new" onClick={() => setMobileOpen(false)}>
           New In
+        </Link>
+        <Link to="/wishlist" onClick={() => setMobileOpen(false)}>
+          Wishlist ({wishlistCount})
         </Link>
         {isSignedIn ? (
           <>

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { CurrencyProvider } from './context/CurrencyContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
+import { WishlistProvider } from './context/WishlistContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './styles/global.css';
 import { ClerkProvider, useClerk } from '@clerk/clerk-react';
@@ -39,7 +40,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <ClerkTokenProvider>
             <CurrencyProvider>
               <CartProvider>
-                <App />
+                <WishlistProvider>
+                  <App />
+                </WishlistProvider>
               </CartProvider>
             </CurrencyProvider>
           </ClerkTokenProvider>

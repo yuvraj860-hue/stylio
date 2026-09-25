@@ -2,22 +2,27 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { productApi } from '../services/api'
 import { useCart } from '../context/CartContext'
+import { useWishlist } from '../context/WishlistContext'
 import ProductCard from '../components/ProductCard'
 import ProductGridSkeleton from '../components/ProductGridSkeleton'
 import SafeImage from '../components/SafeImage'
+import SizeGuideModal from '../components/SizeGuideModal'
 import Toast from '../components/Toast'
+import { HeartIcon } from '../components/icons'
 import { fmt } from '../utils/format'
 import { colorHex } from '../utils/colors'
 
 export default function ProductPage() {
   const { id } = useParams()
   const { addItem } = useCart()
+  const { isInWishlist, toggleWishlist } = useWishlist()
   const [product, setProduct] = useState(null)
   const [related, setRelated] = useState(null)
   const [error, setError] = useState(null)
   const [size, setSize] = useState('')
   const [color, setColor] = useState('')
   const [toast, setToast] = useState(null)
+  const [showSizeGuide, setShowSizeGuide] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -162,7 +167,17 @@ export default function ProductPage() {
             )}
 
             <div className="selector-group">
-              <label>Size</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <label style={{ margin: 0 }}>Size</label>
+                <button
+                  type="button"
+                  className="size-guide-trigger"
+                  onClick={() => setShowSizeGuide(true)}
+                  title="Open Size Chart and Fit Guide"
+                >
+                  Size Guide & Fit Advisor 📏
+                </button>
+              </div>
               {sizes.length > 0 ? (
                 <div className="size-list">
                   {sizes.map((s) => (
@@ -192,15 +207,35 @@ export default function ProductPage() {
               </span>
             </div>
 
-            {outOfStock ? (
-              <button className="btn btn-dark btn-block" disabled>
-                Sold Out
+            <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+              {outOfStock ? (
+                <button className="btn btn-dark" style={{ flex: 1 }} disabled>
+                  Sold Out
+                </button>
+              ) : (
+                <button className="btn btn-dark" style={{ flex: 1 }} onClick={handleAdd}>
+                  Add to Bag — {Number.isFinite(price) ? fmt(price) : '—'}
+                </button>
+              )}
+              <button
+                className={`btn btn-outline ${product && isInWishlist(product._id) ? 'btn-wishlist--active' : ''}`}
+                onClick={() => product && toggleWishlist(product)}
+                style={{
+                  minWidth: 52,
+                  padding: '0 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderColor: product && isInWishlist(product._id) ? '#ef4444' : undefined,
+                  background: product && isInWishlist(product._id) ? 'rgba(239, 68, 68, 0.06)' : undefined,
+                }}
+                title={product && isInWishlist(product._id) ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                type="button"
+                aria-label="Wishlist toggle"
+              >
+                <HeartIcon size={20} filled={product && isInWishlist(product._id)} />
               </button>
-            ) : (
-              <button className="btn btn-dark btn-block" onClick={handleAdd}>
-                Add to Bag — {Number.isFinite(price) ? fmt(price) : '—'}
-              </button>
-            )}
+            </div>
           </div>
         </div>
 
@@ -229,6 +264,13 @@ export default function ProductPage() {
       </div>
 
       {toast && <Toast message={toast} />}
+
+      {showSizeGuide && (
+        <SizeGuideModal
+          category={product?.category}
+          onClose={() => setShowSizeGuide(false)}
+        />
+      )}
     </section>
   )
 }

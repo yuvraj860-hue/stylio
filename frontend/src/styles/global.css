@@ -2156,3 +2156,315 @@ button:disabled {
   color: var(--color-white);
   border-color: var(--color-ink);
 }
+
+/* ==========================================================================
+   Wishlist Styles
+   ========================================================================== */
+.product-card__wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s var(--ease);
+}
+
+.product-card__wishlist-btn:hover {
+  transform: scale(1.1);
+  background: #ffffff;
+  color: #ef4444;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+.product-card__wishlist-btn--active {
+  color: #ef4444;
+  background: #ffffff;
+}
+
+.wishlist-page {
+  min-height: 60vh;
+}
+
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--space-6);
+}
+
+.wishlist-item-card {
+  position: relative;
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
+}
+
+.wishlist-item-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.wishlist-item-card__image-wrap {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--color-paper-deep);
+}
+
+.wishlist-item-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease);
+}
+
+.wishlist-item-card:hover .wishlist-item-card__image {
+  transform: scale(1.04);
+}
+
+.wishlist-item-card__remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.wishlist-item-card__remove-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.wishlist-item-card__body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.wishlist-item-card__title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 4px 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wishlist-item-card__title a {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.wishlist-item-card__title a:hover {
+  color: var(--color-gold);
+}
+
+.wishlist-item-card__price {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  margin-bottom: var(--space-3);
+}
+
+.wishlist-item-card__cart-btn {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  padding: 10px;
+}
+
+/* ==========================================================================
+   Size Guide Modal
+   ========================================================================== */
+.size-guide-trigger {
+  background: none;
+  border: none;
+  color: var(--color-gold);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+  transition: opacity 0.2s ease;
+}
+
+.size-guide-trigger:hover {
+  opacity: 0.8;
+}
+
+.size-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  animation: fadeIn 0.2s ease;
+}
+
+.size-modal-dialog {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-line);
+}
+
+.size-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.size-modal-body {
+  padding: var(--space-6);
+}
+
+.size-unit-toggle {
+  display: inline-flex;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  background: var(--color-paper);
+  margin-bottom: var(--space-4);
+}
+
+.size-unit-btn {
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--color-ink-muted);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.size-unit-btn.active {
+  background: var(--color-ink);
+  color: var(--color-white);
+}
+
+.size-table-wrap {
+  overflow-x: auto;
+  margin-bottom: var(--space-6);
+}
+
+.size-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.size-table th {
+  background: var(--color-paper-deep);
+  color: var(--color-ink);
+  font-weight: 600;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.size-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink-soft);
+}
+
+.size-table tr:hover td {
+  background: var(--color-paper);
+}
+
+.size-tips-box {
+  background: var(--color-paper);
+  border-left: 3px solid var(--color-gold);
+  padding: var(--space-4);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+}
+
+/* ==========================================================================
+   Print / Invoice Styles
+   ========================================================================== */
+.order-invoice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+
+.order-invoice-btn:hover {
+  background: var(--color-ink);
+  color: var(--color-white);
+  border-color: var(--color-ink);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable-invoice,
+  .printable-invoice * {
+    visibility: visible;
+  }
+  .printable-invoice {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 24px;
+    background: #ffffff;
+    color: #111111;
+    z-index: 99999;
+  }
+}
