@@ -12,6 +12,7 @@ export default function SignUpPage() {
       <div className="auth-form-wrap">
         <SignUp
           routing="path"
+          path="/sign-up"
           signInUrl="/sign-in"
           appearance={{
             elements: {

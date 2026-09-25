@@ -61,6 +61,19 @@ const orderSchema = new mongoose.Schema(
       enum: ['placed', 'processing', 'shipped', 'delivered', 'cancelled'],
       default: 'placed',
     },
+    deliveryPartner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    trackingNumber: {
+      type: String,
+      default: '',
+    },
+    courierName: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

@@ -28,6 +28,16 @@ export default function Navbar() {
           <NavLink to="/shop?sort=new" className={linkClass}>
             New In
           </NavLink>
+          {isSignedIn && ['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
+            <NavLink to="/admin" className={linkClass} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+              Admin Panel
+            </NavLink>
+          )}
+          {isSignedIn && ['admin', 'delivery'].includes(user?.publicMetadata?.role) && (
+            <NavLink to="/delivery" className={linkClass} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+              Delivery Portal
+            </NavLink>
+          )}
         </nav>
 
         <div className="navbar__search">
@@ -93,6 +103,16 @@ export default function Navbar() {
         </Link>
         {isSignedIn ? (
           <>
+            {['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
+              <Link to="/admin" onClick={() => setMobileOpen(false)} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+                Admin Panel
+              </Link>
+            )}
+            {['admin', 'delivery'].includes(user?.publicMetadata?.role) && (
+              <Link to="/delivery" onClick={() => setMobileOpen(false)} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+                Delivery Portal
+              </Link>
+            )}
             <Link to="/account" onClick={() => setMobileOpen(false)}>
               My Account
             </Link>

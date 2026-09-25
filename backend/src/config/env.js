@@ -6,6 +6,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const env = {
   PORT: parseInt(process.env.PORT, 10) || 5000,
   MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017/stylio',
+  JWT_SECRET: process.env.JWT_SECRET || 'stylio_jwt_dev_s3cret_default',
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || '',
