@@ -79,8 +79,28 @@ const staticReply = async (message) => {
     return 'Set a budget number and I\u2019ll find the best match at that price point.';
   }
 
+  // Hinglish & Indian cultural styling triggers
+  if (/(shaadi|wedding|party|sangeet|reception|tyohar|festival)/.test(text)) {
+    const p = await findRecommendations(['Dresses', 'Jackets', 'Accessories']);
+    return `Special occasion ke liye tailored statement piece best rahega! ${p ? replyMessage(p) : 'Hamara festive aur evening collection check kijiye.'}`;
+  }
+  if (/(college|casual|daily|dost|hangout)/.test(text)) {
+    const p = await findRecommendations(['T-Shirts', 'Jeans', 'Sneakers']);
+    return `Casual daily drip ke liye relaxed silhouettes perfect hain: ${p ? replyMessage(p) : 'Check out our everyday staples in Shop!'}`;
+  }
+  if (/(kya pehnu|batao|dikhao|kaisa|sugest|suggest)/.test(text)) {
+    const p = await Product.findOne({ active: true }).sort({ createdAt: -1 });
+    return `Bilkul! Current trending pieces me se ${replyMessage(p)} Aap bataiye aapko western, formal ya street style pasand hai?`;
+  }
+  if (/(sasta|budget|kam dam|pocket friendly)/.test(text)) {
+    const p = await Product.findOne({ active: true }).sort({ price: 1 });
+    return p
+      ? `Pocket-friendly luxury me hamara top pick hai ${p.name} sirf ₹${p.price} me!`
+      : 'Hamare shop section me price filter laga ke aap best budget deals dekh sakte hain.';
+  }
+
   const popular = await Product.findOne({ active: true }).sort({ createdAt: -1 });
-  return `Great pick! ${replyMessage(popular)} Or tell me more about the occasion, style, and budget.`;
+  return `Great pick! ${replyMessage(popular)} Or tell me more about your occasion, style preference, or budget.`;
 };
 
 const buildCatalogContext = async () => {

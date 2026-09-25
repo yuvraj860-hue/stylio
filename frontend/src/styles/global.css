@@ -2468,3 +2468,81 @@ button:disabled {
     z-index: 99999;
   }
 }
+
+/* ==========================================================================
+   Complete The Look (Pairing Studio)
+   ========================================================================== */
+.complete-look-section {
+  background: var(--color-paper);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  margin-top: var(--space-7);
+  border: 1px solid var(--color-line);
+}
+
+.complete-look-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.complete-look-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-5);
+}
+
+.complete-look-card {
+  background: var(--color-white);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-line);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.complete-look-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.complete-look-card__thumb {
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-paper-deep);
+  margin-bottom: 10px;
+}
+
+.complete-look-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.complete-look-card__title {
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin: 0 0 4px;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.complete-look-card__price {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  margin-bottom: 10px;
+}
+
+.complete-look-card__btn {
+  margin-top: auto;
+  font-size: 0.78rem;
+  padding: 8px 12px;
+}

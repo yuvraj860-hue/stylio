@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { productApi } from '../services/api'
+import { useParams, Link } from 'react-router-dom'
+import { productApi, visualSearchApi } from '../services/api'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
 import ProductCard from '../components/ProductCard'
 import ProductGridSkeleton from '../components/ProductGridSkeleton'
 import SafeImage from '../components/SafeImage'
 import SizeGuideModal from '../components/SizeGuideModal'
+import VisualSearchModal from '../components/VisualSearchModal'
 import Toast from '../components/Toast'
-import { HeartIcon } from '../components/icons'
+import { HeartIcon, CameraIcon } from '../components/icons'
 import { fmt } from '../utils/format'
 import { colorHex } from '../utils/colors'
 
@@ -18,11 +19,19 @@ export default function ProductPage() {
   const { isInWishlist, toggleWishlist } = useWishlist()
   const [product, setProduct] = useState(null)
   const [related, setRelated] = useState(null)
+  const [completeLook, setCompleteLook] = useState([])
   const [error, setError] = useState(null)
   const [size, setSize] = useState('')
   const [color, setColor] = useState('')
   const [toast, setToast] = useState(null)
   const [showSizeGuide, setShowSizeGuide] = useState(false)
+
+  // Visual Search state
+  const [visualSearchOpen, setVisualSearchOpen] = useState(false)
+  const [visualSearchLoading, setVisualSearchLoading] = useState(false)
+  const [visualSearchResults, setVisualSearchResults] = useState(null)
+  const [visualSearchError, setVisualSearchError] = useState(null)
+  const [visualSearchPreview, setVisualSearchPreview] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -30,6 +39,7 @@ export default function ProductPage() {
     setError(null)
     setSize('')
     setColor('')
+    setCompleteLook([])
 
     productApi
       .get(id)
@@ -41,6 +51,7 @@ export default function ProductPage() {
         setSize(Array.isArray(sizes) && sizes.length ? sizes[0] : '')
         setColor(Array.isArray(colors) && colors.length ? colors[0] : '')
 
+        // Load recommendations
         productApi
           .recommend(id)
           .then((r) => {
@@ -59,6 +70,23 @@ export default function ProductPage() {
           .catch(() => {
             if (!cancelled) setRelated([])
           })
+
+        // Load Complete The Look pairing
+        const cat = (data.category || '').toLowerCase()
+        let compCat = 'Accessories'
+        if (cat.includes('dress') || cat.includes('top')) compCat = 'Accessories'
+        else if (cat.includes('jean') || cat.includes('pant')) compCat = 'Sneakers'
+        else if (cat.includes('sneaker') || cat.includes('shoe')) compCat = 'Hoodies'
+        else compCat = 'Jeans'
+
+        productApi
+          .list({ category: compCat, limit: 4 })
+          .then((r) => {
+            if (cancelled) return
+            const items = r?.products || r?.data || (Array.isArray(r) ? r : [])
+            setCompleteLook(items.filter((p) => String(p._id || p.id) !== id).slice(0, 3))
+          })
+          .catch(() => {})
       })
       .catch((err) => {
         if (!cancelled) setError(err.message)
@@ -68,6 +96,25 @@ export default function ProductPage() {
       cancelled = true
     }
   }, [id])
+
+  const handleVisualSearch = async () => {
+    if (!product) return
+    const imgUrl = product.imageUrl || product.image
+    setVisualSearchPreview(imgUrl)
+    setVisualSearchOpen(true)
+    setVisualSearchLoading(true)
+    setVisualSearchResults(null)
+    setVisualSearchError(null)
+
+    try {
+      const res = await visualSearchApi.searchByUrl(imgUrl)
+      setVisualSearchResults(res)
+    } catch (err) {
+      setVisualSearchError(err.message || 'Could not find visually similar pieces')
+    } finally {
+      setVisualSearchLoading(false)
+    }
+  }
 
   const sizes = useMemo(
     () => (product && Array.isArray(product.sizes) && product.sizes.length ? product.sizes : []),
@@ -129,6 +176,24 @@ export default function ProductPage() {
               src={image}
               alt={product.name}
             />
+            <button
+              type="button"
+              className="btn btn-outline btn-block"
+              onClick={handleVisualSearch}
+              style={{
+                marginTop: 12,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                fontSize: '0.82rem',
+                letterSpacing: '0.04em',
+              }}
+              title="Find visually similar outfits and matches in our catalog"
+            >
+              <CameraIcon size={16} />
+              <span>Find Visually Similar Pieces ✨</span>
+            </button>
           </div>
 
           <div className="product-detail__info">
@@ -239,6 +304,48 @@ export default function ProductPage() {
           </div>
         </div>
 
+        {/* Complete The Look Section */}
+        {completeLook.length > 0 && (
+          <div className="complete-look-section">
+            <div className="complete-look-header">
+              <div>
+                <div className="eyebrow" style={{ color: 'var(--color-gold)' }}>Stylist Pairing</div>
+                <h3 style={{ margin: '4px 0 0', fontSize: '1.25rem' }}>Complete The Look</h3>
+                <p className="text-muted" style={{ margin: '4px 0 0', fontSize: '0.84rem' }}>
+                  Hand-selected pieces curated to elevate and complement this look.
+                </p>
+              </div>
+            </div>
+
+            <div className="complete-look-grid">
+              {completeLook.map((item) => (
+                <div key={item._id || item.id} className="complete-look-card">
+                  <div className="complete-look-card__thumb">
+                    <Link to={`/product/${item._id || item.id}`}>
+                      <SafeImage
+                        src={item.imageUrl || item.image}
+                        alt={item.name}
+                        fallbackText={item.name?.slice(0, 4)}
+                      />
+                    </Link>
+                  </div>
+                  <h4 className="complete-look-card__title">
+                    <Link to={`/product/${item._id || item.id}`}>{item.name}</Link>
+                  </h4>
+                  <div className="complete-look-card__price">{fmt(item.price)}</div>
+                  <button
+                    type="button"
+                    className="btn btn-dark complete-look-card__btn"
+                    onClick={() => addItem(item)}
+                  >
+                    + Add to Bag
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="section" style={{ paddingTop: 'var(--space-7)' }}>
           <div className="section-head">
             <div>
@@ -271,6 +378,15 @@ export default function ProductPage() {
           onClose={() => setShowSizeGuide(false)}
         />
       )}
+
+      <VisualSearchModal
+        open={visualSearchOpen}
+        onClose={() => setVisualSearchOpen(false)}
+        preview={visualSearchPreview}
+        searching={visualSearchLoading}
+        results={visualSearchResults}
+        error={visualSearchError}
+      />
     </section>
   )
 }

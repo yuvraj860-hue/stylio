@@ -174,11 +174,33 @@ export const visualSearchApi = {
   search: async (imageFile) => {
     const formData = new FormData();
     formData.append('file', imageFile);
-    const res = await fetch(`${ML_BASE}/visual-search`, {
-      method: 'POST',
-      body: formData,
-    });
-    return handleResponse(res);
+    try {
+      const res = await fetch(`${ML_BASE}/visual-search`, {
+        method: 'POST',
+        body: formData,
+      });
+      return await handleResponse(res);
+    } catch (err) {
+      console.warn('ML visual search endpoint offline or unreachable, using catalog fallback:', err.message);
+      // Graceful catalog fallback
+      try {
+        const fallback = await fetch(`${API_BASE}/products?limit=8`).then((r) => r.json());
+        return { results: fallback.products || [] };
+      } catch (fbErr) {
+        throw new Error('Visual search is temporarily unavailable. Please try again.');
+      }
+    }
+  },
+  searchByUrl: async (imageUrl) => {
+    try {
+      const imgRes = await fetch(imageUrl);
+      const blob = await imgRes.blob();
+      return visualSearchApi.search(blob);
+    } catch (err) {
+      console.warn('Fetch image for visual search failed, fallback:', err.message);
+      const fallback = await fetch(`${API_BASE}/products?limit=8`).then((r) => r.json());
+      return { results: fallback.products || [] };
+    }
   },
 };
 
