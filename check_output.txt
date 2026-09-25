@@ -1,0 +1,6 @@
+Non-ASCII at 4682: 8595 = '↓'
+Non-ASCII at 4688: 8593 = '↑'
+Non-ASCII at 5207: 8595 = '↓'
+Non-ASCII at 5213: 8593 = '↑'
+Non-ASCII at 6626: 215 = '×'
+Done checking

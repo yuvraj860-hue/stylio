@@ -101,6 +101,16 @@ export async function apiPut(path, body) {
   return handleResponse(res);
 }
 
+export async function apiPatch(path, body) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(body),
+  });
+  return handleResponse(res);
+}
+
 export async function apiDelete(path) {
   const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE}${path}`, {
