@@ -4,9 +4,50 @@ import { productApi } from '../services/api'
 import ProductCard from '../components/ProductCard'
 import SafeImage from '../components/SafeImage'
 import ProductGridSkeleton from '../components/ProductGridSkeleton'
+import { ChevronLeftIcon, ChevronRightIcon } from '../components/icons'
 
-const HERO_IMAGE =
-  'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1800&q=80'
+const HERO_SLIDES = [
+  {
+    id: 'slide-1',
+    eyebrow: 'Autumn · Winter 2026 Atelier',
+    title: 'Quiet Luxury, Considered.',
+    description: 'Timeless silhouettes. Honest natural materials. A wardrobe distilled to what truly matters — now with a private stylist in your pocket.',
+    image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=2000&q=85',
+    primaryCta: { label: 'Shop The Season', to: '/shop' },
+    secondaryCta: { label: 'Explore Lookbook ↓', to: '/lookbook' },
+    pillText: '01 · Capsule'
+  },
+  {
+    id: 'slide-2',
+    eyebrow: 'Atelier Eveningwear',
+    title: 'Mulberry Silk, Sculpted Noir.',
+    description: 'Bias-cut 22-momme Mulberry silk slip dresses and architectural evening silhouettes crafted for intimate galas and modern eveningwear.',
+    image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=2000&q=85',
+    primaryCta: { label: 'Explore Dresses', to: '/shop?category=Dresses' },
+    secondaryCta: { label: 'Evening Edit', to: '/lookbook' },
+    pillText: '02 · Evening'
+  },
+  {
+    id: 'slide-3',
+    eyebrow: 'Italian Leather Craft',
+    title: 'Architectural Soles & Form.',
+    description: 'Hand-burnished Italian calfskin sneakers with Margom cup-soles. Bridging Savile Row formality with supreme daily comfort.',
+    image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=2000&q=85',
+    primaryCta: { label: 'Shop Footwear', to: '/shop?category=Sneakers' },
+    secondaryCta: { label: 'Discover Sneakers', to: '/shop?category=Sneakers' },
+    pillText: '03 · Footwear'
+  },
+  {
+    id: 'slide-4',
+    eyebrow: 'Neural AI Fashion Concierge',
+    title: 'Your Private Stylist, In Pocket.',
+    description: 'Upload any outfit photo or ask Stylio in Hinglish. Bespoke silhouette matching, occasion lookbooks, and tailored recommendations.',
+    image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=2000&q=85',
+    primaryCta: { label: 'Explore Collection', to: '/shop' },
+    secondaryCta: { label: 'Ask Stylio ✨', to: '/lookbook#lookbook' },
+    pillText: '04 · AI Stylist'
+  }
+]
 
 const categoryImage = (photoId) =>
   `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=900&q=80`
@@ -51,6 +92,33 @@ const VALUE_PROPS = [
 export default function HomePage() {
   const [featured, setFeatured] = useState(null)
   const [error, setError] = useState(null)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const [touchStart, setTouchStart] = useState(null)
+  const [touchEnd, setTouchEnd] = useState(null)
+
+  // Auto-play slider timer (every 5.5s)
+  useEffect(() => {
+    if (isPaused) return
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length)
+    }, 5500)
+    return () => clearInterval(timer)
+  }, [isPaused])
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length)
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)
+
+  const handleTouchStart = (e) => setTouchStart(e.targetTouches[0].clientX)
+  const handleTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX)
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const dist = touchStart - touchEnd
+    if (dist > 50) nextSlide()
+    if (dist < -50) prevSlide()
+    setTouchStart(null)
+    setTouchEnd(null)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -77,23 +145,83 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="hero">
-        <div className="hero__bg">
-          <SafeImage
-            src={HERO_IMAGE}
-            alt="A model in minimal, monochrome fashion"
-          />
-        </div>
-        <div className="hero__content">
-          <div className="eyebrow">Autumn · Winter 2026</div>
-          <h1>Quiet Luxury, Considered</h1>
-          <p>
-            Timeless silhouettes. Honest fabrics. A wardrobe distilled to what
-            matters — now with a stylist in your pocket.
-          </p>
-          <Link to="/shop" className="btn btn-gold">
-            Shop the Season
-          </Link>
+      <section
+        className="hero"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        aria-label="Featured Collections Carousel"
+      >
+        {HERO_SLIDES.map((slide, idx) => {
+          const isActive = idx === currentSlide
+          return (
+            <div
+              key={slide.id}
+              className={`hero__slide ${isActive ? 'active' : ''}`}
+              aria-hidden={!isActive}
+            >
+              <div className="hero__slide-bg">
+                <SafeImage
+                  src={slide.image}
+                  alt={slide.title}
+                />
+              </div>
+              <div className="hero__slide-content">
+                <div className="eyebrow">{slide.eyebrow}</div>
+                <h1>{slide.title}</h1>
+                <p>{slide.description}</p>
+                <div className="hero__actions">
+                  <Link to={slide.primaryCta.to} className="btn btn-gold">
+                    {slide.primaryCta.label}
+                  </Link>
+                  {slide.secondaryCta && (
+                    <Link
+                      to={slide.secondaryCta.to}
+                      className="btn btn-outline"
+                      style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.6)' }}
+                    >
+                      {slide.secondaryCta.label}
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+
+        {/* Previous & Next Arrow Buttons */}
+        <button
+          type="button"
+          className="hero__arrow hero__arrow--prev"
+          onClick={prevSlide}
+          aria-label="Previous Slide"
+        >
+          <ChevronLeftIcon size={22} />
+        </button>
+        <button
+          type="button"
+          className="hero__arrow hero__arrow--next"
+          onClick={nextSlide}
+          aria-label="Next Slide"
+        >
+          <ChevronRightIcon size={22} />
+        </button>
+
+        {/* Bottom Slide Indicators */}
+        <div className="hero__indicators">
+          {HERO_SLIDES.map((slide, idx) => (
+            <button
+              key={slide.id}
+              type="button"
+              className={`hero__indicator-pill ${idx === currentSlide ? 'active' : ''}`}
+              onClick={() => setCurrentSlide(idx)}
+              aria-label={`Jump to slide ${idx + 1}: ${slide.title}`}
+            >
+              {slide.pillText}
+            </button>
+          ))}
         </div>
       </section>
 
