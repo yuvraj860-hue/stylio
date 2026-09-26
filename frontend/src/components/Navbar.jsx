@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useUser, UserButton, SignInButton, SignOutButton } from '@clerk/clerk-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -10,8 +10,12 @@ export default function Navbar() {
   const { user, isLoaded, isSignedIn } = useUser();
   const { count, openCart } = useCart();
   const { count: wishlistCount } = useWishlist();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileQuery, setMobileQuery] = useState('');
+
+  const isShopActive = location.pathname === '/shop' && !location.search.includes('sort=new');
+  const isNewInActive = location.pathname === '/shop' && location.search.includes('sort=new');
 
   const linkClass = ({ isActive }) =>
     `nav-link ${isActive ? 'nav-link-active' : ''}`;
@@ -51,17 +55,23 @@ export default function Navbar() {
         </Link>
 
         <nav className="navbar__links" aria-label="Primary">
-          <NavLink to="/shop" className={linkClass}>
+          <Link
+            to="/shop"
+            className={`nav-link ${isShopActive ? 'nav-link-active' : ''}`}
+          >
             Shop
-          </NavLink>
-          <NavLink to="/shop?sort=new" className={linkClass}>
+          </Link>
+          <Link
+            to="/shop?sort=new"
+            className={`nav-link ${isNewInActive ? 'nav-link-active' : ''}`}
+          >
             New In
-          </NavLink>
-          <NavLink to="/wishlist" className={linkClass}>
+          </Link>
+          <NavLink to="/wishlist" end className={linkClass}>
             Wishlist
           </NavLink>
           {isSignedIn && (
-            <NavLink to="/orders" className={linkClass}>
+            <NavLink to="/orders" end className={linkClass}>
               My Orders
             </NavLink>
           )}
