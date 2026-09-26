@@ -2313,7 +2313,7 @@ button:disabled {
   color: var(--color-gold-light);
 }
 
-/* Contact Us Column */
+/* Contact Us Column (Luxury Atelier Theme) */
 .footer__contact {
   min-width: 260px;
   max-width: 320px;
@@ -2324,19 +2324,20 @@ button:disabled {
 }
 
 .footer__contact-title {
-  color: #38bdf8 !important;
+  color: var(--color-paper, #f5f1ea) !important;
+  font-family: var(--font-display, Playfair Display, serif) !important;
   font-size: 1.25rem !important;
   font-weight: 500 !important;
-  letter-spacing: 0.01em !important;
-  margin: 0 0 6px 0 !important;
-  font-family: var(--font-body, system-ui, sans-serif) !important;
+  letter-spacing: 0.08em !important;
+  margin: 0 0 8px 0 !important;
 }
 
 .footer__contact-line {
-  width: 44px;
-  height: 2.5px;
-  background: #f59e0b;
+  width: 38px;
+  height: 2px;
+  background: var(--color-gold, #c5a059);
   border-radius: 2px;
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.35);
 }
 
 .footer__contact-list {
@@ -2351,7 +2352,7 @@ button:disabled {
   align-items: center;
   gap: 12px;
   font-size: 0.88rem;
-  color: rgba(245, 241, 234, 0.92);
+  color: rgba(245, 241, 234, 0.82);
   text-decoration: none;
   transition: all 0.2s ease;
 }
@@ -2361,16 +2362,27 @@ button:disabled {
 }
 
 .footer__contact-item.footer__contact-link:hover {
-  color: #38bdf8;
-  transform: translateX(3px);
+  color: var(--color-gold-light, #e2c485);
+  transform: translateX(4px);
 }
 
 .footer__contact-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(197, 160, 89, 0.1);
+  border: 1px solid rgba(197, 160, 89, 0.25);
   flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.footer__contact-link:hover .footer__contact-icon {
+  background: rgba(197, 160, 89, 0.2);
+  border-color: var(--color-gold, #c5a059);
+  transform: scale(1.06);
 }
 
 .footer__contact-text {
@@ -2389,12 +2401,12 @@ button:disabled {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #20242b;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: rgba(245, 241, 234, 0.85);
   text-decoration: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -2404,7 +2416,7 @@ button:disabled {
   color: #0b1120;
   border-color: var(--color-gold, #c5a059);
   transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(197, 160, 89, 0.35);
+  box-shadow: 0 6px 16px rgba(197, 160, 89, 0.35);
 }
 
 .footer__bottom {

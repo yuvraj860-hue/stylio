@@ -106,9 +106,10 @@ function Footer() {
             </button>
           </div>
 
-          {/* Contact Us Column */}
+          {/* Contact Us Column (Luxury Theme) */}
           <div className="footer__col footer__contact">
             <div className="footer__contact-head">
+              <div className="eyebrow" style={{ marginBottom: 6, color: 'var(--color-gold-light)' }}>Get in Touch</div>
               <h4 className="footer__contact-title">Contact Us</h4>
               <div className="footer__contact-line" />
             </div>
@@ -116,9 +117,9 @@ function Footer() {
             <div className="footer__contact-list">
               <div className="footer__contact-item">
                 <span className="footer__contact-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 8 12 8 12s8-6.75 8-12c0-4.42-3.58-8-8-8z" fill="#ec4899"/>
-                    <circle cx="12" cy="9.5" r="2.5" fill="#ffffff"/>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold, #c5a059)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
                   </svg>
                 </span>
                 <span className="footer__contact-text">Sitapura, Jaipur, Rajasthan</span>
@@ -126,10 +127,9 @@ function Footer() {
 
               <a href="mailto:urbanshiftt@gmail.com" className="footer__contact-item footer__contact-link">
                 <span className="footer__contact-icon">
-                  <svg width="20" height="15" viewBox="0 0 24 18" fill="none" aria-hidden="true">
-                    <rect width="24" height="18" rx="3" fill="#e0e7ff"/>
-                    <circle cx="12" cy="9" r="6" fill="#3b82f6"/>
-                    <text x="12" y="12" fontSize="9" fill="#ffffff" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">@</text>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold, #c5a059)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L1 7" />
                   </svg>
                 </span>
                 <span className="footer__contact-text">urbanshiftt@gmail.com</span>
@@ -137,8 +137,8 @@ function Footer() {
 
               <a href="tel:+919876543210" className="footer__contact-item footer__contact-link">
                 <span className="footer__contact-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#ec4899" aria-hidden="true">
-                    <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z" />
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold, #c5a059)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                   </svg>
                 </span>
                 <span className="footer__contact-text">+91 98765 43210</span>
