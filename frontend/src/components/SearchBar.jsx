@@ -67,7 +67,7 @@ export default function SearchBar({ onSearch }) {
         </span>
         <input
           type="text"
-          placeholder="Search pieces, categories…"
+          placeholder="Search pieces..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search products"

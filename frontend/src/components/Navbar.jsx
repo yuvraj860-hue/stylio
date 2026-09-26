@@ -66,13 +66,13 @@ export default function Navbar() {
             </NavLink>
           )}
           {isSignedIn && ['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
-            <NavLink to="/admin" className={linkClass} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
-              Admin Panel
+            <NavLink to="/admin" className="nav-portal-badge" title="Access Admin Panel">
+              Admin ↗
             </NavLink>
           )}
           {isSignedIn && ['admin', 'delivery'].includes(user?.publicMetadata?.role) && (
-            <NavLink to="/delivery" className={linkClass} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
-              Delivery Portal
+            <NavLink to="/delivery" className="nav-portal-badge" title="Access Delivery Portal">
+              Delivery ↗
             </NavLink>
           )}
         </nav>
@@ -96,17 +96,17 @@ export default function Navbar() {
             className="icon-btn"
             onClick={openCart}
             aria-label={`Open cart, ${count} items`}
+            title="Shopping Cart"
           >
             <CartIcon />
             {count > 0 && <span className="cart-badge">{count}</span>}
           </button>
 
           {isSignedIn && user ? (
-            <>
+            <div className="navbar__user-group">
               <Link
                 to="/account"
-                className="icon-btn navbar__avatar"
-                style={{ fontFamily: 'var(--font-display)' }}
+                className="navbar__avatar"
                 title={`${user.fullName || user.firstName || 'Account'} - Profile`}
               >
                 {(user.firstName || user.fullName || 'U').charAt(0).toUpperCase()}
@@ -118,11 +118,11 @@ export default function Navbar() {
                   title="Sign Out"
                   aria-label="Sign Out"
                 >
-                  <LogOutIcon size={15} />
+                  <LogOutIcon size={14} />
                   <span>Logout</span>
                 </button>
               </SignOutButton>
-            </>
+            </div>
           ) : (
             <SignInButton
               mode="redirect"
