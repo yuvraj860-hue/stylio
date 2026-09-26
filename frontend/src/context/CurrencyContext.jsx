@@ -29,56 +29,28 @@ function currencyFromLanguage(lang) {
 export function CurrencyProvider({ children }) {
   const [currency, setCurrencyState] = useState('INR')
   const [rates, setRates] = useState({ INR: 1 })
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const doneRef = useRef(false)
 
   useEffect(() => {
-    if (doneRef.current) return
-    doneRef.current = true
-
-    let geoCurrency = null
-    ;(async () => {
-      try {
-        const locateRes = await apiGet('/locate')
-        if (locateRes && locateRes.currency && locateRes.currency !== 'INR') {
-          geoCurrency = locateRes.currency
-        }
-      } catch {
-        /* geo lookup optional */
-      }
-
-      const langCurrency = currencyFromLanguage(navigator.language || '')
-      const detected = geoCurrency || langCurrency || 'INR'
-
-      try {
-        const res = await apiGet('/rates')
-        const nextRates = (res && res.rates) || { INR: 1 }
-        setRates(nextRates)
-        applyFormatCurrency(detected, nextRates)
-      } catch {
-        applyFormatCurrency(detected, { INR: 1 })
-      }
-
-      setCurrencyState(detected)
-      setLoading(false)
-    })()
+    // Strictly INR for Indian market & user requirement
+    applyFormatCurrency('INR', { INR: 1 })
+    setCurrencyState('INR')
   }, [])
 
   const setCurrency = useCallback((code) => {
-    const next = code && code !== 'INR' ? code : 'INR'
-    setCurrencyState(next)
-    applyFormatCurrency(next)
+    setCurrencyState('INR')
+    applyFormatCurrency('INR', { INR: 1 })
   }, [])
 
   const value = {
-    currency,
-    rates,
+    currency: 'INR',
+    rates: { INR: 1 },
     setCurrency,
-    loading,
-    error,
-    geosLoaded: !loading,
-    fmtNow: getCurrency,
+    loading: false,
+    error: null,
+    geosLoaded: true,
+    fmtNow: () => 'INR',
   }
 
   return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>

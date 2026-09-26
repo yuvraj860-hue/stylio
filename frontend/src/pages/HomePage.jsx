@@ -93,8 +93,8 @@ export default function HomePage() {
   const [featured, setFeatured] = useState(null)
   const [error, setError] = useState(null)
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [touchStart, setTouchStart] = useState(null)
-  const [touchEnd, setTouchEnd] = useState(null)
+  const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 })
+  const [touchEndPos, setTouchEndPos] = useState({ x: 0, y: 0 })
 
   // Auto-play continuous cycle: strictly slides automatically every 5 seconds (5000ms)
   useEffect(() => {
@@ -107,15 +107,23 @@ export default function HomePage() {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length)
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)
 
-  const handleTouchStart = (e) => setTouchStart(e.targetTouches[0].clientX)
-  const handleTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX)
+  const handleTouchStart = (e) => {
+    const t = e.targetTouches[0]
+    setTouchStartPos({ x: t.clientX, y: t.clientY })
+    setTouchEndPos({ x: t.clientX, y: t.clientY })
+  }
+  const handleTouchMove = (e) => {
+    const t = e.targetTouches[0]
+    setTouchEndPos({ x: t.clientX, y: t.clientY })
+  }
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    const dist = touchStart - touchEnd
-    if (dist > 50) nextSlide()
-    if (dist < -50) prevSlide()
-    setTouchStart(null)
-    setTouchEnd(null)
+    const distX = touchStartPos.x - touchEndPos.x
+    const distY = touchStartPos.y - touchEndPos.y
+    // Strictly require intentional horizontal swipe (>60px and 1.5x greater than vertical movement)
+    if (Math.abs(distX) > 60 && Math.abs(distX) > Math.abs(distY) * 1.5) {
+      if (distX > 0) nextSlide()
+      else prevSlide()
+    }
   }
 
   useEffect(() => {
@@ -300,7 +308,7 @@ export default function HomePage() {
               <h2>Style Directions</h2>
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 'var(--space-6)' }}>
             <div
               style={{
                 position: 'relative',
@@ -373,7 +381,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-5)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'var(--space-5)' }}>
             {[
               {
                 stars: 5,
@@ -441,7 +449,7 @@ export default function HomePage() {
       {/* Atelier Trust Guarantee Badges */}
       <section style={{ borderTop: '1px solid var(--color-line)', padding: 'var(--space-6) 0', background: 'var(--color-paper)' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-5)', textAlign: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: 'var(--space-5)', textAlign: 'center' }}>
             <div style={{ padding: '12px' }}>
               <div style={{ fontSize: '1.5rem', marginBottom: 6 }}>💎</div>
               <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-ink)' }}>100% Certified Authentic</div>
@@ -532,7 +540,7 @@ function NewsletterSection() {
         </p>
 
         {!unlocked ? (
-          <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 10, maxWidth: 440, margin: '0 auto' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: 10, maxWidth: 440, width: '100%', margin: '0 auto' }}>
             <input
               type="email"
               placeholder="Enter your email address..."

@@ -45,6 +45,10 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  overscroll-behavior-x: none;
 }
 
 body {
@@ -55,6 +59,17 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+  overscroll-behavior-x: none;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 h1,
@@ -1303,6 +1318,7 @@ button:disabled {
   max-width: 1360px;
   margin: 18px auto 28px;
   padding: 0 var(--space-5);
+  overflow: hidden;
 }
 
 .hero {
@@ -1321,6 +1337,7 @@ button:disabled {
   border: 1px solid rgba(255, 255, 255, 0.08);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
   transform: translateZ(0);
+  touch-action: pan-y;
 }
 
 .hero__slide {
