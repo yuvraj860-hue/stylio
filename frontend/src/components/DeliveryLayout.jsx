@@ -53,6 +53,7 @@ export default function DeliveryLayout({ children }) {
               <li key={item.path}>
                 <NavLink
                   to={item.path}
+                  end={item.path === '/delivery'}
                   className={({ isActive }) => 
                     `nav-item ${isActive ? 'active' : ''}`
                   }

@@ -56,6 +56,7 @@ export default function AdminLayout({ children }) {
               <li key={item.path}>
                 <NavLink
                   to={item.path}
+                  end={item.path === '/admin'}
                   className={({ isActive }) => 
                     `nav-item ${isActive ? 'active' : ''}`
                   }
