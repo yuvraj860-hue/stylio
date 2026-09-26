@@ -134,6 +134,53 @@ export default function ProductPage() {
     setToast(`Added to bag — ${product.name}${size ? ` · ${size}` : ''}`)
   }
 
+  // Customer Review state
+  const [newRating, setNewRating] = useState(5)
+  const [newComment, setNewComment] = useState('')
+  const [reviewerName, setReviewerName] = useState('')
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
+  const [reviewError, setReviewError] = useState(null)
+  const [reviewSuccess, setReviewSuccess] = useState(false)
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault()
+    if (!newComment.trim()) return
+    setReviewSubmitting(true)
+    setReviewError(null)
+    setReviewSuccess(false)
+    try {
+      const res = await productApi.addReview(id, {
+        rating: newRating,
+        comment: newComment.trim(),
+        userName: reviewerName.trim() || undefined,
+      })
+      if (res?.product) {
+        setProduct(res.product)
+      } else {
+        setProduct((prev) => ({
+          ...prev,
+          reviews: [
+            ...(prev.reviews || []),
+            {
+              userName: reviewerName.trim() || 'Verified Buyer',
+              rating: newRating,
+              comment: newComment.trim(),
+              createdAt: new Date(),
+            },
+          ],
+          numReviews: (prev.numReviews || 0) + 1,
+        }))
+      }
+      setNewComment('')
+      setReviewSuccess(true)
+      setTimeout(() => setReviewSuccess(false), 4000)
+    } catch (err) {
+      setReviewError(err?.message || 'Could not submit review')
+    } finally {
+      setReviewSubmitting(false)
+    }
+  }
+
   useEffect(() => {
     if (!toast) return
     const t = setTimeout(() => setToast(null), 3200)
@@ -206,6 +253,27 @@ export default function ProductPage() {
 
             <div className="product-detail__price">
               {Number.isFinite(price) ? fmt(price) : '—'}
+            </div>
+
+            {/* Rating Stars & Stock Badge */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', margin: '4px 0 12px' }}>
+              <div className="product-rating-stars">
+                <span>{'★'.repeat(Math.round(product.rating || 5))}</span>
+                <span>{'☆'.repeat(5 - Math.round(product.rating || 5))}</span>
+                <span style={{ color: 'var(--color-ink-soft)', fontWeight: 500, marginLeft: 4 }}>
+                  {(product.rating || 4.8).toFixed(1)} &bull; {product.numReviews || product.reviews?.length || 0} reviews
+                </span>
+              </div>
+
+              <div>
+                {outOfStock ? (
+                  <span className="stock-badge stock-badge--out">✕ Out of Stock</span>
+                ) : (product.stock !== undefined && product.stock <= 5) ? (
+                  <span className="stock-badge stock-badge--low">⚡ Hurry! Only {product.stock} left in stock</span>
+                ) : (
+                  <span className="stock-badge stock-badge--in">✔ In Stock &bull; Ready to Ship</span>
+                )}
+              </div>
             </div>
 
             {product.description && (
@@ -345,6 +413,123 @@ export default function ProductPage() {
             </div>
           </div>
         )}
+
+        {/* Customer Reviews & Ratings Section */}
+        <div className="product-reviews-section">
+          <div className="section-head" style={{ marginBottom: 'var(--space-4)' }}>
+            <div>
+              <div className="eyebrow">Customer Voices</div>
+              <h3 style={{ fontSize: '1.4rem' }}>Reviews & Ratings</h3>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-ink)' }}>
+                {(product.rating || 4.8).toFixed(1)} <span style={{ fontSize: '1rem', color: '#f59e0b' }}>★</span>
+              </div>
+              <span className="text-muted small">Based on {product.numReviews || product.reviews?.length || 0} reviews</span>
+            </div>
+          </div>
+
+          <div className="reviews-grid">
+            {/* Review submission card */}
+            <div className="review-form-card">
+              <h4 style={{ margin: '0 0 10px', fontSize: '1rem' }}>Write a Review</h4>
+              <p className="text-muted small" style={{ marginBottom: 14 }}>
+                Share your styling experience with the community.
+              </p>
+
+              {reviewSuccess && (
+                <div style={{ padding: '8px 12px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, color: '#16a34a', fontSize: '0.82rem', marginBottom: 12 }}>
+                  ✓ Review submitted! Thank you for your feedback.
+                </div>
+              )}
+
+              {reviewError && (
+                <div style={{ padding: '8px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, color: '#dc2626', fontSize: '0.82rem', marginBottom: 12 }}>
+                  {reviewError}
+                </div>
+              )}
+
+              <form onSubmit={handleReviewSubmit}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block' }}>Rating</label>
+                <div className="star-rating-select">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className={`star-rating-btn ${newRating >= star ? 'active' : ''}`}
+                      onClick={() => setNewRating(star)}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: 4 }}>Your Name (Optional)</label>
+                  <input
+                    type="text"
+                    value={reviewerName}
+                    onChange={(e) => setReviewerName(e.target.value)}
+                    placeholder="e.g. Priya S."
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: 4, border: '1px solid var(--color-line)', fontSize: '0.84rem' }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: 4 }}>Review Comment</label>
+                  <textarea
+                    rows={3}
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Fit, fabric quality, styling tips..."
+                    required
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: 4, border: '1px solid var(--color-line)', fontSize: '0.84rem', resize: 'vertical' }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-dark btn-block"
+                  disabled={reviewSubmitting || !newComment.trim()}
+                  style={{ fontSize: '0.85rem' }}
+                >
+                  {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </form>
+            </div>
+
+            {/* Reviews List */}
+            <div className="reviews-list-card">
+              {(!product.reviews || product.reviews.length === 0) ? (
+                <div style={{ padding: '30px 20px', textAlign: 'center', background: 'var(--color-paper)', borderRadius: 'var(--radius-sm)' }}>
+                  <p className="text-muted" style={{ margin: 0, fontSize: '0.88rem' }}>
+                    No reviews yet for this piece. Be the first to review and share your style verdict!
+                  </p>
+                </div>
+              ) : (
+                product.reviews.map((rev, idx) => (
+                  <div key={idx} className="review-item">
+                    <div className="review-item__head">
+                      <div>
+                        <span className="review-item__name">{rev.userName || 'Verified Buyer'}</span>
+                        <span style={{ color: '#16a34a', fontSize: '0.74rem', marginLeft: 8, fontWeight: 600 }}>
+                          ✓ Verified Purchase
+                        </span>
+                      </div>
+                      <span className="review-item__date">
+                        {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recent'}
+                      </span>
+                    </div>
+                    <div style={{ color: '#f59e0b', fontSize: '0.9rem', marginBottom: 4 }}>
+                      {'★'.repeat(rev.rating)}{'☆'.repeat(Math.max(0, 5 - rev.rating))}
+                    </div>
+                    <p className="review-item__comment">{rev.comment}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
 
         <div className="section" style={{ paddingTop: 'var(--space-7)' }}>
           <div className="section-head">

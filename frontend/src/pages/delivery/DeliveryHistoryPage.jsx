@@ -21,6 +21,10 @@ export default function DeliveryHistoryPage() {
   const [sort, setSort] = useState({ field: 'createdAt', order: 'desc' });
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [newStatus, setNewStatus] = useState('');
+  const [deliveryOtpInput, setDeliveryOtpInput] = useState('');
+  const [statusUpdating, setStatusUpdating] = useState(false);
+  const [statusUpdateError, setStatusUpdateError] = useState(null);
 
   const fetchOrders = async () => {
     try {
@@ -58,6 +62,25 @@ export default function DeliveryHistoryPage() {
 
   const handleViewOrder = (order) => {
     setSelectedOrder(order);
+    setNewStatus(order.status);
+    setDeliveryOtpInput('');
+    setStatusUpdateError(null);
+  };
+
+  const handleUpdateDeliveryStatus = async () => {
+    if (!selectedOrder) return;
+    try {
+      setStatusUpdating(true);
+      setStatusUpdateError(null);
+      const orderId = selectedOrder._id || selectedOrder.id;
+      await adminApi.updateDeliveryStatus(orderId, newStatus, deliveryOtpInput);
+      setSelectedOrder(prev => ({ ...prev, status: newStatus }));
+      fetchOrders();
+    } catch (err) {
+      setStatusUpdateError(err.message || 'Could not update delivery status');
+    } finally {
+      setStatusUpdating(false);
+    }
   };
 
   if (loading && orders.length === 0) {
@@ -209,6 +232,59 @@ export default function DeliveryHistoryPage() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+              <div className="order-detail-section" style={{ background: '#f8fafc', padding: 14, borderRadius: 8, marginTop: 12 }}>
+                <h4 style={{ marginBottom: 8 }}>Update Delivery Progress</h4>
+                {statusUpdateError && (
+                  <div className="alert alert-error" style={{ marginBottom: 10, fontSize: '0.82rem', padding: '6px 10px' }}>
+                    {statusUpdateError}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <select
+                    value={newStatus || selectedOrder.status}
+                    onChange={(e) => setNewStatus(e.target.value)}
+                    className="filter-select"
+                    style={{ width: 'auto' }}
+                  >
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                  </select>
+
+                  {newStatus === 'delivered' && (
+                    <input
+                      type="text"
+                      maxLength={4}
+                      placeholder="Customer 4-digit OTP"
+                      value={deliveryOtpInput}
+                      onChange={(e) => setDeliveryOtpInput(e.target.value)}
+                      style={{
+                        width: 170,
+                        textAlign: 'center',
+                        fontWeight: 700,
+                        letterSpacing: 2,
+                        padding: '6px 10px',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: 4,
+                      }}
+                    />
+                  )}
+
+                  <button
+                    className="btn btn-dark"
+                    onClick={handleUpdateDeliveryStatus}
+                    disabled={statusUpdating}
+                    style={{ padding: '6px 16px', fontSize: '0.85rem' }}
+                  >
+                    {statusUpdating ? 'Updating...' : 'Update Status'}
+                  </button>
+                </div>
+                {newStatus === 'delivered' && (
+                  <p className="text-muted small" style={{ marginTop: 6, marginBotom: 0 }}>
+                    * Delivery partner must ask the customer for their 4-digit OTP shown in their Orders page.
+                  </p>
+                )}
               </div>
             </div>
             <div className="modal-footer">

@@ -30,7 +30,7 @@ async function detectMockMode() {
   return 'mock'
 }
 
-function RazorpayPaymentSection({ itemPayload, shippingPayload, user, totalDue, onPaid }) {
+function RazorpayPaymentSection({ itemPayload, shippingPayload, user, totalDue, promoCode, onPaid }) {
   const [processing, setProcessing] = useState(false)
   const [sectionError, setSectionError] = useState(null)
 
@@ -39,7 +39,7 @@ function RazorpayPaymentSection({ itemPayload, shippingPayload, user, totalDue, 
     setProcessing(true)
     setSectionError(null)
     try {
-      const order = await orderApi.razorpayCheckout(itemPayload(), shippingPayload())
+      const order = await orderApi.razorpayCheckout(itemPayload(), shippingPayload(), promoCode)
       const { orderId, amount, currency } = order
       if (!orderId) throw new Error('Order setup failed. Please try again.')
 
@@ -100,7 +100,7 @@ function RazorpayPaymentSection({ itemPayload, shippingPayload, user, totalDue, 
   )
 }
 
-function StripePaymentSection({ itemPayload, shippingPayload, email, totalDue, onPaid }) {
+function StripePaymentSection({ itemPayload, shippingPayload, email, totalDue, promoCode, onPaid }) {
   const stripe = useStripe()
   const elements = useElements()
   const [processing, setProcessing] = useState(false)
@@ -113,7 +113,7 @@ function StripePaymentSection({ itemPayload, shippingPayload, email, totalDue, o
     setProcessing(true)
     setSectionError(null)
     try {
-      const intent = await orderApi.checkout(itemPayload(), shippingPayload())
+      const intent = await orderApi.checkout(itemPayload(), shippingPayload(), promoCode)
       const clientSecret = intent && (intent.clientSecret || (intent.paymentIntent && intent.paymentIntent.clientSecret))
       const paymentIntentId =
         (intent && (intent.paymentIntentId || (intent.paymentIntent && intent.paymentIntent.id)))
@@ -166,6 +166,23 @@ function CheckoutForm() {
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState(null)
   const [placed, setPlaced] = useState(null)
+
+  // Promo code state
+  const [promoInput, setPromoInput] = useState('')
+  const [appliedPromo, setAppliedPromo] = useState(null)
+  const [promoDiscount, setPromoDiscount] = useState(0)
+  const [promoLoading, setPromoLoading] = useState(false)
+  const [promoMessage, setPromoMessage] = useState(null)
+
+  useEffect(() => {
+    if (user) {
+      setForm((f) => ({
+        ...f,
+        name: f.name || user.fullName || user.firstName || '',
+        email: f.email || user.emailAddresses?.[0]?.emailAddress || '',
+      }))
+    }
+  }, [user])
 
   useEffect(() => {
     if (mode === null) {
@@ -228,7 +245,35 @@ function CheckoutForm() {
     const order = await orderApi.confirm(paymentIntentId)
     clearCart()
     setPlaced(order && (order._id || order.id || order.orderId) ? order : { _id: 'pending' })
-    navigate(`/account`, { replace: true })
+    navigate(`/orders`, { replace: true })
+  }
+
+  const handleApplyPromo = async (codeToTry) => {
+    const code = (codeToTry || promoInput).trim().toUpperCase()
+    if (!code) return
+    setPromoLoading(true)
+    setPromoMessage(null)
+    try {
+      const res = await orderApi.validateCoupon(code, subtotal)
+      if (res && res.valid) {
+        setAppliedPromo(res)
+        setPromoDiscount(res.discount || 0)
+        setPromoMessage({ type: 'success', text: `Coupon ${res.code} applied! Saved ₹${res.discount}` })
+        setPromoInput('')
+      } else {
+        setPromoMessage({ type: 'error', text: res?.message || 'Invalid promo code' })
+      }
+    } catch (err) {
+      setPromoMessage({ type: 'error', text: err?.message || 'Could not apply coupon' })
+    } finally {
+      setPromoLoading(false)
+    }
+  }
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null)
+    setPromoDiscount(0)
+    setPromoMessage(null)
   }
 
   const handleMockOrder = async (e) => {
@@ -237,7 +282,7 @@ function CheckoutForm() {
     setProcessing(true)
     setError(null)
     try {
-      const intent = await orderApi.checkout(itemPayload(), shippingPayload())
+      const intent = await orderApi.checkout(itemPayload(), shippingPayload(), appliedPromo?.code || '')
       const paymentIntentId =
         (intent && (intent.paymentIntentId || (intent.paymentIntent && intent.paymentIntent.id))) ||
         (intent && intent.clientSecret && intent.clientSecret.replace(/^mock_/, ''))
@@ -251,7 +296,7 @@ function CheckoutForm() {
   }
 
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST
-  const totalDue = () => subtotal + shipping
+  const totalDue = () => Math.max(1, Math.round((subtotal + shipping - promoDiscount) * 100) / 100)
 
 const fieldClass = (field) => (formErrors[field] ? 'input-invalid' : '')
 
@@ -323,6 +368,7 @@ const fieldClass = (field) => (formErrors[field] ? 'input-invalid' : '')
                   shippingPayload={shippingPayload}
                   user={user}
                   totalDue={totalDue()}
+                  promoCode={appliedPromo?.code || ''}
                   onPaid={confirmOrder}
                 />
               )}
@@ -333,6 +379,7 @@ const fieldClass = (field) => (formErrors[field] ? 'input-invalid' : '')
                   shippingPayload={shippingPayload}
                   email={form.email}
                   totalDue={totalDue()}
+                  promoCode={appliedPromo?.code || ''}
                   onPaid={confirmOrder}
                 />
               )}
@@ -361,6 +408,107 @@ const fieldClass = (field) => (formErrors[field] ? 'input-invalid' : '')
                 <span>{fmt(i.price * i.qty)}</span>
               </div>
             ))}
+
+            {/* Promo Code Input & Badges */}
+            <div style={{ borderTop: '1px solid var(--color-line)', paddingTop: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+              <label style={{ fontSize: '0.82rem', fontWeight: 600, display: 'block', marginBottom: 6 }}>
+                Have a Promo Code?
+              </label>
+              <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+                <input
+                  type="text"
+                  placeholder="e.g. STYLIO10"
+                  value={promoInput}
+                  onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                  style={{
+                    flex: 1,
+                    textTransform: 'uppercase',
+                    fontSize: '0.82rem',
+                    padding: '8px 10px',
+                    borderRadius: 4,
+                    border: '1px solid var(--color-line)',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleApplyPromo()}
+                  disabled={promoLoading || !promoInput.trim()}
+                  className="btn btn-dark"
+                  style={{ padding: '8px 14px', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+                >
+                  {promoLoading ? '...' : 'Apply'}
+                </button>
+              </div>
+
+              {/* Quick coupons chips */}
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+                {['STYLIO10', 'WELCOME500', 'FESTIVE20'].map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    onClick={() => handleApplyPromo(code)}
+                    style={{
+                      background: appliedPromo?.code === code ? '#111827' : '#f3f4f6',
+                      color: appliedPromo?.code === code ? '#fff' : '#374151',
+                      border: '1px dashed #d1d5db',
+                      borderRadius: 12,
+                      fontSize: '0.72rem',
+                      padding: '3px 8px',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    🏷️ {code}
+                  </button>
+                ))}
+              </div>
+
+              {promoMessage && (
+                <div
+                  style={{
+                    fontSize: '0.78rem',
+                    padding: '6px 8px',
+                    borderRadius: 4,
+                    marginBottom: 10,
+                    background: promoMessage.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                    color: promoMessage.type === 'success' ? '#15803d' : '#b91c1c',
+                    border: `1px solid ${promoMessage.type === 'success' ? '#bbf7d0' : '#fecaca'}`,
+                  }}
+                >
+                  {promoMessage.text}
+                </div>
+              )}
+            </div>
+
+            <div className="summary-row">
+              <span>Subtotal</span>
+              <span>{fmt(subtotal)}</span>
+            </div>
+
+            {promoDiscount > 0 && appliedPromo && (
+              <div className="summary-row" style={{ color: '#16a34a' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  Discount ({appliedPromo.code})
+                  <button
+                    type="button"
+                    onClick={handleRemovePromo}
+                    title="Remove coupon"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#ef4444',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      padding: 0,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </span>
+                <span>-{fmt(promoDiscount)}</span>
+              </div>
+            )}
+
             <div className="summary-row">
               <span>Shipping</span>
               <span>{shipping === 0 ? 'Free' : fmt(shipping)}</span>

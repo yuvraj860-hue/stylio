@@ -74,6 +74,36 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    deliveryOtp: {
+      type: String,
+      default: '',
+    },
+    cancellationReason: {
+      type: String,
+      default: '',
+    },
+    cancelledAt: {
+      type: Date,
+      default: null,
+    },
+    returnStatus: {
+      type: String,
+      enum: ['none', 'requested', 'approved', 'rejected', 'completed'],
+      default: 'none',
+    },
+    returnReason: {
+      type: String,
+      default: '',
+    },
+    promoCode: {
+      type: String,
+      default: '',
+    },
+    discountAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,

@@ -1,4 +1,6 @@
+import mongoose from 'mongoose';
 import Product from '../models/Product.js';
+import User from '../models/User.js';
 import AppError from '../utils/AppError.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import apiClient from '../utils/apiClient.js';
@@ -260,4 +262,71 @@ export const getRelatedProducts = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json(ordered);
+});
+
+export const createProductReview = asyncHandler(async (req, res) => {
+  const { rating, comment, userName } = req.body;
+  const numRating = Number(rating);
+  if (!numRating || numRating < 1 || numRating > 5) {
+    throw new AppError('Rating must be a number between 1 and 5', 400);
+  }
+  if (!comment || !comment.trim()) {
+    throw new AppError('Review comment cannot be empty', 400);
+  }
+
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    throw new AppError('Product not found', 404);
+  }
+
+  let mongoUserId = null;
+  let reviewerName = userName || 'Verified Buyer';
+
+  if (req.auth && req.auth.userId) {
+    const user = await User.findOne({ clerkId: req.auth.userId });
+    if (user) {
+      mongoUserId = user._id;
+      reviewerName = user.name || reviewerName;
+    }
+  }
+
+  // Ensure reviews array exists
+  if (!Array.isArray(product.reviews)) {
+    product.reviews = [];
+  }
+
+  // Check if user already reviewed
+  const alreadyReviewed = mongoUserId && product.reviews.find(
+    (r) => String(r.userId) === String(mongoUserId)
+  );
+
+  if (alreadyReviewed) {
+    alreadyReviewed.rating = numRating;
+    alreadyReviewed.comment = comment.trim();
+    alreadyReviewed.createdAt = new Date();
+  } else {
+    product.reviews.push({
+      userId: mongoUserId || new mongoose.Types.ObjectId(),
+      userName: reviewerName,
+      rating: numRating,
+      comment: comment.trim(),
+      createdAt: new Date(),
+    });
+  }
+
+  product.numReviews = product.reviews.length;
+  product.rating =
+    Math.round(
+      (product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+        product.reviews.length) *
+        10
+    ) / 10;
+
+  await product.save();
+
+  res.status(201).json({
+    success: true,
+    message: 'Review submitted successfully',
+    product,
+  });
 });

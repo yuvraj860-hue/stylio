@@ -141,6 +141,9 @@ export const productApi = {
 
   recommend: (id, limit = 6) =>
     apiGet(`/products/${id}/related?limit=${limit}`),
+
+  addReview: (id, payload) =>
+    apiPost(`/products/${id}/reviews`, payload),
 };
 
 /* ------------------------- Cart (server-side) ------------------------- */
@@ -154,14 +157,20 @@ export const cartApi = {
 
 /* ------------------------- Orders ------------------------- */
 export const orderApi = {
-  checkout: (items, shippingAddress) =>
-    apiPost('/orders/checkout', { items, shippingAddress }),
+  checkout: (items, shippingAddress, promoCode = '') =>
+    apiPost('/orders/checkout', { items, shippingAddress, promoCode }),
   confirm: (paymentIntentId) => apiPost('/orders', { paymentIntentId }),
-  razorpayCheckout: (items, shippingAddress) =>
-    apiPost('/orders/razorpay-checkout', { items, shippingAddress }),
+  razorpayCheckout: (items, shippingAddress, promoCode = '') =>
+    apiPost('/orders/razorpay-checkout', { items, shippingAddress, promoCode }),
   razorpayVerify: (payload) =>
     apiPost('/orders/razorpay-verify', payload),
   myOrders: () => apiGet('/orders'),
+  cancel: (orderId, reason = '') =>
+    apiPost(`/orders/${orderId}/cancel`, { reason }),
+  requestReturn: (orderId, reason = '') =>
+    apiPost(`/orders/${orderId}/return`, { reason }),
+  validateCoupon: (code, subtotal) =>
+    apiPost('/orders/validate-coupon', { code, subtotal }),
 };
 
 /* ------------------------- Stylist ------------------------- */

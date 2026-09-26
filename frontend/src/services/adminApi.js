@@ -70,6 +70,6 @@ export const adminApi = {
   getDeliveryOrders: (status) => apiGet(`/delivery/orders${status ? `?status=${status}` : ''}`),
   getLiveOrders: () => apiGet('/delivery/orders/live'),
   acceptOrder: (id) => apiPost(`/delivery/orders/${id}/accept`),
-  updateDeliveryStatus: (id, status) => 
-    apiPatch(`/delivery/orders/${id}/status`, { status }),
+  updateDeliveryStatus: (id, status, otp) => 
+    apiPatch(`/delivery/orders/${id}/status`, { status, otp }),
 };

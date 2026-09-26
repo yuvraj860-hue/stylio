@@ -36,6 +36,30 @@ const createRazorpayOrderApi = async ({ amount, receipt, notes }) => {
   return res.json();
 };
 
+export const PROMO_CODES = {
+  STYLIO10: { type: 'percent', value: 10, minOrder: 0, maxDiscount: 1000, description: '10% Off on entire order' },
+  WELCOME500: { type: 'flat', value: 500, minOrder: 1999, description: '₹500 Off on orders above ₹1,999' },
+  FESTIVE20: { type: 'percent', value: 20, minOrder: 2500, maxDiscount: 2000, description: '20% Festive Off on orders above ₹2,500' },
+  FREESHIP: { type: 'shipping', value: 0, minOrder: 0, description: 'Free Standard Shipping' },
+};
+
+const calculateDiscount = (code, rawTotal) => {
+  if (!code) return { discount: 0, normalizedCode: '' };
+  const normalized = String(code).toUpperCase().trim();
+  const promo = PROMO_CODES[normalized];
+  if (!promo || rawTotal < promo.minOrder) return { discount: 0, normalizedCode: '' };
+  let discount = 0;
+  if (promo.type === 'percent') {
+    discount = Math.round((rawTotal * promo.value) / 100);
+    if (promo.maxDiscount) discount = Math.min(discount, promo.maxDiscount);
+  } else if (promo.type === 'flat') {
+    discount = Math.min(promo.value, rawTotal);
+  }
+  return { discount, normalizedCode: normalized };
+};
+
+const generateDeliveryOtp = () => String(Math.floor(1000 + Math.random() * 9000));
+
 const buildItemsFromBody = async (requestedItems) => {
   if (!Array.isArray(requestedItems) || requestedItems.length === 0) {
     throw new AppError('At least one item is required', 400);
@@ -88,7 +112,7 @@ const getMongoUserId = async (clerkId) => {
 };
 
 export const createOrder = asyncHandler(async (req, res) => {
-  const { items: requestedItems, shippingAddress } = req.body;
+  const { items: requestedItems, shippingAddress, promoCode } = req.body;
 
   if (!shippingAddress || !shippingAddress.street || !shippingAddress.city) {
     throw new AppError('Valid shippingAddress with street and city is required', 400);
@@ -96,9 +120,12 @@ export const createOrder = asyncHandler(async (req, res) => {
 
   const mongoUserId = await getMongoUserId(req.auth.userId);
   const { items } = await buildItemsFromBody(requestedItems);
-  const total = Math.round(
+  const rawTotal = Math.round(
     items.reduce((sum, i) => sum + i.price * i.qty, 0) * 100
   ) / 100;
+
+  const { discount, normalizedCode } = calculateDiscount(promoCode, rawTotal);
+  const total = Math.max(1, Math.round((rawTotal - discount) * 100) / 100);
 
   const signature = itemSignature(items);
   const recent = await Order.findOne({
@@ -115,6 +142,8 @@ export const createOrder = asyncHandler(async (req, res) => {
     });
   }
 
+  const deliveryOtp = generateDeliveryOtp();
+
   const order = await Order.create({
     userId: mongoUserId,
     items,
@@ -123,6 +152,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     shippingAddress: {
       name: shippingAddress.name || '',
       email: shippingAddress.email || '',
+      phone: shippingAddress.phone || '',
       street: shippingAddress.street,
       city: shippingAddress.city,
       state: shippingAddress.state || '',
@@ -130,6 +160,9 @@ export const createOrder = asyncHandler(async (req, res) => {
       country: shippingAddress.country || '',
     },
     paymentStatus: 'pending',
+    deliveryOtp,
+    promoCode: normalizedCode,
+    discountAmount: discount,
   });
 
   if (!stripeConfigured) {
@@ -263,7 +296,7 @@ const confirmOrder = async (paymentId, clerkId = null, alreadyVerified = false) 
 };
 
 export const createRazorpayOrder = asyncHandler(async (req, res) => {
-  const { items: requestedItems, shippingAddress } = req.body;
+  const { items: requestedItems, shippingAddress, promoCode } = req.body;
 
   if (razorpayConfigured === false) {
     return res.status(400).json({ status: 400, message: 'Razorpay not configured on the server' });
@@ -275,9 +308,12 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
 
   const mongoUserId = await getMongoUserId(req.auth.userId);
   const { items } = await buildItemsFromBody(requestedItems);
-  const total = Math.round(
+  const rawTotal = Math.round(
     items.reduce((sum, i) => sum + i.price * i.qty, 0) * 100
   ) / 100;
+
+  const { discount, normalizedCode } = calculateDiscount(promoCode, rawTotal);
+  const total = Math.max(1, Math.round((rawTotal - discount) * 100) / 100);
 
   const signature = itemSignature(items);
   const recent = await Order.findOne({
@@ -296,6 +332,8 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
     });
   }
 
+  const deliveryOtp = generateDeliveryOtp();
+
   const order = await Order.create({
     userId: mongoUserId,
     items,
@@ -313,6 +351,9 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
     },
     paymentStatus: 'pending',
     status: 'placed',
+    deliveryOtp,
+    promoCode: normalizedCode,
+    discountAmount: discount,
   });
 
   const rzpOrder = await createRazorpayOrderApi({
@@ -329,6 +370,106 @@ export const createRazorpayOrder = asyncHandler(async (req, res) => {
     amount: rzpOrder.amount,
     currency: rzpOrder.currency,
     keyId: env.RAZORPAY_KEY_ID,
+  });
+});
+
+export const cancelOrder = asyncHandler(async (req, res) => {
+  const { reason } = req.body;
+  const mongoUserId = await getMongoUserId(req.auth.userId);
+
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    throw new AppError('Order not found', 404);
+  }
+
+  if (String(order.userId) !== String(mongoUserId)) {
+    throw new AppError('Not authorized to cancel this order', 403);
+  }
+
+  if (!['placed', 'processing'].includes(order.status)) {
+    throw new AppError(`Cannot cancel order in '${order.status}' status`, 400);
+  }
+
+  // Restore inventory stock
+  for (const item of order.items) {
+    if (item.productId) {
+      await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.qty } });
+    }
+  }
+
+  order.status = 'cancelled';
+  order.cancellationReason = reason || 'Cancelled by customer';
+  order.cancelledAt = new Date();
+  await order.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Order cancelled successfully and inventory restored',
+    order,
+  });
+});
+
+export const requestReturn = asyncHandler(async (req, res) => {
+  const { reason } = req.body;
+  const mongoUserId = await getMongoUserId(req.auth.userId);
+
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    throw new AppError('Order not found', 404);
+  }
+
+  if (String(order.userId) !== String(mongoUserId)) {
+    throw new AppError('Not authorized to request return for this order', 403);
+  }
+
+  if (order.status !== 'delivered') {
+    throw new AppError('Return can only be requested for delivered orders', 400);
+  }
+
+  if (order.returnStatus && order.returnStatus !== 'none') {
+    throw new AppError(`Return already ${order.returnStatus}`, 400);
+  }
+
+  order.returnStatus = 'requested';
+  order.returnReason = reason || 'Customer requested return/exchange within 7 days';
+  await order.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Return request submitted successfully. Pickup will be scheduled.',
+    order,
+  });
+});
+
+export const validateCoupon = asyncHandler(async (req, res) => {
+  const { code, subtotal } = req.body;
+  if (!code) {
+    throw new AppError('Promo code is required', 400);
+  }
+  const rawTotal = Math.max(0, Number(subtotal) || 0);
+  const normalized = String(code).toUpperCase().trim();
+  const promo = PROMO_CODES[normalized];
+
+  if (!promo) {
+    return res.status(200).json({ valid: false, message: 'Invalid promo code' });
+  }
+
+  if (rawTotal < promo.minOrder) {
+    return res.status(200).json({
+      valid: false,
+      message: `Minimum order amount of ₹${promo.minOrder.toLocaleString('en-IN')} required for ${normalized}`,
+    });
+  }
+
+  const { discount } = calculateDiscount(normalized, rawTotal);
+
+  return res.status(200).json({
+    valid: true,
+    code: normalized,
+    discount,
+    description: promo.description,
+    type: promo.type,
+    finalTotal: Math.max(0, Math.round((rawTotal - discount) * 100) / 100),
   });
 });
 

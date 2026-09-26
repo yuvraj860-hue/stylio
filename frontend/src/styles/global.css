@@ -2546,3 +2546,309 @@ button:disabled {
   font-size: 0.78rem;
   padding: 8px 12px;
 }
+
+/* ==========================================================================
+   Order OTP & Lifecycle Actions (Phase 3)
+   ========================================================================== */
+.order-otp-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #fefce8;
+  border: 1px dashed #eab308;
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  margin: 12px 18px 0;
+}
+
+.order-otp-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-otp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ca8a04;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.order-otp-text {
+  font-size: 0.82rem;
+  color: #713f12;
+}
+
+.order-otp-number {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #854d0e;
+  background: #ffffff;
+  padding: 4px 12px 4px 16px;
+  border-radius: 6px;
+  border: 1px solid #fde047;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.order-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+
+.order-cancel-btn:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+.order-return-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+
+.order-return-btn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.order-action-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.order-action-modal {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  position: relative;
+  animation: modalPop 0.25s var(--ease);
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.order-action-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.order-action-modal__close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--color-ink-soft);
+}
+
+.order-action-modal__reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.order-action-modal__reason-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.86rem;
+  transition: all 0.15s ease;
+}
+
+.order-action-modal__reason-opt:hover {
+  background: var(--color-paper);
+}
+
+.order-action-modal__reason-opt.active {
+  border-color: var(--color-ink);
+  background: var(--color-paper);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Stock Status & Customer Reviews (Phase 4)
+   ========================================================================== */
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  margin-top: 8px;
+}
+
+.stock-badge--in {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.stock-badge--low {
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+.stock-badge--out {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.product-rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #eab308;
+  margin-top: 4px;
+}
+
+.product-reviews-section {
+  padding-top: var(--space-7);
+  border-top: 1px solid var(--color-line);
+  margin-top: var(--space-8);
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-5);
+}
+
+@media (min-width: 840px) {
+  .reviews-grid {
+    grid-template-columns: 340px 1fr;
+  }
+}
+
+.review-form-card {
+  background: var(--color-paper);
+  padding: 22px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-line);
+  height: fit-content;
+}
+
+.star-rating-select {
+  display: flex;
+  gap: 6px;
+  font-size: 1.5rem;
+  margin: 6px 0 14px;
+}
+
+.star-rating-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #cbd5e1;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.star-rating-btn.active {
+  color: #f59e0b;
+}
+
+.star-rating-btn:hover {
+  transform: scale(1.15);
+}
+
+.reviews-list-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-item {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.review-item:first-child {
+  padding-top: 0;
+}
+
+.review-item:last-child {
+  border-bottom: none;
+}
+
+.review-item__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.review-item__name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.review-item__date {
+  font-size: 0.76rem;
+  color: var(--color-ink-soft);
+}
+
+.review-item__comment {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--color-ink);
+  margin: 6px 0 0;
+}

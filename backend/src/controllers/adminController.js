@@ -269,23 +269,38 @@ export const acceptDeliveryOrder = asyncHandler(async (req, res) => {
 });
 
 export const updateDeliveryStatus = asyncHandler(async (req, res) => {
-  const { status } = req.body;
+  const { status, otp } = req.body;
   const validStatuses = ['processing', 'shipped', 'delivered'];
   if (!validStatuses.includes(status)) {
     throw new AppError('Invalid status for delivery', 400);
   }
 
-  const order = await Order.findOneAndUpdate(
-    { _id: req.params.id, deliveryPartner: req.auth.mongoUserId },
-    { status },
-    { new: true }
-  ).populate('userId', 'name email').populate('items.productId', 'name price');
+  const existingOrder = await Order.findOne({
+    _id: req.params.id,
+    deliveryPartner: req.auth.mongoUserId,
+  });
 
-  if (!order) {
+  if (!existingOrder) {
     throw new AppError('Order not found or not assigned to you', 404);
   }
 
-  res.status(200).json({ order });
+  // If completing delivery, verify customer's 4-digit OTP if configured
+  if (status === 'delivered' && existingOrder.deliveryOtp) {
+    if (!otp || String(otp).trim() !== String(existingOrder.deliveryOtp).trim()) {
+      throw new AppError(
+        'Invalid or missing Delivery OTP. Please enter the 4-digit OTP provided by the customer.',
+        400
+      );
+    }
+  }
+
+  existingOrder.status = status;
+  await existingOrder.save();
+
+  await existingOrder.populate('userId', 'name email');
+  await existingOrder.populate('items.productId', 'name price');
+
+  res.status(200).json({ order: existingOrder });
 });
 
 export const getProducts = asyncHandler(async (req, res) => {

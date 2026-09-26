@@ -10,8 +10,10 @@ import {
   adminDeleteProduct,
   uploadImage,
   indexExistingProducts,
+  createProductReview,
 } from '../controllers/productController.js';
 import { protect, adminOnly } from '../middleware/auth.js';
+import { clerkAuth } from '../middleware/clerkAuth.js';
 import { validateId } from '../middleware/validate.js';
 
 const router = Router();
@@ -50,6 +52,7 @@ router.get('/', listProducts);
 router.get('/index-ml', protect, adminOnly, indexExistingProducts);
 router.get('/:id/related', validateId('id'), getRelatedProducts);
 router.get('/:id', validateId('id'), getProductById);
+router.post('/:id/reviews', clerkAuth, validateId('id'), createProductReview);
 
 router.post(
   '/',
