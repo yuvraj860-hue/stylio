@@ -2272,7 +2272,7 @@ button:disabled {
 }
 
 .footer__inner {
-  max-width: 1200px;
+  max-width: 1360px;
   margin: 0 auto;
   padding: 0 var(--space-5);
   display: flex;
@@ -2286,6 +2286,10 @@ button:disabled {
   font-family: var(--font-display);
   font-size: 1.3rem;
   letter-spacing: 0.24em;
+}
+
+.footer__col {
+  min-width: 160px;
 }
 
 .footer__col a,
@@ -2309,8 +2313,102 @@ button:disabled {
   color: var(--color-gold-light);
 }
 
+/* Contact Us Column */
+.footer__contact {
+  min-width: 260px;
+  max-width: 320px;
+}
+
+.footer__contact-head {
+  margin-bottom: 18px;
+}
+
+.footer__contact-title {
+  color: #38bdf8 !important;
+  font-size: 1.25rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+  margin: 0 0 6px 0 !important;
+  font-family: var(--font-body, system-ui, sans-serif) !important;
+}
+
+.footer__contact-line {
+  width: 44px;
+  height: 2.5px;
+  background: #f59e0b;
+  border-radius: 2px;
+}
+
+.footer__contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.footer__contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.88rem;
+  color: rgba(245, 241, 234, 0.92);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.footer__contact-item.footer__contact-link {
+  cursor: pointer;
+}
+
+.footer__contact-item.footer__contact-link:hover {
+  color: #38bdf8;
+  transform: translateX(3px);
+}
+
+.footer__contact-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.footer__contact-text {
+  font-size: 0.88rem;
+  color: inherit;
+  word-break: break-word;
+}
+
+.footer__contact-socials {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer__social-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #20242b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.footer__social-btn:hover {
+  background: var(--color-gold, #c5a059);
+  color: #0b1120;
+  border-color: var(--color-gold, #c5a059);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(197, 160, 89, 0.35);
+}
+
 .footer__bottom {
-  max-width: 1200px;
+  max-width: 1360px;
   margin: var(--space-6) auto 0;
   padding: var(--space-4) var(--space-5) 0;
   border-top: 1px solid rgba(245, 241, 234, 0.12);
