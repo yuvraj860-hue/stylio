@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useUser, UserButton, SignInButton, SignOutButton } from '@clerk/clerk-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import SearchBar from './SearchBar';
-import { CartIcon, UserIcon, MenuIcon, CloseIcon, LogOutIcon, HeartIcon } from './icons';
+import { CartIcon, UserIcon, MenuIcon, CloseIcon, LogOutIcon, HeartIcon, OrdersIcon } from './icons';
 
 export default function Navbar() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -14,6 +14,22 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileQuery, setMobileQuery] = useState('');
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userMenuOpen]);
 
   const isShopActive = location.pathname === '/shop' && !location.search.includes('sort=new');
   const isNewInActive = location.pathname === '/shop' && location.search.includes('sort=new');
@@ -71,20 +87,12 @@ export default function Navbar() {
           <NavLink to="/lookbook" end className={linkClass}>
             Lookbook
           </NavLink>
-          <NavLink to="/wishlist" end className={linkClass}>
-            Wishlist
-          </NavLink>
-          {isSignedIn && (
-            <NavLink to="/orders" end className={linkClass}>
-              My Orders
-            </NavLink>
-          )}
           {isSignedIn && ['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
             <NavLink to="/admin" className="nav-portal-badge" title="Access Admin Panel">
               Admin ↗
             </NavLink>
           )}
-          {isSignedIn && ['admin', 'delivery'].includes(user?.publicMetadata?.role) && (
+          {isSignedIn && user?.publicMetadata?.role === 'delivery' && (
             <NavLink to="/delivery" className="nav-portal-badge" title="Access Delivery Portal">
               Delivery ↗
             </NavLink>
@@ -117,25 +125,97 @@ export default function Navbar() {
           </button>
 
           {isSignedIn && user ? (
-            <div className="navbar__user-group">
-              <Link
-                to="/account"
-                className="navbar__avatar"
+            <div className="navbar__user-group" ref={userMenuRef}>
+              <button
+                type="button"
+                className="navbar__avatar-btn"
+                onClick={() => setUserMenuOpen((v) => !v)}
+                aria-expanded={userMenuOpen}
+                aria-label="User account menu"
                 title={`${user.fullName || user.firstName || 'Account'} - Profile`}
               >
-                {(user.firstName || user.fullName || 'U').charAt(0).toUpperCase()}
-              </Link>
-              <SignOutButton signOutUrl="/" afterSignOutUrl="/">
-                <button
-                  type="button"
-                  className="navbar__logout-btn"
-                  title="Sign Out"
-                  aria-label="Sign Out"
-                >
-                  <LogOutIcon size={14} />
-                  <span>Logout</span>
-                </button>
-              </SignOutButton>
+                <span className="navbar__avatar">
+                  {(user.firstName || user.fullName || 'U').charAt(0).toUpperCase()}
+                </span>
+              </button>
+
+              {userMenuOpen && (
+                <div className="user-dropdown-menu">
+                  <div className="user-dropdown-header">
+                    <div className="user-dropdown-name">{user.fullName || user.firstName || 'Account'}</div>
+                    <div className="user-dropdown-email">
+                      {user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress || ''}
+                    </div>
+                    {user.publicMetadata?.role && (
+                      <span className="user-dropdown-role">
+                        {user.publicMetadata.role === 'admin' ? '🛡️ Administrator' : user.publicMetadata.role === 'delivery' ? '🚚 Delivery Partner' : 'VIP Member'}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="user-dropdown-divider" />
+
+                  <Link
+                    to="/orders"
+                    className="user-dropdown-item"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    <OrdersIcon size={16} />
+                    <span>My Orders</span>
+                  </Link>
+
+                  <Link
+                    to="/account"
+                    className="user-dropdown-item"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    <UserIcon size={16} />
+                    <span>My Account</span>
+                  </Link>
+
+                  <Link
+                    to="/wishlist"
+                    className="user-dropdown-item"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    <HeartIcon size={16} />
+                    <span>Wishlist ({wishlistCount})</span>
+                  </Link>
+
+                  {['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
+                    <Link
+                      to="/admin"
+                      className="user-dropdown-item user-dropdown-item--gold"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <span>Admin Operations ↗</span>
+                    </Link>
+                  )}
+
+                  {user?.publicMetadata?.role === 'delivery' && (
+                    <Link
+                      to="/delivery"
+                      className="user-dropdown-item user-dropdown-item--gold"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <span>Delivery Portal ↗</span>
+                    </Link>
+                  )}
+
+                  <div className="user-dropdown-divider" />
+
+                  <SignOutButton signOutUrl="/" afterSignOutUrl="/">
+                    <button
+                      type="button"
+                      className="user-dropdown-item user-dropdown-item--logout"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <LogOutIcon size={16} />
+                      <span>Log Out</span>
+                    </button>
+                  </SignOutButton>
+                </div>
+              )}
             </div>
           ) : (
             <SignInButton
@@ -188,7 +268,7 @@ export default function Navbar() {
                 Admin Panel
               </Link>
             )}
-            {['admin', 'delivery'].includes(user?.publicMetadata?.role) && (
+            {user?.publicMetadata?.role === 'delivery' && (
               <Link to="/delivery" onClick={() => setMobileOpen(false)} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
                 Delivery Portal
               </Link>
