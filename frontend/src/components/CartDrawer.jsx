@@ -62,6 +62,34 @@ export default function CartDrawer() {
           </button>
         </div>
 
+        {/* Free Shipping Progress Indicator */}
+        {items.length > 0 && (
+          <div style={{ padding: '12px 20px', background: '#f8fafc', borderBottom: '1px solid var(--color-line)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: 6 }}>
+              <span>
+                {subtotal >= 1500 ? (
+                  <strong style={{ color: '#16a34a' }}>🎉 You unlocked Free Express Delivery!</strong>
+                ) : (
+                  <span>Add <strong>{fmt(1500 - subtotal)}</strong> more for <strong>Free Delivery</strong></span>
+                )}
+              </span>
+              <span style={{ fontWeight: 600, color: 'var(--color-ink-soft)' }}>
+                {Math.min(100, Math.round((subtotal / 1500) * 100))}%
+              </span>
+            </div>
+            <div style={{ width: '100%', height: 5, background: '#e2e8f0', borderRadius: 3, overflow: 'hidden' }}>
+              <div
+                style={{
+                  width: `${Math.min(100, (subtotal / 1500) * 100)}%`,
+                  height: '100%',
+                  background: subtotal >= 1500 ? '#16a34a' : 'var(--color-gold)',
+                  transition: 'width 0.3s ease',
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         <div className="cart-drawer__items">
           {items.length === 0 ? (
             <div className="empty-state">
@@ -125,6 +153,12 @@ export default function CartDrawer() {
         </div>
 
         <div className="cart-drawer__footer">
+          {items.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: '#854d0e', background: '#fefce8', padding: '6px 10px', borderRadius: 4, marginBottom: 12, border: '1px dashed #fde047' }}>
+              <span>🏷️</span>
+              <span>Use promo code <strong>STYLIO10</strong> for 10% OFF at checkout</span>
+            </div>
+          )}
           <div className="cart-drawer__total">
             <span>Subtotal</span>
             <span>{fmt(subtotal)}</span>

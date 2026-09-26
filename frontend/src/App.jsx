@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthGuard, GuestGuard } from './components/AuthGuard';
 import Navbar from './components/Navbar';
 import CartDrawer from './components/CartDrawer';
 import StylistBot from './components/StylistBot';
 import Toast from './components/Toast';
+import CustomerCareModal from './components/CustomerCareModal';
 import AdminLayout from './components/AdminLayout';
 import DeliveryLayout from './components/DeliveryLayout';
 import HomePage from './pages/HomePage';
@@ -49,30 +50,81 @@ function ToastHost() {
 }
 
 function Footer() {
+  const [careModalTab, setCareModalTab] = useState(null);
+
   return (
-    <footer className="footer">
-      <div className="footer__inner">
-        <div>
-          <h4>STYLIO</h4>
-          <p style={{ marginTop: 8, fontSize: '0.82rem' }}>
-            Considered clothing. Curated for you.
-          </p>
+    <>
+      <footer className="footer">
+        <div className="footer__inner">
+          <div style={{ maxWidth: 300 }}>
+            <h4>STYLIO</h4>
+            <p style={{ marginTop: 8, fontSize: '0.84rem', lineHeight: 1.6 }}>
+              Considered clothing and modern luxury fashion. Curated silhouettes, honest fabrics, and AI-powered personal styling.
+            </p>
+            <div style={{ marginTop: 14, fontSize: '0.8rem', color: 'rgba(245, 241, 234, 0.55)' }}>
+              Concierge: <a href="mailto:concierge@stylio.luxury" style={{ color: 'var(--color-gold-light)', display: 'inline' }}>concierge@stylio.luxury</a>
+            </div>
+          </div>
+
+          <div className="footer__col">
+            <div className="eyebrow" style={{ marginBottom: 10, color: 'var(--color-gold-light)' }}>Collections</div>
+            <Link to="/shop">All Pieces</Link>
+            <Link to="/shop?category=Dresses">Designer Dresses</Link>
+            <Link to="/shop?category=Sneakers">Luxury Sneakers</Link>
+            <Link to="/shop?category=Accessories">Artisanal Accessories</Link>
+            <Link to="/shop?sort=new">New Arrivals</Link>
+          </div>
+
+          <div className="footer__col">
+            <div className="eyebrow" style={{ marginBottom: 10, color: 'var(--color-gold-light)' }}>Client Care</div>
+            <Link to="/orders">Track My Orders</Link>
+            <Link to="/account">My Account & Profile</Link>
+            <Link to="/wishlist">Saved Wishlist</Link>
+            <button type="button" onClick={() => setCareModalTab('shipping')}>
+              Shipping & Delivery
+            </button>
+            <button type="button" onClick={() => setCareModalTab('returns')}>
+              7-Day Doorstep Returns
+            </button>
+          </div>
+
+          <div className="footer__col">
+            <div className="eyebrow" style={{ marginBottom: 10, color: 'var(--color-gold-light)' }}>Atelier Promise</div>
+            <button type="button" onClick={() => setCareModalTab('authenticity')}>
+              100% Authentic Guarantee
+            </button>
+            <p style={{ margin: '4px 0', fontSize: '0.82rem', color: 'rgba(245, 241, 234, 0.6)' }}>
+              Free Express on ₹1,500+
+            </p>
+            <p style={{ margin: '4px 0', fontSize: '0.82rem', color: 'rgba(245, 241, 234, 0.6)' }}>
+              Secure Dynamic OTP Handover
+            </p>
+            <button type="button" onClick={() => setCareModalTab('contact')} style={{ color: 'var(--color-gold-light)', fontWeight: 500 }}>
+              Speak with Concierge →
+            </button>
+          </div>
         </div>
-        <div className="footer__col">
-          <div className="eyebrow" style={{ marginBottom: 8 }}>Shop</div>
-          <a href="/shop">All Pieces</a>
-          <a href="/shop?category=Dresses">Dresses</a>
-          <a href="/shop?category=Sneakers">Sneakers</a>
-          <a href="/shop?category=Accessories">Accessories</a>
+
+        <div className="footer__bottom">
+          <div>© 2026 STYLIO Luxury Atelier. All rights reserved.</div>
+          <div className="footer__payment-badges">
+            <span className="footer__badge-pill">UPI</span>
+            <span className="footer__badge-pill">VISA</span>
+            <span className="footer__badge-pill">MASTERCARD</span>
+            <span className="footer__badge-pill">COD</span>
+            <span className="footer__badge-pill">100% SECURE</span>
+          </div>
         </div>
-        <div className="footer__col">
-          <div className="eyebrow" style={{ marginBottom: 8 }}>Care</div>
-          <a href="/account">My Account</a>
-          <a href="/shop?sort=new">New In</a>
-        </div>
-      </div>
-      <div className="footer__bottom">© 2026 STYLIO. All rights reserved.</div>
-    </footer>
+      </footer>
+
+      {careModalTab && (
+        <CustomerCareModal
+          isOpen={Boolean(careModalTab)}
+          initialTab={careModalTab}
+          onClose={() => setCareModalTab(null)}
+        />
+      )}
+    </>
   );
 }
 
