@@ -5,16 +5,30 @@ import { fmt } from '../../utils/format';
 import { UsersIcon, ShoppingCartIcon, PackageIcon, TruckIcon, ChartBarIcon } from '../../components/AdminIcons';
 
 function StatCard({ label, value, icon: Icon, color, link }) {
-  return (
-    <Link to={link} className="stat-card" style={{ '--stat-color': color }}>
-      <div className="stat-icon" style={{ background: color }}>
+  const content = (
+    <>
+      <div className="stat-icon" style={{ backgroundColor: color }}>
         {Icon && <Icon size={24} />}
       </div>
       <div className="stat-content">
         <div className="stat-label">{label}</div>
         <div className="stat-value">{value}</div>
       </div>
-    </Link>
+    </>
+  );
+
+  if (link) {
+    return (
+      <Link to={link} className="stat-card stat-card--interactive" style={{ '--stat-color': color }}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="stat-card" style={{ '--stat-color': color }}>
+      {content}
+    </div>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Navigate, Link } from 'react-router-dom';
+import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { AuthGuard, GuestGuard } from './components/AuthGuard';
 import Navbar from './components/Navbar';
 import CartDrawer from './components/CartDrawer';
@@ -129,10 +129,13 @@ function Footer() {
 }
 
 export default function App() {
+  const location = useLocation();
+  const isPortal = location.pathname.startsWith('/admin') || location.pathname.startsWith('/delivery');
+
   return (
-    <div className="app">
-      <Navbar />
-      <main>
+    <div className={`app ${isPortal ? 'app--portal' : ''}`}>
+      {!isPortal && <Navbar />}
+      <main className={isPortal ? 'main--portal' : ''}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
@@ -293,9 +296,9 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <Footer />
-      <CartDrawer />
-      <StylistBot />
+      {!isPortal && <Footer />}
+      {!isPortal && <CartDrawer />}
+      {!isPortal && <StylistBot />}
       <ToastHost />
     </div>
   );

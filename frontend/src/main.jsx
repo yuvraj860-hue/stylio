@@ -7,6 +7,7 @@ import { CartProvider } from './context/CartContext.jsx';
 import { WishlistProvider } from './context/WishlistContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import './styles/global.css';
+import './styles/admin.css';
 import { ClerkProvider, useClerk } from '@clerk/clerk-react';
 import { setClerkTokenGetter } from './services/api';
 

@@ -43,7 +43,7 @@ export default function AdminLayout({ children }) {
           </Link>
           <button 
             className="sidebar-close"
-            onClick={() => setSidebarOpen(false)}
+            onClick={() => { setSidebarOpen(false); setMobileMenuOpen(false); }}
             aria-label="Close sidebar"
           >
             <CloseIcon size={24} />
@@ -60,6 +60,7 @@ export default function AdminLayout({ children }) {
                     `nav-item ${isActive ? 'active' : ''}`
                   }
                   aria-current={location.pathname === item.path ? 'page' : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   <item.icon size={20} />
                   <span>{item.label}</span>
