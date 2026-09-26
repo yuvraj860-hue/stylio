@@ -67,6 +67,9 @@ export default function Navbar() {
           >
             New In
           </Link>
+          <NavLink to="/lookbook" end className={linkClass}>
+            Lookbook
+          </NavLink>
           <NavLink to="/wishlist" end className={linkClass}>
             Wishlist
           </NavLink>
@@ -170,6 +173,9 @@ export default function Navbar() {
         </Link>
         <Link to="/shop?sort=new" onClick={() => setMobileOpen(false)}>
           New In
+        </Link>
+        <Link to="/lookbook" onClick={() => setMobileOpen(false)}>
+          Editorial Lookbook
         </Link>
         <Link to="/wishlist" onClick={() => setMobileOpen(false)}>
           Wishlist ({wishlistCount})

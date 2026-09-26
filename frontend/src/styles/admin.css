@@ -403,6 +403,78 @@ a.stat-card:hover {
   text-decoration: underline;
 }
 
+/* Quick Actions Grid & Cards */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.action-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-gold, #c5a059);
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.09);
+}
+
+.action-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  transition: transform 0.2s ease;
+}
+
+.action-card:hover .action-icon-wrap {
+  transform: scale(1.08);
+}
+
+.action-card h4 {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.action-arrow {
+  font-size: 1.05rem;
+  color: #94a3b8;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.action-card:hover .action-arrow {
+  transform: translateX(4px);
+  color: var(--color-gold, #c5a059);
+}
+
+.action-card p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* ==========================================================================
    DATA TABLES
    ========================================================================== */

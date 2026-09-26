@@ -9,6 +9,7 @@ import CustomerCareModal from './components/CustomerCareModal';
 import AdminLayout from './components/AdminLayout';
 import DeliveryLayout from './components/DeliveryLayout';
 import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
 import ShopPage from './pages/ShopPage';
 import ProductPage from './pages/ProductPage';
 import CheckoutPage from './pages/CheckoutPage';
@@ -69,6 +70,7 @@ function Footer() {
           <div className="footer__col">
             <div className="eyebrow" style={{ marginBottom: 10, color: 'var(--color-gold-light)' }}>Collections</div>
             <Link to="/shop">All Pieces</Link>
+            <Link to="/lookbook">Editorial Lookbook</Link>
             <Link to="/shop?category=Dresses">Designer Dresses</Link>
             <Link to="/shop?category=Sneakers">Luxury Sneakers</Link>
             <Link to="/shop?category=Accessories">Artisanal Accessories</Link>
@@ -159,15 +161,10 @@ export default function App() {
             }
           />
           <Route path="/profile" element={<Navigate to="/account" replace />} />
-          <Route
-            path="/orders"
-            element={
-              <AuthGuard>
-                <OrdersPage />
-              </AuthGuard>
-            }
-          />
+          <Route path="/orders" element={<AuthGuard><OrdersPage /></AuthGuard>} />
           <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/lookbook" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           
           {/* Admin Routes */}
           <Route

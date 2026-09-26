@@ -147,19 +147,34 @@ export default function DeliveryDashboardPage() {
           </div>
           <div className="quick-actions">
             <Link to="/delivery/orders/live" className="action-card">
-              <PackageIcon size={28} />
-              <h4>Live Orders</h4>
-              <p>View and accept new orders</p>
+              <div className="action-icon-wrap" style={{ background: '#fef3c7', color: '#d97706' }}>
+                <TruckIcon size={24} />
+              </div>
+              <h4>
+                <span>Live Orders</span>
+                <span className="action-arrow">→</span>
+              </h4>
+              <p>View real-time pending dispatches & accept new deliveries</p>
             </Link>
             <Link to="/delivery/orders" className="action-card">
-              <PackageIcon size={28} />
-              <h4>All Orders</h4>
-              <p>View all assigned orders</p>
+              <div className="action-icon-wrap" style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+                <PackageIcon size={24} />
+              </div>
+              <h4>
+                <span>All Orders</span>
+                <span className="action-arrow">→</span>
+              </h4>
+              <p>Verify 4-digit OTP handover & manage shipments</p>
             </Link>
             <Link to="/delivery/history" className="action-card">
-              <PackageIcon size={28} />
-              <h4>History</h4>
-              <p>View delivery history</p>
+              <div className="action-icon-wrap" style={{ background: '#dcfce7', color: '#16a34a' }}>
+                <ClockIcon size={24} />
+              </div>
+              <h4>
+                <span>Delivery History</span>
+                <span className="action-arrow">→</span>
+              </h4>
+              <p>Track completed trips, fulfilled parcels & earnings</p>
             </Link>
           </div>
         </section>
@@ -168,11 +183,11 @@ export default function DeliveryDashboardPage() {
   );
 }
 
-function StatCard({ label, value, icon, color }) {
+function StatCard({ label, value, icon: Icon, color }) {
   return (
     <div className="stat-card" style={{ '--stat-color': color }}>
-      <div className="stat-icon" style={{ background: color }}>
-        <icon size={24} />
+      <div className="stat-icon" style={{ backgroundColor: color }}>
+        {Icon && <Icon size={24} />}
       </div>
       <div className="stat-content">
         <div className="stat-label">{label}</div>
