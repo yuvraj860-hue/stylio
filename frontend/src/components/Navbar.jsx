@@ -16,8 +16,35 @@ export default function Navbar() {
   const linkClass = ({ isActive }) =>
     `nav-link ${isActive ? 'nav-link-active' : ''}`;
 
+  const handleCopyCode = () => {
+    navigator.clipboard?.writeText('STYLIO10');
+    if (window.dispatchEvent) {
+      window.dispatchEvent(
+        new CustomEvent('stylio:toast', {
+          detail: { message: 'Coupon code STYLIO10 copied to clipboard! ✂️' },
+        })
+      );
+    }
+  };
+
   return (
-    <header className="navbar">
+    <>
+      <div className="announcement-bar">
+        <div className="announcement-bar__text">
+          <span>✨ <strong>Spring Exclusive:</strong> Flat 10% OFF with code</span>
+          <button
+            type="button"
+            className="announcement-bar__code"
+            onClick={handleCopyCode}
+            title="Click to copy code"
+          >
+            STYLIO10
+          </button>
+          <span>&bull; Free Express Delivery on orders over ₹1,500</span>
+        </div>
+      </div>
+
+      <header className="navbar">
       <div className="navbar__inner">
         <Link to="/" className="navbar__logo" aria-label="STYLIO home">
           STYL<span>IO</span>
@@ -213,5 +240,6 @@ export default function Navbar() {
         </form>
       </div>
     </header>
+    </>
   );
 }

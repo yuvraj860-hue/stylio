@@ -32,7 +32,7 @@ export default function ShopPage() {
       search: searchParams.get('search') || undefined,
       minPrice: minPrice > 0 ? minPrice : undefined,
       maxPrice: maxPrice < 15000 ? maxPrice : undefined,
-      sort: sort === 'new' ? 'newest' : sort === 'price_asc' ? 'price_asc' : sort === 'price_desc' ? 'price_desc' : undefined,
+      sort: sort === 'new' ? 'newest' : sort === 'price_asc' ? 'price_asc' : sort === 'price_desc' ? 'price_desc' : sort === 'top_rated' ? 'rating' : undefined,
       limit: 60
     }
     productApi
@@ -102,7 +102,7 @@ export default function ShopPage() {
           </div>
         </div>
 
-        <form className="search-bar" style={{ maxWidth: 420, marginBottom: 'var(--space-7)' }} onSubmit={handleTextSearch}>
+        <form className="search-bar" style={{ maxWidth: 420, marginBottom: 'var(--space-6)' }} onSubmit={handleTextSearch}>
           <span className="search-icon"><SearchIcon /></span>
           <input
             type="text"
@@ -115,6 +115,30 @@ export default function ShopPage() {
             Go
           </button>
         </form>
+
+        {/* Quick Category Selection Pills */}
+        <div className="category-pills-bar">
+          <button
+            type="button"
+            className={`category-pill ${activeCategories.length === 0 ? 'active' : ''}`}
+            onClick={() => updateParams({ category: undefined })}
+          >
+            All Pieces
+          </button>
+          {CATEGORIES.map((cat) => {
+            const isActive = activeCategories.includes(cat);
+            return (
+              <button
+                key={cat}
+                type="button"
+                className={`category-pill ${isActive ? 'active' : ''}`}
+                onClick={() => toggleCategory(cat)}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
 
         <div className="shop-layout">
           <button
@@ -202,6 +226,15 @@ export default function ShopPage() {
                   onChange={() => updateParams({ sort: 'price_desc' })}
                 />
                 Price: High to Low
+              </label>
+              <label className="filter-option">
+                <input
+                  type="radio"
+                  name="sort"
+                  checked={sort === 'top_rated'}
+                  onChange={() => updateParams({ sort: 'top_rated' })}
+                />
+                Top Rated ★
               </label>
             </div>
 

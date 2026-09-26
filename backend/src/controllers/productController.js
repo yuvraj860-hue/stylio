@@ -119,6 +119,7 @@ export const listProducts = asyncHandler(async (req, res) => {
   else if (sort === 'price_desc') sortQuery = { price: -1 };
   else if (sort === 'featured') sortQuery = { featured: -1, createdAt: -1 };
   else if (sort === 'newest') sortQuery = { createdAt: -1 };
+  else if (sort === 'rating' || sort === 'top_rated') sortQuery = { rating: -1, numReviews: -1 };
   else sortQuery = { createdAt: -1 };
 
   const pageNum = Math.max(parseInt(page, 10) || 1, 1);

@@ -191,6 +191,59 @@ export default function OrdersPage() {
                   </div>
                 </div>
 
+                {/* Visual Order Progress Stepper */}
+                {order.status !== 'cancelled' && (
+                  <div className="order-stepper">
+                    <div
+                      className="order-stepper__progress-line"
+                      style={{
+                        width:
+                          order.status === 'delivered'
+                            ? 'calc(100% - 90px)'
+                            : order.status === 'shipped'
+                            ? 'calc(66% - 60px)'
+                            : order.status === 'processing'
+                            ? 'calc(33% - 30px)'
+                            : '0%',
+                      }}
+                    />
+                    <div className={`order-step ${order.status ? 'completed' : ''}`}>
+                      <span className="order-step__dot">✓</span>
+                      <span className="order-step__label">Placed</span>
+                    </div>
+                    <div
+                      className={`order-step ${
+                        ['processing', 'shipped', 'delivered'].includes(order.status)
+                          ? order.status === 'processing'
+                            ? 'current'
+                            : 'completed'
+                          : ''
+                      }`}
+                    >
+                      <span className="order-step__dot">
+                        {['shipped', 'delivered'].includes(order.status) ? '✓' : '2'}
+                      </span>
+                      <span className="order-step__label">Packed</span>
+                    </div>
+                    <div
+                      className={`order-step ${
+                        ['shipped', 'delivered'].includes(order.status)
+                          ? order.status === 'shipped'
+                            ? 'current'
+                            : 'completed'
+                          : ''
+                      }`}
+                    >
+                      <span className="order-step__dot">{order.status === 'delivered' ? '✓' : '3'}</span>
+                      <span className="order-step__label">Shipped</span>
+                    </div>
+                    <div className={`order-step ${order.status === 'delivered' ? 'completed' : ''}`}>
+                      <span className="order-step__dot">4</span>
+                      <span className="order-step__label">Delivered</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Delivery OTP Banner */}
                 {order.deliveryOtp && order.status !== 'delivered' && order.status !== 'cancelled' && (
                   <div className="order-otp-banner">
