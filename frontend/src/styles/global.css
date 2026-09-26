@@ -2316,7 +2316,7 @@ button:disabled {
 /* Contact Us Column (Luxury Atelier Theme) */
 .footer__contact {
   min-width: 260px;
-  max-width: 320px;
+  max-width: 340px;
 }
 
 .footer__contact-head {
@@ -2348,76 +2348,117 @@ button:disabled {
 }
 
 .footer__contact-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.88rem;
-  color: rgba(245, 241, 234, 0.82);
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.footer__contact-item.footer__contact-link {
-  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 4px 0 !important;
+  font-size: 0.88rem !important;
+  color: rgba(245, 241, 234, 0.82) !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
 }
 
 .footer__contact-item.footer__contact-link:hover {
-  color: var(--color-gold-light, #e2c485);
-  transform: translateX(4px);
+  color: var(--color-gold-light, #e2c485) !important;
+  transform: translateX(4px) !important;
 }
 
 .footer__contact-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: rgba(197, 160, 89, 0.1);
-  border: 1px solid rgba(197, 160, 89, 0.25);
-  flex-shrink: 0;
-  transition: all 0.2s ease;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+  background: rgba(197, 160, 89, 0.1) !important;
+  border: 1px solid rgba(197, 160, 89, 0.25) !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
 }
 
 .footer__contact-link:hover .footer__contact-icon {
-  background: rgba(197, 160, 89, 0.2);
-  border-color: var(--color-gold, #c5a059);
-  transform: scale(1.06);
+  background: rgba(197, 160, 89, 0.2) !important;
+  border-color: var(--color-gold, #c5a059) !important;
+  transform: scale(1.06) !important;
 }
 
 .footer__contact-text {
-  font-size: 0.88rem;
-  color: inherit;
-  word-break: break-word;
+  font-size: 0.88rem !important;
+  color: inherit !important;
+  word-break: break-word !important;
 }
 
+/* Fix social circular bubbles */
 .footer__contact-socials {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  margin-top: 6px !important;
 }
 
+.footer .footer__social-btn,
+.footer__col .footer__contact-socials a.footer__social-btn,
 .footer__social-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(245, 241, 234, 0.85);
-  text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  max-width: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  background: #1b2330 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: rgba(245, 241, 234, 0.9) !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  box-sizing: border-box !important;
 }
 
+.footer .footer__social-btn svg,
+.footer__col .footer__contact-socials a.footer__social-btn svg,
+.footer__social-btn svg {
+  display: block !important;
+  margin: auto !important;
+  width: 17px !important;
+  height: 17px !important;
+  flex-shrink: 0 !important;
+  pointer-events: none !important;
+  transition: transform 0.25s ease, fill 0.2s ease, stroke 0.2s ease !important;
+}
+
+.footer .footer__social-btn:hover,
+.footer__col .footer__contact-socials a.footer__social-btn:hover,
 .footer__social-btn:hover {
-  background: var(--color-gold, #c5a059);
-  color: #0b1120;
-  border-color: var(--color-gold, #c5a059);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(197, 160, 89, 0.35);
+  background: var(--color-gold, #c5a059) !important;
+  color: #0b1120 !important;
+  border-color: var(--color-gold, #c5a059) !important;
+  transform: translateY(-3px) scale(1.08) !important;
+  box-shadow: 0 8px 20px rgba(197, 160, 89, 0.45) !important;
+}
+
+.footer .footer__social-btn:hover svg,
+.footer__col .footer__contact-socials a.footer__social-btn:hover svg,
+.footer__social-btn:hover svg {
+  color: #0b1120 !important;
+  fill: #0b1120 !important;
+}
+
+.footer .footer__social-btn:hover svg[stroke],
+.footer__col .footer__contact-socials a.footer__social-btn:hover svg[stroke],
+.footer__social-btn:hover svg[stroke] {
+  stroke: #0b1120 !important;
 }
 
 .footer__bottom {
