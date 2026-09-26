@@ -143,83 +143,85 @@ export default function HomePage() {
 
   return (
     <>
-      <section
-        className="hero"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        aria-label="Featured Collections Carousel"
-      >
-        {HERO_SLIDES.map((slide, idx) => {
-          const isActive = idx === currentSlide
-          return (
-            <div
-              key={slide.id}
-              className={`hero__slide ${isActive ? 'active' : ''}`}
-              aria-hidden={!isActive}
-            >
-              <div className="hero__slide-bg">
-                <SafeImage
-                  src={slide.image}
-                  alt={slide.title}
-                />
-              </div>
-              <div className="hero__slide-content">
-                <div className="eyebrow">{slide.eyebrow}</div>
-                <h1>{slide.title}</h1>
-                <p>{slide.description}</p>
-                <div className="hero__actions">
-                  <Link to={slide.primaryCta.to} className="btn btn-gold">
-                    {slide.primaryCta.label}
-                  </Link>
-                  {slide.secondaryCta && (
-                    <Link
-                      to={slide.secondaryCta.to}
-                      className="btn btn-outline"
-                      style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.6)' }}
-                    >
-                      {slide.secondaryCta.label}
+      <div className="hero-wrapper">
+        <section
+          className="hero"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          aria-label="Featured Collections Carousel"
+        >
+          {HERO_SLIDES.map((slide, idx) => {
+            const isActive = idx === currentSlide
+            return (
+              <div
+                key={slide.id}
+                className={`hero__slide ${isActive ? 'active' : ''}`}
+                aria-hidden={!isActive}
+              >
+                <div className="hero__slide-bg">
+                  <SafeImage
+                    src={slide.image}
+                    alt={slide.title}
+                  />
+                </div>
+                <div className="hero__slide-content">
+                  <div className="eyebrow">{slide.eyebrow}</div>
+                  <h1>{slide.title}</h1>
+                  <p>{slide.description}</p>
+                  <div className="hero__actions">
+                    <Link to={slide.primaryCta.to} className="btn btn-gold">
+                      {slide.primaryCta.label}
                     </Link>
-                  )}
+                    {slide.secondaryCta && (
+                      <Link
+                        to={slide.secondaryCta.to}
+                        className="btn btn-outline"
+                        style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.6)' }}
+                      >
+                        {slide.secondaryCta.label}
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
 
-        {/* Previous & Next Arrow Buttons */}
-        <button
-          type="button"
-          className="hero__arrow hero__arrow--prev"
-          onClick={prevSlide}
-          aria-label="Previous Slide"
-        >
-          <ChevronLeftIcon size={22} />
-        </button>
-        <button
-          type="button"
-          className="hero__arrow hero__arrow--next"
-          onClick={nextSlide}
-          aria-label="Next Slide"
-        >
-          <ChevronRightIcon size={22} />
-        </button>
+          {/* Previous & Next Arrow Buttons */}
+          <button
+            type="button"
+            className="hero__arrow hero__arrow--prev"
+            onClick={prevSlide}
+            aria-label="Previous Slide"
+          >
+            <ChevronLeftIcon size={22} />
+          </button>
+          <button
+            type="button"
+            className="hero__arrow hero__arrow--next"
+            onClick={nextSlide}
+            aria-label="Next Slide"
+          >
+            <ChevronRightIcon size={22} />
+          </button>
 
-        {/* Bottom Slide Indicators */}
-        <div className="hero__indicators">
-          {HERO_SLIDES.map((slide, idx) => (
-            <button
-              key={slide.id}
-              type="button"
-              className={`hero__indicator-pill ${idx === currentSlide ? 'active' : ''}`}
-              onClick={() => setCurrentSlide(idx)}
-              aria-label={`Jump to slide ${idx + 1}: ${slide.title}`}
-            >
-              {slide.pillText}
-            </button>
-          ))}
-        </div>
-      </section>
+          {/* Bottom Slide Indicators */}
+          <div className="hero__indicators">
+            {HERO_SLIDES.map((slide, idx) => (
+              <button
+                key={slide.id}
+                type="button"
+                className={`hero__indicator-pill ${idx === currentSlide ? 'active' : ''}`}
+                onClick={() => setCurrentSlide(idx)}
+                aria-label={`Jump to slide ${idx + 1}: ${slide.title}`}
+              >
+                {slide.pillText}
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
 
       <section className="section">
         <div className="container">
