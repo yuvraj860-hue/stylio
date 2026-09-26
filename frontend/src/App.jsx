@@ -219,7 +219,7 @@ function Footer() {
         </div>
 
         <div className="footer__bottom">
-          <div>© 2026 STYLIO Luxury Atelier. All rights reserved.</div>
+          <div>© 2026 MR.Yuvraj.Rajput. All rights reserved.</div>
           <div className="footer__payment-badges">
             <span className="footer__badge-pill">UPI</span>
             <span className="footer__badge-pill">VISA</span>
