@@ -228,7 +228,11 @@ export default function AdminOrdersPage() {
                     <Link to={`/admin/orders/${order._id || order.id}`} className="action-btn view" title="View">
                       <EyeIcon size={16} />
                     </Link>
-                    <button className="action-btn print" title="Print">
+                    <button
+                      className="action-btn print"
+                      title="Print Tax Invoice"
+                      onClick={() => setInvoiceOrder(order)}
+                    >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-10"/><rect x="6" y="14" width="12" height="8"/></svg>
                     </button>
                   </div>
@@ -256,6 +260,18 @@ export default function AdminOrdersPage() {
                   <div><label>Status</label><span className={`badge ${statusColors[selectedOrder.status] || "badge-muted"}`}>{selectedOrder.status}</span></div>
                   <div><label>Date</label><span>{new Date(selectedOrder.createdAt).toLocaleString()}</span></div>
                   <div><label>Total</label><span className="text-lg font-bold">{fmt(selectedOrder.total)}</span></div>
+                  {selectedOrder.deliveryOtp && (
+                    <div><label>Delivery OTP</label><span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#854d0e', background: '#fefce8', padding: '2px 8px', borderRadius: 4, letterSpacing: 2 }}>{selectedOrder.deliveryOtp}</span></div>
+                  )}
+                  {selectedOrder.discountAmount > 0 && (
+                    <div><label>Discount</label><span style={{ color: '#16a34a', fontWeight: 'bold' }}>-{fmt(selectedOrder.discountAmount)} {selectedOrder.promoCode ? `(${selectedOrder.promoCode})` : ''}</span></div>
+                  )}
+                  {selectedOrder.returnStatus && selectedOrder.returnStatus !== 'none' && (
+                    <div><label>Return Status</label><span style={{ color: '#2563eb', fontWeight: 'bold' }}>{selectedOrder.returnStatus.toUpperCase()} ({selectedOrder.returnReason || 'Exchange/Return'})</span></div>
+                  )}
+                  {selectedOrder.status === 'cancelled' && (
+                    <div><label>Cancellation</label><span style={{ color: '#dc2626' }}>{selectedOrder.cancellationReason || 'Cancelled by customer'}</span></div>
+                  )}
                 </div>
               </div>
               <div className="order-detail-section">

@@ -103,6 +103,7 @@ export default function App() {
               </AuthGuard>
             }
           />
+          <Route path="/profile" element={<Navigate to="/account" replace />} />
           <Route
             path="/orders"
             element={
