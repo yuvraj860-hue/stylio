@@ -2463,35 +2463,69 @@ button:disabled {
 
 .footer__bottom {
   max-width: 1360px;
-  margin: var(--space-6) auto 0;
-  padding: var(--space-4) var(--space-5) 0;
-  border-top: 1px solid rgba(245, 241, 234, 0.12);
+  margin: var(--space-7) auto 0;
+  padding: var(--space-5) var(--space-5) 0;
+  border-top: 1px solid rgba(245, 241, 234, 0.1);
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  font-size: 0.76rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(245, 241, 234, 0.45);
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
 }
 
 .footer__payment-badges {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .footer__badge-pill {
   font-size: 0.7rem;
   padding: 2px 8px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(245, 241, 234, 0.75);
   letter-spacing: 0.05em;
   font-weight: 500;
+}
+
+.footer__copyright {
+  font-size: 0.84rem;
+  letter-spacing: 0.02em;
+  color: rgba(245, 241, 234, 0.65);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  line-height: 1.6;
+  text-transform: none;
+}
+
+.footer__copyright-name {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: color 0.2s ease;
+}
+
+.footer__copyright-name:hover {
+  color: var(--color-gold-light, #e2c485);
+}
+
+.footer__copyright-heart {
+  display: inline-block;
+  font-style: normal;
+  animation: heartPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.22); }
 }
 
 @media (max-width: 700px) {

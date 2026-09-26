@@ -219,13 +219,18 @@ function Footer() {
         </div>
 
         <div className="footer__bottom">
-          <div>© 2026 MR.Yuvraj.Rajput. All rights reserved.</div>
           <div className="footer__payment-badges">
             <span className="footer__badge-pill">UPI</span>
             <span className="footer__badge-pill">VISA</span>
             <span className="footer__badge-pill">MASTERCARD</span>
             <span className="footer__badge-pill">COD</span>
             <span className="footer__badge-pill">100% SECURE</span>
+          </div>
+
+          <div className="footer__copyright">
+            © 2026 STYLIO. All rights reserved. | Designed &amp; Developed by{' '}
+            <strong className="footer__copyright-name">MR.Yuvraj.Rajput</strong>{' '}
+            <span className="footer__copyright-heart">💖</span>
           </div>
         </div>
       </footer>
