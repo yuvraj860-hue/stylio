@@ -93,18 +93,16 @@ export default function HomePage() {
   const [featured, setFeatured] = useState(null)
   const [error, setError] = useState(null)
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
   const [touchStart, setTouchStart] = useState(null)
   const [touchEnd, setTouchEnd] = useState(null)
 
-  // Auto-play slider timer (every 5.5s)
+  // Auto-play continuous cycle: strictly slides automatically every 5 seconds (5000ms)
   useEffect(() => {
-    if (isPaused) return
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length)
-    }, 5500)
+    }, 5000)
     return () => clearInterval(timer)
-  }, [isPaused])
+  }, [currentSlide])
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length)
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)
@@ -147,8 +145,6 @@ export default function HomePage() {
     <>
       <section
         className="hero"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

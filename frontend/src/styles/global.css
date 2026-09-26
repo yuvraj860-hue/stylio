@@ -1510,7 +1510,7 @@ button:disabled {
   left: 0;
   height: 2px;
   background: var(--color-gold, #c5a059);
-  animation: heroProgressBar 5.5s linear infinite;
+  animation: heroProgressBar 5s linear infinite;
 }
 
 @keyframes heroProgressBar {
