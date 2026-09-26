@@ -1491,6 +1491,11 @@ button:disabled {
   grid-template-columns: 260px 1fr;
   gap: var(--space-7);
   align-items: start;
+  min-height: 70vh;
+}
+
+.shop-products-wrap {
+  min-height: 650px;
 }
 
 .filter-panel {

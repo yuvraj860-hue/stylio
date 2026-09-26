@@ -13,6 +13,7 @@ export default function ShopPage() {
   const location = useLocation()
 
   const [products, setProducts] = useState(null)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [textQuery, setTextQuery] = useState(searchParams.get('search') || '')
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -25,8 +26,26 @@ export default function ShopPage() {
   const maxPrice = Number(searchParams.get('maxPrice')) || 15000
   const sort = searchParams.get('sort') || ''
 
+  const [sliderMaxPrice, setSliderMaxPrice] = useState(maxPrice)
+
+  // Sync local slider state when URL maxPrice changes from outside (e.g. back button, clear filters)
+  useEffect(() => {
+    setSliderMaxPrice(maxPrice)
+  }, [maxPrice])
+
+  // Debounced URL update when slider is dragged, preventing 30 URL changes per second
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (sliderMaxPrice !== maxPrice) {
+        updateParams({ maxPrice: sliderMaxPrice })
+      }
+    }, 350)
+    return () => clearTimeout(timer)
+  }, [sliderMaxPrice, maxPrice])
+
   const fetchProducts = useCallback(() => {
     setError(null)
+    setLoading(true)
     const params = {
       category: activeCategories,
       search: searchParams.get('search') || undefined,
@@ -48,10 +67,10 @@ export default function ShopPage() {
         setProducts(list)
       })
       .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
   }, [activeCategories, minPrice, maxPrice, sort, searchParams])
 
   useEffect(() => {
-    setProducts(null)
     fetchProducts()
   }, [fetchProducts])
 
@@ -66,7 +85,7 @@ export default function ShopPage() {
         next.set(key, value)
       }
     })
-    setSearchParams(next)
+    setSearchParams(next, { replace: true, preventScrollReset: true })
   }
 
   const toggleCategory = (cat) => {
@@ -84,7 +103,8 @@ export default function ShopPage() {
 
   const clearAll = () => {
     setTextQuery('')
-    setSearchParams({})
+    setSliderMaxPrice(15000)
+    setSearchParams({}, { replace: true, preventScrollReset: true })
   }
 
   const resultCount = products ? products.length : 0
@@ -178,13 +198,15 @@ export default function ShopPage() {
                   min={0}
                   max={15000}
                   step={500}
-                  value={maxPrice}
-                  onChange={(e) => updateParams({ maxPrice: Number(e.target.value) })}
+                  value={sliderMaxPrice}
+                  onChange={(e) => setSliderMaxPrice(Number(e.target.value))}
+                  onPointerUp={() => updateParams({ maxPrice: sliderMaxPrice })}
+                  onTouchEnd={() => updateParams({ maxPrice: sliderMaxPrice })}
                   aria-label="Maximum price"
                 />
                 <div className="price-range__labels">
                   <span>{fmt(minPrice)}</span>
-                  <span>{fmt(maxPrice)}</span>
+                  <span>{fmt(sliderMaxPrice)}</span>
                 </div>
               </div>
             </div>
@@ -243,22 +265,39 @@ export default function ShopPage() {
             </button>
           </aside>
 
-          <div>
+          <div className="shop-products-wrap" style={{ minHeight: '650px', position: 'relative' }}>
             {error && (
               <div className="alert alert-error">
                 We couldn't load the collection. {error}
               </div>
             )}
-            {!error && !products && <ProductGridSkeleton count={8} />}
-            {!error && products && (
-              <ProductGrid
-                products={products}
-                emptyMessage={
-                  location.pathname === '/shop'
-                    ? 'Try widening your price range or clearing a filter.'
-                    : 'No pieces found.'
-                }
-              />
+            {!error && products === null && <ProductGridSkeleton count={8} />}
+            {!error && products !== null && (
+              <div style={{ opacity: loading ? 0.6 : 1, transition: 'opacity 0.2s ease' }}>
+                <ProductGrid
+                  products={products}
+                  emptyMessage={
+                    location.pathname === '/shop'
+                      ? 'No pieces found in this price range. Try widening your price range.'
+                      : 'No pieces found.'
+                  }
+                />
+                {products.length === 0 && (
+                  <div style={{ textAlign: 'center', marginTop: 24 }}>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={() => {
+                        setSliderMaxPrice(15000);
+                        updateParams({ minPrice: undefined, maxPrice: undefined });
+                      }}
+                      style={{ fontSize: '0.82rem' }}
+                    >
+                      Reset Price Filter
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
