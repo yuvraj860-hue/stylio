@@ -63,7 +63,7 @@ function Footer() {
               Considered clothing and modern luxury fashion. Curated silhouettes, honest fabrics, and AI-powered personal styling.
             </p>
             <div style={{ marginTop: 14, fontSize: '0.8rem', color: 'rgba(245, 241, 234, 0.55)' }}>
-              Concierge: <a href="mailto:concierge@stylio.luxury" style={{ color: 'var(--color-gold-light)', display: 'inline' }}>concierge@stylio.luxury</a>
+              Concierge: <a href="mailto:yuvrajsingh45842@gmail.com" style={{ color: 'var(--color-gold-light)', display: 'inline' }}>yuvrajsingh45842@gmail.com</a>
             </div>
           </div>
 
@@ -106,7 +106,7 @@ function Footer() {
             </button>
           </div>
 
-          {/* Contact Us Column (Luxury Theme) */}
+          {/* Contact Us Column (User Details & Socials) */}
           <div className="footer__col footer__contact">
             <div className="footer__contact-head">
               <div className="eyebrow" style={{ marginBottom: 6, color: 'var(--color-gold-light)' }}>Get in Touch</div>
@@ -122,52 +122,96 @@ function Footer() {
                     <circle cx="12" cy="10" r="3" />
                   </svg>
                 </span>
-                <span className="footer__contact-text">Sitapura, Jaipur, Rajasthan</span>
+                <span className="footer__contact-text">Sasaram, Bihar 821115</span>
               </div>
 
-              <a href="mailto:urbanshiftt@gmail.com" className="footer__contact-item footer__contact-link">
+              <a href="mailto:yuvrajsingh45842@gmail.com" className="footer__contact-item footer__contact-link">
                 <span className="footer__contact-icon">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold, #c5a059)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <rect width="20" height="16" x="2" y="4" rx="2" />
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L1 7" />
                   </svg>
                 </span>
-                <span className="footer__contact-text">urbanshiftt@gmail.com</span>
+                <span className="footer__contact-text">yuvrajsingh45842@gmail.com</span>
               </a>
 
-              <a href="tel:+919876543210" className="footer__contact-item footer__contact-link">
+              <a href="tel:+918603558113" className="footer__contact-item footer__contact-link">
                 <span className="footer__contact-icon">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold, #c5a059)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                   </svg>
                 </span>
-                <span className="footer__contact-text">+91 98765 43210</span>
+                <span className="footer__contact-text">+91 8603558113</span>
               </a>
             </div>
 
             <div className="footer__contact-socials">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="footer__social-btn" aria-label="Facebook">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                </svg>
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer__social-btn" aria-label="Instagram">
+              {/* Instagram */}
+              <a
+                href="https://www.instagram.com/__yuvraj.rajput.26__?stkn=Ymk5emUzNW5idXhm"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer__social-btn"
+                aria-label="Instagram"
+              >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
                 </svg>
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="footer__social-btn" aria-label="Twitter">
+
+              {/* Facebook */}
+              <a
+                href="https://www.facebook.com/share/1bVzp77QKQ/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer__social-btn"
+                aria-label="Facebook"
+              >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
                 </svg>
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="footer__social-btn" aria-label="LinkedIn">
+
+              {/* LinkedIn */}
+              <a
+                href="https://www.linkedin.com/in/yuvraj-singh-1742a3393?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer__social-btn"
+                aria-label="LinkedIn"
+              >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                   <rect x="2" y="9" width="4" height="12" />
                   <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+
+              {/* GitHub */}
+              <a
+                href="https://github.com/yuvraj860-hue"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer__social-btn"
+                aria-label="GitHub"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                </svg>
+              </a>
+
+              {/* X / Twitter */}
+              <a
+                href="https://x.com/YuvrajSingh860"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer__social-btn"
+                aria-label="X (formerly Twitter)"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
               </a>
             </div>
