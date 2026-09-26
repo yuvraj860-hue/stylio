@@ -564,6 +564,25 @@ export default function ProductPage() {
         />
       )}
 
+      {/* Mobile Sticky Bottom Add to Bag Bar */}
+      {product && !outOfStock && (
+        <div className="product-mobile-bar">
+          <div className="product-mobile-bar__info">
+            <span className="product-mobile-bar__name">{product.name}</span>
+            <span className="product-mobile-bar__price">
+              {Number.isFinite(price) ? fmt(price) : '—'}
+            </span>
+          </div>
+          <button
+            type="button"
+            className="btn btn-dark product-mobile-bar__btn"
+            onClick={handleAdd}
+          >
+            Add to Bag
+          </button>
+        </div>
+      )}
+
       <VisualSearchModal
         open={visualSearchOpen}
         onClose={() => setVisualSearchOpen(false)}

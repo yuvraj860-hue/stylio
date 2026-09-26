@@ -91,6 +91,8 @@ export default function CustomerCareModal({ isOpen, onClose, initialTab = 'shipp
             background: '#f8fafc',
             padding: '0 16px',
             overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'none',
           }}
         >
           {[

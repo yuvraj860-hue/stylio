@@ -105,12 +105,14 @@ export default function SizeGuideModal({ category = '', onClose }) {
               paddingBottom: 12,
               marginBottom: 16,
               overflowX: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
             }}
           >
             <button
               type="button"
               className={`btn ${activeTab === 'apparel' ? 'btn-dark' : 'btn-outline'}`}
-              style={{ fontSize: '0.78rem', padding: '6px 14px' }}
+              style={{ fontSize: '0.78rem', padding: '6px 14px', whiteSpace: 'nowrap' }}
               onClick={() => setActiveTab('apparel')}
             >
               Apparel & Tops
@@ -118,7 +120,7 @@ export default function SizeGuideModal({ category = '', onClose }) {
             <button
               type="button"
               className={`btn ${activeTab === 'bottoms' ? 'btn-dark' : 'btn-outline'}`}
-              style={{ fontSize: '0.78rem', padding: '6px 14px' }}
+              style={{ fontSize: '0.78rem', padding: '6px 14px', whiteSpace: 'nowrap' }}
               onClick={() => setActiveTab('bottoms')}
             >
               Trousers & Bottoms
@@ -126,7 +128,7 @@ export default function SizeGuideModal({ category = '', onClose }) {
             <button
               type="button"
               className={`btn ${activeTab === 'footwear' ? 'btn-dark' : 'btn-outline'}`}
-              style={{ fontSize: '0.78rem', padding: '6px 14px' }}
+              style={{ fontSize: '0.78rem', padding: '6px 14px', whiteSpace: 'nowrap' }}
               onClick={() => setActiveTab('footwear')}
             >
               Footwear & Shoes
@@ -134,7 +136,7 @@ export default function SizeGuideModal({ category = '', onClose }) {
           </div>
 
           {/* Unit Toggle */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
             <span style={{ fontSize: '0.86rem', fontWeight: 600 }}>{currentChart.title}</span>
             <div className="size-unit-toggle">
               <button

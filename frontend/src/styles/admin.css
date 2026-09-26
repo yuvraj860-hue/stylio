@@ -483,10 +483,12 @@ a.stat-card:hover {
   overflow-x: auto;
   border-radius: 8px;
   background: #ffffff;
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table table {
   width: 100%;
+  min-width: 620px;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.87rem;
@@ -1039,7 +1041,8 @@ a.stat-card:hover {
 
 @media (max-width: 640px) {
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
   }
   
   .dashboard-header,
@@ -1050,5 +1053,11 @@ a.stat-card:hover {
 
   .header-actions .view-site-btn span {
     display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }

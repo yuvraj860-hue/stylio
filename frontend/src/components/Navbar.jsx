@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useUser, UserButton, SignInButton, SignOutButton } from '@clerk/clerk-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -11,6 +11,7 @@ export default function Navbar() {
   const { count, openCart } = useCart();
   const { count: wishlistCount } = useWishlist();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileQuery, setMobileQuery] = useState('');
 
@@ -240,7 +241,7 @@ export default function Navbar() {
             e.preventDefault();
             setMobileOpen(false);
             if (mobileQuery.trim()) {
-              window.location.href = `/shop?search=${encodeURIComponent(mobileQuery.trim())}`;
+              navigate(`/shop?search=${encodeURIComponent(mobileQuery.trim())}`);
             }
           }}
         >

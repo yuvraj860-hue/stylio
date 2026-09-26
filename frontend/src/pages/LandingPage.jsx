@@ -152,7 +152,7 @@ export default function LandingPage() {
           <h1
             style={{
               fontFamily: 'var(--font-display, Playfair Display, serif)',
-              fontSize: 'clamp(2.4rem, 5.5vw, 4.2rem)',
+              fontSize: 'clamp(1.85rem, 5.5vw, 4.2rem)',
               fontWeight: 500,
               lineHeight: 1.15,
               margin: '0 0 20px',
@@ -235,7 +235,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 32 }}>
             <div style={{ background: '#ffffff', padding: '36px 30px', borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 4px 18px rgba(0,0,0,0.03)' }}>
               <div style={{ fontSize: '1.8rem', fontWeight: 300, color: 'var(--color-gold, #c5a059)', fontFamily: 'var(--font-display, serif)', marginBottom: 12 }}>
                 01.
@@ -319,7 +319,7 @@ export default function LandingPage() {
               borderRadius: 16,
               overflow: 'hidden',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
               border: '1px solid #1e293b',
               boxShadow: '0 20px 40px -10px rgba(0,0,0,0.5)',
             }}
@@ -410,7 +410,7 @@ export default function LandingPage() {
       {/* Interactive AI Stylist Live Experience Section */}
       <section style={{ padding: 'clamp(50px, 8vw, 90px) 24px', background: '#faf9f5' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 40, alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 40, alignItems: 'center' }}>
             <div>
               <div style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.24em', color: 'var(--color-gold, #c5a059)', fontWeight: 600, marginBottom: 10 }}>
                 Intelligent Concierge
@@ -530,7 +530,7 @@ export default function LandingPage() {
           </p>
 
           {!unlocked ? (
-            <form onSubmit={handleVipSubmit} style={{ display: 'flex', gap: 10, maxWidth: 440, margin: '0 auto' }}>
+            <form onSubmit={handleVipSubmit} style={{ display: 'flex', gap: 10, maxWidth: 440, margin: '0 auto', flexWrap: 'wrap' }}>
               <input
                 type="email"
                 placeholder="Enter your email address..."
@@ -538,7 +538,7 @@ export default function LandingPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 style={{
-                  flex: 1,
+                  flex: '1 1 220px',
                   padding: '13px 18px',
                   borderRadius: 4,
                   border: '1px solid rgba(255,255,255,0.22)',
@@ -551,7 +551,7 @@ export default function LandingPage() {
               <button
                 type="submit"
                 className="btn btn-gold"
-                style={{ padding: '13px 24px', fontSize: '0.84rem', letterSpacing: '0.12em', whiteSpace: 'nowrap' }}
+                style={{ flex: '1 1 140px', padding: '13px 24px', fontSize: '0.84rem', letterSpacing: '0.12em', whiteSpace: 'nowrap' }}
               >
                 Unlock ₹500
               </button>
