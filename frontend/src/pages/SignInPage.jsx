@@ -15,6 +15,14 @@ export default function SignInPage() {
           path="/sign-in"
           signUpUrl="/sign-up"
           appearance={{
+            layout: {
+              socialButtonsPlacement: 'bottom',
+              socialButtonsVariant: 'blockButton',
+            },
+            options: {
+              socialButtonsPlacement: 'bottom',
+              socialButtonsVariant: 'blockButton',
+            },
             elements: {
               formButtonPrimary: 'btn btn-dark btn-block',
               card: 'auth-form',

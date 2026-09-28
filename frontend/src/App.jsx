@@ -246,12 +246,23 @@ function Footer() {
   );
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 export default function App() {
   const location = useLocation();
   const isPortal = location.pathname.startsWith('/admin') || location.pathname.startsWith('/delivery');
 
   return (
     <div className={`app ${isPortal ? 'app--portal' : ''}`}>
+      <ScrollToTop />
       {!isPortal && <Navbar />}
       <main className={isPortal ? 'main--portal' : ''}>
         <Routes>

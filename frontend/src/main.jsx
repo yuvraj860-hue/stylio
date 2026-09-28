@@ -37,6 +37,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ClerkProvider
           publishableKey={import.meta.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY}
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          appearance={{
+            layout: {
+              socialButtonsPlacement: 'bottom',
+              socialButtonsVariant: 'blockButton',
+            },
+            options: {
+              socialButtonsPlacement: 'bottom',
+              socialButtonsVariant: 'blockButton',
+            },
+          }}
         >
           <ClerkTokenProvider>
             <CurrencyProvider>

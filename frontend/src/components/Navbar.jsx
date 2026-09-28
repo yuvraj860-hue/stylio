@@ -218,19 +218,13 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <SignInButton
-              mode="redirect"
-              signInUrl="/sign-in"
-              afterSignInUrl="/account"
+            <Link
+              to="/sign-in"
+              className="icon-btn"
+              aria-label="Sign in"
             >
-              <Link
-                to="/sign-in"
-                className="icon-btn"
-                aria-label="Sign in"
-              >
-                <UserIcon />
-              </Link>
-            </SignInButton>
+              <UserIcon />
+            </Link>
           )}
 
           <button
@@ -296,20 +290,15 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <SignInButton
-              mode="redirect"
-              signInUrl="/sign-in"
-              afterSignInUrl="/account"
+            <Link
+              to="/sign-in"
+              className="btn btn-outline btn-block"
+              style={{ marginTop: 8, textAlign: 'left' }}
+              onClick={() => setMobileOpen(false)}
             >
-              <Link
-                to="/sign-in"
-                className="btn btn-outline btn-block"
-                style={{ marginTop: 8, textAlign: 'left' }}
-              >
-                Sign In
-              </Link>
-            </SignInButton>
-            <Link to="/sign-up" className="btn btn-dark btn-block" style={{ marginTop: 8, textAlign: 'left' }}>
+              Sign In
+            </Link>
+            <Link to="/sign-up" className="btn btn-dark btn-block" style={{ marginTop: 8, textAlign: 'left' }} onClick={() => setMobileOpen(false)}>
               Create Account
             </Link>
           </>
