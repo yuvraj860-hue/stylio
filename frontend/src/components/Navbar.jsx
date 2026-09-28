@@ -8,6 +8,23 @@ import { CartIcon, UserIcon, MenuIcon, CloseIcon, LogOutIcon, HeartIcon, OrdersI
 
 export default function Navbar() {
   const { user, isLoaded, isSignedIn } = useUser();
+  const [localUser, setLocalUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('stylio_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const handleAuthChange = (e) => {
+      setLocalUser(e.detail?.user || null);
+    };
+    window.addEventListener('stylio:auth-change', handleAuthChange);
+    return () => window.removeEventListener('stylio:auth-change', handleAuthChange);
+  }, []);
+
   const { count, openCart } = useCart();
   const { count: wishlistCount } = useWishlist();
   const location = useLocation();
@@ -124,7 +141,7 @@ export default function Navbar() {
             {count > 0 && <span className="cart-badge">{count}</span>}
           </button>
 
-          {isSignedIn && user ? (
+          {((isSignedIn && user) || localUser) ? (
             <div className="navbar__user-group" ref={userMenuRef}>
               <button
                 type="button"
@@ -132,23 +149,23 @@ export default function Navbar() {
                 onClick={() => setUserMenuOpen((v) => !v)}
                 aria-expanded={userMenuOpen}
                 aria-label="User account menu"
-                title={`${user.fullName || user.firstName || 'Account'} - Profile`}
+                title={`${(user?.fullName || user?.firstName || localUser?.name || 'Account')} - Profile`}
               >
                 <span className="navbar__avatar">
-                  {(user.firstName || user.fullName || 'U').charAt(0).toUpperCase()}
+                  {(user?.firstName || user?.fullName || localUser?.name || 'U').charAt(0).toUpperCase()}
                 </span>
               </button>
 
               {userMenuOpen && (
                 <div className="user-dropdown-menu">
                   <div className="user-dropdown-header">
-                    <div className="user-dropdown-name">{user.fullName || user.firstName || 'Account'}</div>
+                    <div className="user-dropdown-name">{user?.fullName || user?.firstName || localUser?.name || 'Account'}</div>
                     <div className="user-dropdown-email">
-                      {user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress || ''}
+                      {user?.primaryEmailAddress?.emailAddress || user?.emailAddresses?.[0]?.emailAddress || (localUser?.phone ? `+91 ${localUser.phone}` : localUser?.email || '')}
                     </div>
-                    {user.publicMetadata?.role && (
+                    {(user?.publicMetadata?.role || localUser?.role) && (
                       <span className="user-dropdown-role">
-                        {user.publicMetadata.role === 'admin' ? '🛡️ Administrator' : user.publicMetadata.role === 'delivery' ? '🚚 Delivery Partner' : 'VIP Member'}
+                        {(user?.publicMetadata?.role || localUser?.role) === 'admin' ? '🛡️ Administrator' : (user?.publicMetadata?.role || localUser?.role) === 'delivery' ? '🚚 Delivery Partner' : 'VIP Member'}
                       </span>
                     )}
                   </div>
@@ -182,7 +199,7 @@ export default function Navbar() {
                     <span>Wishlist ({wishlistCount})</span>
                   </Link>
 
-                  {['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
+                  {['admin', 'warehouse'].includes(user?.publicMetadata?.role || localUser?.role) && (
                     <Link
                       to="/admin"
                       className="user-dropdown-item user-dropdown-item--gold"
@@ -192,7 +209,7 @@ export default function Navbar() {
                     </Link>
                   )}
 
-                  {user?.publicMetadata?.role === 'delivery' && (
+                  {(user?.publicMetadata?.role || localUser?.role) === 'delivery' && (
                     <Link
                       to="/delivery"
                       className="user-dropdown-item user-dropdown-item--gold"
@@ -204,16 +221,38 @@ export default function Navbar() {
 
                   <div className="user-dropdown-divider" />
 
-                  <SignOutButton signOutUrl="/" afterSignOutUrl="/">
+                  {isSignedIn ? (
+                    <SignOutButton signOutUrl="/" afterSignOutUrl="/">
+                      <button
+                        type="button"
+                        className="user-dropdown-item user-dropdown-item--logout"
+                        onClick={() => {
+                          localStorage.removeItem('stylio_user');
+                          localStorage.removeItem('stylio_auth_token');
+                          setLocalUser(null);
+                          setUserMenuOpen(false);
+                        }}
+                      >
+                        <LogOutIcon size={16} />
+                        <span>Log Out</span>
+                      </button>
+                    </SignOutButton>
+                  ) : (
                     <button
                       type="button"
                       className="user-dropdown-item user-dropdown-item--logout"
-                      onClick={() => setUserMenuOpen(false)}
+                      onClick={() => {
+                        localStorage.removeItem('stylio_user');
+                        localStorage.removeItem('stylio_auth_token');
+                        setLocalUser(null);
+                        setUserMenuOpen(false);
+                        navigate('/');
+                      }}
                     >
                       <LogOutIcon size={16} />
                       <span>Log Out</span>
                     </button>
-                  </SignOutButton>
+                  )}
                 </div>
               )}
             </div>
@@ -255,14 +294,14 @@ export default function Navbar() {
         <Link to="/wishlist" onClick={() => setMobileOpen(false)}>
           Wishlist ({wishlistCount})
         </Link>
-        {isSignedIn ? (
+        {((isSignedIn && user) || localUser) ? (
           <>
-            {['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
+            {['admin', 'warehouse'].includes(user?.publicMetadata?.role || localUser?.role) && (
               <Link to="/admin" onClick={() => setMobileOpen(false)} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
                 Admin Panel
               </Link>
             )}
-            {user?.publicMetadata?.role === 'delivery' && (
+            {(user?.publicMetadata?.role || localUser?.role) === 'delivery' && (
               <Link to="/delivery" onClick={() => setMobileOpen(false)} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
                 Delivery Portal
               </Link>
@@ -273,20 +312,43 @@ export default function Navbar() {
             <Link to="/account" onClick={() => setMobileOpen(false)}>
               My Account
             </Link>
-            <SignOutButton
-              signOutUrl="/"
-              afterSignOutUrl="/"
-            >
+            {isSignedIn ? (
+              <SignOutButton
+                signOutUrl="/"
+                afterSignOutUrl="/"
+              >
+                <button
+                  type="button"
+                  className="btn btn-outline btn-block"
+                  style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                  onClick={() => {
+                    localStorage.removeItem('stylio_user');
+                    localStorage.removeItem('stylio_auth_token');
+                    setLocalUser(null);
+                    setMobileOpen(false);
+                  }}
+                >
+                  <LogOutIcon size={16} />
+                  <span>Log Out</span>
+                </button>
+              </SignOutButton>
+            ) : (
               <button
                 type="button"
                 className="btn btn-outline btn-block"
                 style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-                onClick={() => setMobileOpen(false)}
+                onClick={() => {
+                  localStorage.removeItem('stylio_user');
+                  localStorage.removeItem('stylio_auth_token');
+                  setLocalUser(null);
+                  setMobileOpen(false);
+                  navigate('/');
+                }}
               >
                 <LogOutIcon size={16} />
                 <span>Log Out</span>
               </button>
-            </SignOutButton>
+            )}
           </>
         ) : (
           <>
