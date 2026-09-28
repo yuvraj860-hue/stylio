@@ -43,6 +43,12 @@ async function getAuthHeaders() {
       // Clerk token fetch failed, proceed without auth
     }
   }
+  if (!headers['Authorization'] && typeof localStorage !== 'undefined') {
+    const localToken = localStorage.getItem('stylio_auth_token');
+    if (localToken) {
+      headers['Authorization'] = `Bearer ${localToken}`;
+    }
+  }
   return headers;
 }
 

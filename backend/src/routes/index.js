@@ -7,6 +7,7 @@ import adminRoutes from './admin.js';
 import deliveryRoutes from './delivery.js';
 import warehouseRoutes from './warehouse.js';
 import userRoutes from './user.js';
+import authRoutes from './auth.js';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/admin', adminRoutes);
 router.use('/delivery', deliveryRoutes);
 router.use('/warehouse', warehouseRoutes);
 router.use('/user', userRoutes);
+router.use('/auth', authRoutes);
 
 export default router;
