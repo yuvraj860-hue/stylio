@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import SearchBar from './SearchBar';
 import { CartIcon, UserIcon, MenuIcon, CloseIcon, LogOutIcon, HeartIcon, OrdersIcon } from './icons';
+import StylioLogo from './StylioLogo.jsx';
 
 export default function Navbar() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -83,10 +84,11 @@ export default function Navbar() {
       </div>
 
       <header className="navbar">
-      <div className="navbar__inner">
-        <Link to="/" className="navbar__logo" aria-label="STYLIO home">
-          STYL<span>IO</span>
-        </Link>
+        <div className="navbar__inner">
+          <Link to="/" className="navbar__logo" aria-label="STYLIO home" style={{ display: 'inline-flex', alignItems: 'center', gap: 9 }}>
+            <StylioLogo size={24} />
+            <span>STYL<span>IO</span></span>
+          </Link>
 
         <nav className="navbar__links" aria-label="Primary">
           <Link

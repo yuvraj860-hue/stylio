@@ -1,13 +1,30 @@
 {
-  "name": "STYLIO — Fashion",
+  "name": "STYLIO — Luxury Fashion & AI Stylist",
   "short_name": "STYLIO",
-  "description": "Considered clothing and accessories. Modern minimal fashion, curated for you.",
-  "start_url": ".",
+  "description": "Considered clothing, designer dresses, sneakers, and bespoke styling with our AI Stylist.",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f0f",
   "theme_color": "#0f0f0f",
   "orientation": "portrait",
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
     {
       "src": "/favicon.svg",
       "sizes": "any",

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SignIn } from '@clerk/clerk-react';
 import PhoneOtpLogin from '../components/PhoneOtpLogin.jsx';
 
@@ -7,14 +7,55 @@ const SIDE_IMAGE =
 
 export default function SignInPage() {
   const [authMethod, setAuthMethod] = useState('phone'); // 'phone' | 'clerk'
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 820);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 820);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <div className="auth-layout">
-      <div className="auth-side">
-        <img src={SIDE_IMAGE} alt="Minimal fashion editorial" />
-      </div>
-      <div className="auth-form-wrap">
-        <div style={{ width: '100%', maxWidth: '400px' }}>
+    <div
+      className="auth-layout"
+      style={{
+        display: isMobile ? 'block' : 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        width: '100%',
+        minHeight: isMobile ? 'auto' : 'calc(100vh - 72px)',
+        boxSizing: 'border-box',
+        overflowX: 'hidden',
+      }}
+    >
+      {!isMobile && (
+        <div className="auth-side" style={{ flex: '1 1 50%', width: '50%', minHeight: '100%' }}>
+          <img src={SIDE_IMAGE} alt="Minimal fashion editorial" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
+      )}
+      <div
+        className="auth-form-wrap"
+        style={{
+          flex: isMobile ? 'none' : '1 1 50%',
+          width: '100%',
+          maxWidth: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: isMobile ? '16px 12px' : '40px 24px',
+          boxSizing: 'border-box',
+          margin: '0 auto',
+        }}
+      >
+        <div
+          className="auth-form-container"
+          style={{
+            width: '100%',
+            maxWidth: isMobile ? '100%' : '400px',
+            margin: '0 auto',
+            boxSizing: 'border-box',
+          }}
+        >
           <div className="auth-method-tabs" role="tablist">
             <button
               type="button"
