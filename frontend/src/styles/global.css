@@ -2123,7 +2123,7 @@ button:disabled {
   background: var(--color-border, #e5e7eb);
 }
 
-/* Auth method tabs (Mobile OTP vs Email/Google) */
+/* Auth method tabs (Email OTP vs Google/Password) */
 .auth-method-tabs {
   display: flex;
   background: #f1f3f5;
@@ -2157,8 +2157,9 @@ button:disabled {
   font-weight: 600;
 }
 
-/* Phone OTP Card */
-.phone-otp-box {
+/* Email OTP Card */
+.phone-otp-box,
+.email-otp-box {
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
@@ -2171,12 +2172,14 @@ button:disabled {
   overflow: hidden;
 }
 
-.phone-otp-header {
+.phone-otp-header,
+.email-otp-header {
   text-align: center;
   margin-bottom: 24px;
 }
 
-.phone-otp-title {
+.phone-otp-title,
+.email-otp-title {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-ink, #111);
@@ -2184,13 +2187,15 @@ button:disabled {
   letter-spacing: -0.02em;
 }
 
-.phone-otp-sub {
+.phone-otp-sub,
+.email-otp-sub {
   font-size: 0.88rem;
   color: var(--color-ink-muted, #666);
   line-height: 1.5;
 }
 
-.phone-otp-alert {
+.phone-otp-alert,
+.email-otp-alert {
   padding: 10px 14px;
   border-radius: 6px;
   font-size: 0.84rem;
@@ -2198,19 +2203,22 @@ button:disabled {
   word-break: break-word;
 }
 
-.phone-otp-alert--error {
+.phone-otp-alert--error,
+.email-otp-alert--error {
   background: #fef2f2;
   color: #dc2626;
   border: 1px solid #fecaca;
 }
 
-.phone-otp-alert--success {
+.phone-otp-alert--success,
+.email-otp-alert--success {
   background: #f0fdf4;
   color: #16a34a;
   border: 1px solid #bbf7d0;
 }
 
-.phone-otp-dev-banner {
+.phone-otp-dev-banner,
+.email-otp-dev-banner {
   background: #fffbeb;
   border: 1px dashed #f59e0b;
   color: #b45309;
@@ -2223,7 +2231,8 @@ button:disabled {
   margin-bottom: 16px;
 }
 
-.phone-otp-dev-fill {
+.phone-otp-dev-fill,
+.email-otp-dev-fill {
   background: #f59e0b;
   color: #ffffff;
   border: none;
@@ -2234,11 +2243,13 @@ button:disabled {
   cursor: pointer;
 }
 
-.phone-otp-dev-fill:hover {
+.phone-otp-dev-fill:hover,
+.email-otp-dev-fill:hover {
   background: #d97706;
 }
 
-.phone-otp-form {
+.phone-otp-form,
+.email-otp-form {
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -2246,7 +2257,8 @@ button:disabled {
   box-sizing: border-box;
 }
 
-.phone-otp-field {
+.phone-otp-field,
+.email-otp-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -2254,7 +2266,8 @@ button:disabled {
   box-sizing: border-box;
 }
 
-.phone-otp-field label {
+.phone-otp-field label,
+.email-otp-field label {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--color-ink, #222);
@@ -2262,7 +2275,8 @@ button:disabled {
   letter-spacing: 0.04em;
 }
 
-.phone-input-group {
+.phone-input-group,
+.email-input-group {
   display: flex;
   align-items: center;
   border: 1.5px solid #e2e8f0;
@@ -2274,12 +2288,14 @@ button:disabled {
   box-sizing: border-box;
 }
 
-.phone-input-group:focus-within {
+.phone-input-group:focus-within,
+.email-input-group:focus-within {
   border-color: #111111;
   box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
 }
 
-.phone-country-code {
+.phone-country-code,
+.email-input-icon {
   padding: 12px 14px;
   background: #f8fafc;
   color: #334155;
@@ -2288,9 +2304,13 @@ button:disabled {
   border-right: 1.5px solid #e2e8f0;
   user-select: none;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.phone-input-group input {
+.phone-input-group input,
+.email-input-group input {
   flex: 1;
   min-width: 0 !important;
   width: 100% !important;
@@ -2305,7 +2325,8 @@ button:disabled {
   box-sizing: border-box;
 }
 
-.phone-otp-field > input:not([type="checkbox"]) {
+.phone-otp-field > input:not([type="checkbox"]),
+.email-otp-field > input:not([type="checkbox"]) {
   width: 100%;
   border: 1.5px solid #e2e8f0;
   border-radius: 8px;
@@ -2317,12 +2338,14 @@ button:disabled {
   transition: border-color 0.2s ease;
 }
 
-.phone-otp-field > input:focus {
+.phone-otp-field > input:focus,
+.email-otp-field > input:focus {
   border-color: #111111;
   box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
 }
 
-.phone-otp-code-input {
+.phone-otp-code-input,
+.email-otp-code-input {
   text-align: center;
   font-size: 1.6rem !important;
   letter-spacing: 0.35em !important;
@@ -2330,13 +2353,15 @@ button:disabled {
   padding: 12px !important;
 }
 
-.phone-otp-row {
+.phone-otp-row,
+.email-otp-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.phone-otp-change-link {
+.phone-otp-change-link,
+.email-otp-change-link {
   background: none;
   border: none;
   color: var(--color-gold, #c5a059);
@@ -2347,7 +2372,8 @@ button:disabled {
   text-decoration: underline;
 }
 
-.phone-otp-submit {
+.phone-otp-submit,
+.email-otp-submit {
   padding: 14px;
   font-size: 0.95rem;
   letter-spacing: 0.06em;
@@ -2357,17 +2383,20 @@ button:disabled {
   margin-top: 6px;
 }
 
-.phone-otp-resend-row {
+.phone-otp-resend-row,
+.email-otp-resend-row {
   text-align: center;
   margin-top: 4px;
   font-size: 0.85rem;
 }
 
-.phone-otp-timer {
+.phone-otp-timer,
+.email-otp-timer {
   color: #94a3b8;
 }
 
-.phone-otp-resend-btn {
+.phone-otp-resend-btn,
+.email-otp-resend-btn {
   background: none;
   border: none;
   color: var(--color-gold, #c5a059);

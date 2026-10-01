@@ -107,8 +107,40 @@ export async function sendWelcomeEmail(user) {
   });
 }
 
+export async function sendOtpEmail({ to, otp }) {
+  if (!brevoConfigured()) return false;
+
+  const bodyHtml = `
+    <p>Hi,</p>
+    <p>Your one-time verification code (OTP) for <strong>STYLIO</strong> is:</p>
+    <div style="margin:24px 0;padding:16px 24px;background:#f5f5f5;border-radius:8px;display:inline-block;letter-spacing:6px;font-size:28px;font-weight:700;color:#111">
+      ${escapeHtml(otp)}
+    </div>
+    <p style="font-size:13px;color:#666">This verification code is valid for 5 minutes. Please do not share this code with anyone.</p>
+  `;
+
+  try {
+    return await sendEmail({
+      to,
+      subject: `Your STYLIO Verification Code: ${otp}`,
+      html: emailHtml({ title: 'Verification Code', bodyHtml }),
+    });
+  } catch (err) {
+    console.warn('[mailer] sendOtpEmail warning:', err.message);
+    return false;
+  }
+}
+
 export async function sendEmail({ to, subject, html }) {
   if (!brevoConfigured()) return false;
+
+  let senderEmail = env.EMAIL_FROM || 'no-reply@stylio.in';
+  let senderName = 'STYLIO';
+  const match = senderEmail.match(/^(.*?)\s*<([^>]+)>/);
+  if (match) {
+    senderName = match[1].trim() || 'STYLIO';
+    senderEmail = match[2].trim();
+  }
 
   const response = await fetch(BREVO_URL, {
     method: 'POST',
@@ -117,7 +149,7 @@ export async function sendEmail({ to, subject, html }) {
       'api-key': env.BREVO_API_KEY,
     },
     body: JSON.stringify({
-      sender: { email: env.EMAIL_FROM },
+      sender: { name: senderName, email: senderEmail },
       to: [{ email: to }],
       subject,
       htmlContent: html,
