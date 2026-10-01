@@ -54,19 +54,40 @@ const categoryImage = (photoId) =>
 
 const CATEGORIES = [
   {
-    name: 'Dresses',
+    name: 'Shirts & Overshirts',
+    query: 'category=Shirts',
+    subtitle: 'Linen, Oxford & Twill',
+    image: categoryImage('photo-1596755094514-f87e34085b2c')
+  },
+  {
+    name: "Dresses & Women's",
     query: 'category=Dresses',
-    image: categoryImage('photo-1515372039744-b8f02a3ae446')
+    subtitle: 'Silks, Florals & Co-Ords',
+    image: categoryImage('photo-1572804013309-59a88b7e92f1')
   },
   {
-    name: 'Sneakers',
+    name: 'Pants & Cargos',
+    query: 'category=Pants',
+    subtitle: 'Chinos, Trousers & Streetwear',
+    image: categoryImage('photo-1624378439575-d8705ad7ae80')
+  },
+  {
+    name: 'T-Shirts & Polos',
+    query: 'category=T-Shirts',
+    subtitle: 'Heavyweight & Graphic Tees',
+    image: categoryImage('photo-1503342217505-b0a15ec3261c')
+  },
+  {
+    name: 'Jackets & Blazers',
+    query: 'category=Jackets',
+    subtitle: 'Tailored Wool & Denim',
+    image: categoryImage('photo-1548624149-f9b1859aa9d0')
+  },
+  {
+    name: 'Sneakers & Soles',
     query: 'category=Sneakers',
+    subtitle: 'Italian Leather Craft',
     image: categoryImage('photo-1549298916-b41d501d3772')
-  },
-  {
-    name: 'Accessories',
-    query: 'category=Accessories',
-    image: categoryImage('photo-1584917865442-de89df76afd3')
   }
 ]
 
@@ -95,6 +116,7 @@ export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 })
   const [touchEndPos, setTouchEndPos] = useState({ x: 0, y: 0 })
+  const [activeTab, setActiveTab] = useState('all')
 
   // Auto-play continuous cycle: strictly slides automatically every 5 seconds (5000ms)
   useEffect(() => {
@@ -119,7 +141,6 @@ export default function HomePage() {
   const handleTouchEnd = () => {
     const distX = touchStartPos.x - touchEndPos.x
     const distY = touchStartPos.y - touchEndPos.y
-    // Strictly require intentional horizontal swipe (>60px and 1.5x greater than vertical movement)
     if (Math.abs(distX) > 60 && Math.abs(distX) > Math.abs(distY) * 1.5) {
       if (distX > 0) nextSlide()
       else prevSlide()
@@ -129,7 +150,7 @@ export default function HomePage() {
   useEffect(() => {
     let cancelled = false
     productApi
-      .list({ featured: true, limit: 8 })
+      .list({ limit: 36 })
       .then((data) => {
         if (cancelled) return
         const list = Array.isArray(data)
@@ -148,6 +169,23 @@ export default function HomePage() {
       cancelled = true
     }
   }, [])
+
+  // Filter products according to active tab
+  const displayedProducts = (featured || []).filter((p) => {
+    if (activeTab === 'all') return true
+    if (activeTab === 'women') {
+      const c = (p.category || '').toLowerCase()
+      const t = (p.tags || []).map((x) => x.toLowerCase())
+      return c === 'dresses' || t.includes('women') || t.includes('blouse') || t.includes('crop top')
+    }
+    if (activeTab === 'shirts-tees') {
+      return p.category === 'Shirts' || p.category === 'T-Shirts'
+    }
+    if (activeTab === 'bottoms') {
+      return p.category === 'Pants' || p.category === 'Jeans'
+    }
+    return true
+  }).slice(0, 8)
 
   return (
     <>
@@ -231,7 +269,183 @@ export default function HomePage() {
         </section>
       </div>
 
-      <section className="section">
+      {/* Modern Luxury Marquee Ribbon */}
+      <div className="marquee-strip" aria-hidden="true">
+        <div className="marquee-content">
+          <span className="marquee-item">✨ 47+ NEW ATELIER ARRIVALS NOW LIVE</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">🚚 COMPLIMENTARY EXPRESS DELIVERY OVER ₹1,500</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">✂️ USE CODE "STYLIO10" FOR 10% OFF</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">👗 MULBERRY SILK DRESSES & FLORAL CO-ORDS</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">👔 LINEN RESORT & OXFORD TAILORED SHIRTS</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">👖 PLEATED CHINOS & TACTICAL CARGOS</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">🔄 7-DAY DOORSTEP RETURNS & OTP VERIFIED DELIVERY</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">✨ 47+ NEW ATELIER ARRIVALS NOW LIVE</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">🚚 COMPLIMENTARY EXPRESS DELIVERY OVER ₹1,500</span>
+          <span className="marquee-sep">✦</span>
+          <span className="marquee-item">✂️ USE CODE "STYLIO10" FOR 10% OFF</span>
+        </div>
+      </div>
+
+      {/* Him & Her Curated Wardrobes Section */}
+      <section className="section" style={{ paddingBottom: 'var(--space-5)' }}>
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <div className="eyebrow">Wardrobe Curations</div>
+              <h2>Curated For Him & Her</h2>
+            </div>
+            <Link to="/shop" className="btn btn-ghost" style={{ fontSize: '0.78rem', letterSpacing: '0.18em' }}>
+              Explore All Styles →
+            </Link>
+          </div>
+
+          <div className="wardrobe-split">
+            {/* Women's Card */}
+            <Link to="/shop?category=Dresses" className="wardrobe-card">
+              <SafeImage
+                src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1200&q=85"
+                alt="Women's Collection"
+              />
+              <div className="wardrobe-card__overlay" />
+              <div className="wardrobe-card__content">
+                <span className="wardrobe-card__badge">Women's Couture & Resort</span>
+                <h3 className="wardrobe-card__title">The Women's Collection</h3>
+                <p className="wardrobe-card__desc">
+                  Fluid bias-cut silk dresses, smocked floral midis, cottagecore blouses, and sculpted power tailoring.
+                </p>
+                <span className="btn btn-gold" style={{ alignSelf: 'flex-start', display: 'inline-flex' }}>
+                  Explore Women's Edit →
+                </span>
+              </div>
+            </Link>
+
+            {/* Men's Card */}
+            <Link to="/shop?category=Shirts,Pants" className="wardrobe-card">
+              <SafeImage
+                src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1200&q=85"
+                alt="Men's Collection"
+              />
+              <div className="wardrobe-card__overlay" />
+              <div className="wardrobe-card__content">
+                <span className="wardrobe-card__badge">Men's Tailoring & Casuals</span>
+                <h3 className="wardrobe-card__title">The Men's Collection</h3>
+                <p className="wardrobe-card__desc">
+                  Crisp Oxford button-downs, breathable linen resort shirts, pleated chinos, and heavyweight street tees.
+                </p>
+                <span className="btn btn-gold" style={{ alignSelf: 'flex-start', display: 'inline-flex' }}>
+                  Explore Men's Edit →
+                </span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* By Category (6 Luxury Tiles) */}
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-head">
+            <div>
+              <div className="eyebrow">Explore Collections</div>
+              <h2>By Category</h2>
+            </div>
+            <Link to="/shop" className="btn btn-ghost" style={{ fontSize: '0.78rem', letterSpacing: '0.18em' }}>
+              Full Catalog →
+            </Link>
+          </div>
+          <div className="category-tiles">
+            {CATEGORIES.map((c) => (
+              <Link to={`/shop?${c.query}`} className="category-tile" key={c.name}>
+                <SafeImage src={c.image} alt={c.name} loading="lazy" />
+                <span className="category-tile__label">
+                  {c.name}
+                  <span className="category-tile__sub">{c.subtitle || 'Explore →'}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Showcase with Filter Tabs */}
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-head" style={{ marginBottom: 'var(--space-4)' }}>
+            <div>
+              <div className="eyebrow">Curated Pieces</div>
+              <h2>Featured & New Arrivals</h2>
+            </div>
+            <Link to="/shop" className="btn btn-ghost" style={{ fontSize: '0.78rem', letterSpacing: '0.18em' }}>
+              View All ({featured ? featured.length : 0}) →
+            </Link>
+          </div>
+
+          {/* Filter Pills */}
+          <div className="home-filter-tabs">
+            <button
+              type="button"
+              className={`home-filter-tab ${activeTab === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveTab('all')}
+            >
+              ✦ All Pieces
+            </button>
+            <button
+              type="button"
+              className={`home-filter-tab ${activeTab === 'women' ? 'active' : ''}`}
+              onClick={() => setActiveTab('women')}
+            >
+              👗 Dresses & Women's
+            </button>
+            <button
+              type="button"
+              className={`home-filter-tab ${activeTab === 'shirts-tees' ? 'active' : ''}`}
+              onClick={() => setActiveTab('shirts-tees')}
+            >
+              👔 Shirts & T-Shirts
+            </button>
+            <button
+              type="button"
+              className={`home-filter-tab ${activeTab === 'bottoms' ? 'active' : ''}`}
+              onClick={() => setActiveTab('bottoms')}
+            >
+              👖 Pants & Trousers
+            </button>
+          </div>
+
+          {error && (
+            <div className="alert alert-error">Couldn't load pieces. {error}</div>
+          )}
+          {!featured && !error && <ProductGridSkeleton count={4} />}
+
+          {featured && displayedProducts.length > 0 && (
+            <div className="product-grid">
+              {displayedProducts.map((p) => (
+                <ProductCard key={p._id} product={p} />
+              ))}
+            </div>
+          )}
+          {featured && displayedProducts.length === 0 && !error && (
+            <div className="empty-state">
+              <h3>No items found in this section</h3>
+              <p>Explore our full catalog to discover more.</p>
+              <Link to="/shop" className="btn btn-dark" style={{ marginTop: 12 }}>
+                Browse All Pieces
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Value Props */}
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="container">
           <div className="value-props">
             {VALUE_PROPS.map((v) => (
@@ -244,60 +458,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">Browse</div>
-              <h2>By Category</h2>
-            </div>
-          </div>
-          <div className="category-tiles">
-            {CATEGORIES.map((c) => (
-              <Link to={`/shop?${c.query}`} className="category-tile" key={c.name}>
-                <SafeImage src={c.image} alt={c.name} loading="lazy" />
-                <span className="category-tile__label">
-                  {c.name}
-                  <span className="category-tile__sub">Explore →</span>
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow">Editor's Pick</div>
-              <h2>Featured Pieces</h2>
-            </div>
-            <Link to="/shop" className="btn btn-ghost" style={{ fontSize: '0.78rem', letterSpacing: '0.18em' }}>
-              View All →
-            </Link>
-          </div>
-
-          {error && (
-            <div className="alert alert-error">Couldn't load featured pieces. {error}</div>
-          )}
-          {!featured && !error && <ProductGridSkeleton count={4} />}
-
-          {featured && featured.length > 0 && (
-            <div className="product-grid">
-              {featured.map((p) => (
-                <ProductCard key={p._id} product={p} />
-              ))}
-            </div>
-          )}
-          {featured && featured.length === 0 && !error && (
-            <div className="empty-state">
-              <h3>New pieces arriving soon</h3>
-              <p>Our buyers are out curating something special.</p>
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* Curated Editorial Split Banner */}
       <section className="section" style={{ paddingTop: 0 }}>
