@@ -6,7 +6,7 @@ import ProductGridSkeleton from '../components/ProductGridSkeleton'
 import { SearchIcon, FilterIcon } from '../components/icons'
 import { fmt } from '../utils/format'
 
-const CATEGORIES = ['T-Shirts', 'Dresses', 'Sneakers', 'Hoodies', 'Jeans', 'Jackets', 'Accessories']
+const CATEGORIES = ['Shirts', 'T-Shirts', 'Pants', 'Jeans', 'Dresses', 'Jackets', 'Hoodies', 'Sneakers', 'Accessories']
 
 export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams()

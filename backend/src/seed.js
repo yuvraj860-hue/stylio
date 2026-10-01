@@ -4,6 +4,7 @@ import Product from './models/Product.js';
 import connectDB from './config/db.js';
 import env from './config/env.js';
 import apiClient from './utils/apiClient.js';
+import { newProducts } from '../scripts/add-more-products.js';
 
 const indexProductsInML = async (products) => {
   const payload = products.map((product) => ({
@@ -231,6 +232,7 @@ const products = [
     imageUrl: unsplash('photo-1511499767150-a48a237f0083'),
     tags: ['aviator', 'sunglasses', 'uv protection', 'accessories'],
   },
+  ...newProducts,
 ];
 
 const seedDatabase = async () => {
