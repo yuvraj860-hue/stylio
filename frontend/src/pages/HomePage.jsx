@@ -118,6 +118,153 @@ const VALUE_PROPS = [
   }
 ]
 
+const FALLBACK_BEAUTY_PRODUCTS = [
+  {
+    _id: 'b-kajal',
+    name: '24H Smudge-Proof Herbal Kohl Kajal',
+    price: 299,
+    imageUrl: 'https://images.unsplash.com/photo-1583241800698-e8ab01c85b27?w=800&q=80&auto=format&fit=crop',
+    tags: ['kajal', 'eyes', 'makeup'],
+    colors: ['Intense Carbon Black']
+  },
+  {
+    _id: 'b-mascara',
+    name: 'Lash Drama Volumizing Waterproof Mascara',
+    price: 649,
+    imageUrl: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&q=80&auto=format&fit=crop',
+    tags: ['mascara', 'eyes', 'makeup'],
+    colors: ['Midnight Black']
+  },
+  {
+    _id: 'b-eyeliner',
+    name: 'Precision Waterproof Liquid Ink Eyeliner',
+    price: 799,
+    imageUrl: 'https://images.unsplash.com/photo-1631730486784-545631bc2713?w=800&q=80&auto=format&fit=crop',
+    tags: ['eyeliner', 'eyes', 'makeup'],
+    colors: ['Jet Carbon Black']
+  },
+  {
+    _id: 'b-lipstick',
+    name: 'Velvet Matte Rouge Lipstick',
+    price: 1299,
+    imageUrl: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=800&q=80&auto=format&fit=crop',
+    tags: ['lipstick', 'lips', 'makeup'],
+    colors: ['Rouge Noir', 'Rose Petal', 'Burnt Terracotta']
+  },
+  {
+    _id: 'b-liquid-lip',
+    name: 'Ultra-Matte Transfer-Proof Liquid Lipstick',
+    price: 699,
+    imageUrl: 'https://images.unsplash.com/photo-1625093742435-6fa192b6fb10?w=800&q=80&auto=format&fit=crop',
+    tags: ['liquid lipstick', 'lips', 'makeup'],
+    colors: ['Crimson Queen', 'Spiced Chai Nude', 'Mauve Obsession']
+  },
+  {
+    _id: 'b-lip-gloss',
+    name: 'High-Shine Glass Plumping Lip Gloss',
+    price: 449,
+    imageUrl: 'https://images.unsplash.com/photo-1608248597359-0027f32906eb?w=800&q=80&auto=format&fit=crop',
+    tags: ['lip gloss', 'lips', 'makeup'],
+    colors: ['Crystal Diamond', 'Glazed Cinnamon']
+  },
+  {
+    _id: 'b-foundation',
+    name: 'Luminous Silk Flawless Foundation',
+    price: 2199,
+    imageUrl: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=800&q=80&auto=format&fit=crop',
+    tags: ['foundation', 'face', 'makeup'],
+    colors: ['Ivory Glow', 'Warm Almond', 'Golden Caramel']
+  },
+  {
+    _id: 'b-primer',
+    name: 'Pore-Blurring Mattifying Face Primer',
+    price: 849,
+    imageUrl: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80&auto=format&fit=crop',
+    tags: ['primer', 'face', 'makeup'],
+    colors: ['Clear Invisible']
+  },
+  {
+    _id: 'b-concealer',
+    name: 'All-Day Full Coverage Concealer',
+    price: 749,
+    imageUrl: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=800&q=80&auto=format&fit=crop',
+    tags: ['concealer', 'face', 'makeup'],
+    colors: ['Warm Honey', 'Golden Beige', 'Ivory Fair']
+  },
+  {
+    _id: 'b-compact',
+    name: 'Velvet Compact Powder with SPF 30',
+    price: 599,
+    imageUrl: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=800&q=80&auto=format&fit=crop',
+    tags: ['compact', 'face', 'makeup'],
+    colors: ['Natural Ivory', 'Warm Sand', 'Golden Bronze']
+  },
+  {
+    _id: 'b-setting-spray',
+    name: '24H Long-Lasting Makeup Setting Spray',
+    price: 549,
+    imageUrl: 'https://images.unsplash.com/photo-1608248597359-0027f32906eb?w=800&q=80&auto=format&fit=crop',
+    tags: ['setting spray', 'face', 'makeup'],
+    colors: ['Dewy Mist']
+  },
+  {
+    _id: 'b-contour',
+    name: 'Sculpt & Glow Highlighter + Contour Palette',
+    price: 1199,
+    imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80&auto=format&fit=crop',
+    tags: ['contour', 'highlighter', 'face', 'makeup'],
+    colors: ['Champagne Bronze']
+  },
+  {
+    _id: 'b-brushes',
+    name: 'Professional 10-Piece Luxury Makeup Brush Set',
+    price: 999,
+    imageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80&auto=format&fit=crop',
+    tags: ['brushes', 'tools', 'makeup'],
+    colors: ['Rose Gold & Matte Black']
+  },
+  {
+    _id: 'b-blender',
+    name: 'Flawless Teardrop Beauty Blender Sponge Duo',
+    price: 349,
+    imageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80&auto=format&fit=crop',
+    tags: ['sponge', 'tools', 'makeup'],
+    colors: ['Pastel Rose & Lilac']
+  },
+  {
+    _id: 'b-nails',
+    name: 'Gel Finish Salon Shine Nail Enamel (Trio Pack)',
+    price: 499,
+    imageUrl: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80&auto=format&fit=crop',
+    tags: ['nail polish', 'nails', 'beauty'],
+    colors: ['Wine & Nudes Trio']
+  },
+  {
+    _id: 'b-serum',
+    name: '10% Vitamin C Radiance Glow Face Serum',
+    price: 899,
+    imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80&auto=format&fit=crop',
+    tags: ['serum', 'skincare', 'glow'],
+    colors: ['Clear Golden Dropper']
+  },
+  {
+    _id: 'b-micellar',
+    name: 'Bi-Phase Micellar Cleansing Water & Makeup Remover',
+    price: 399,
+    imageUrl: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80&auto=format&fit=crop',
+    tags: ['micellar water', 'remover', 'skincare'],
+    colors: ['Crystal Clear Phase']
+  },
+  {
+    _id: 'b-bridal-box',
+    name: 'Royal Bridal 24K Gold All-in-One Makeup Vanity Box',
+    price: 2999,
+    imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80&auto=format&fit=crop',
+    tags: ['bridal kit', 'vanity box', 'luxury', 'makeup'],
+    colors: ['Royal Gold Edition']
+  }
+]
+
 export default function HomePage() {
   const { addItem } = useCart()
   const [featured, setFeatured] = useState(null)
@@ -126,6 +273,7 @@ export default function HomePage() {
   const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 })
   const [touchEndPos, setTouchEndPos] = useState({ x: 0, y: 0 })
   const [activeTab, setActiveTab] = useState('all')
+  const [beautyTab, setBeautyTab] = useState('all')
   const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 28, seconds: 15 })
 
   useEffect(() => {
@@ -172,7 +320,7 @@ export default function HomePage() {
   useEffect(() => {
     let cancelled = false
     productApi
-      .list({ limit: 36 })
+      .list({ limit: 120 })
       .then((data) => {
         if (cancelled) return
         const list = Array.isArray(data)
@@ -214,11 +362,81 @@ export default function HomePage() {
     return true
   }).slice(0, 8)
 
-  const beautyProducts = (featured || []).filter((p) => {
+  const allBeautyProducts = (featured || []).filter((p) => {
     const c = (p.category || '').toLowerCase()
     const t = (p.tags || []).map((x) => x.toLowerCase())
-    return c === 'beauty' || t.includes('beauty') || t.includes('makeup') || t.includes('cosmetics')
-  }).slice(0, 6)
+    return (
+      c === 'beauty' ||
+      t.includes('beauty') ||
+      t.includes('makeup') ||
+      t.includes('cosmetics') ||
+      t.includes('lipstick') ||
+      t.includes('kajal') ||
+      t.includes('mascara') ||
+      t.includes('skincare') ||
+      t.includes('perfume')
+    )
+  })
+
+  const beautyCatalog = allBeautyProducts.length > 0 ? allBeautyProducts : FALLBACK_BEAUTY_PRODUCTS
+
+  const beautyFiltered = beautyCatalog.filter((p) => {
+    if (beautyTab === 'all') return true
+    const text = `${p.name} ${(p.tags || []).join(' ')} ${p.description || ''}`.toLowerCase()
+    if (beautyTab === 'face') {
+      return (
+        text.includes('foundation') ||
+        text.includes('primer') ||
+        text.includes('concealer') ||
+        text.includes('compact') ||
+        text.includes('powder') ||
+        text.includes('setting spray') ||
+        text.includes('contour') ||
+        text.includes('highlighter') ||
+        text.includes('blush') ||
+        text.includes('corrector')
+      )
+    }
+    if (beautyTab === 'eyes') {
+      return (
+        text.includes('kajal') ||
+        text.includes('kohl') ||
+        text.includes('mascara') ||
+        text.includes('eyeliner') ||
+        text.includes('eyeshadow') ||
+        text.includes('brow') ||
+        text.includes('glitter') ||
+        text.includes('lashes')
+      )
+    }
+    if (beautyTab === 'lips') {
+      return (
+        text.includes('lipstick') ||
+        text.includes('lip') ||
+        text.includes('rouge') ||
+        text.includes('gloss') ||
+        text.includes('balm') ||
+        text.includes('nail')
+      )
+    }
+    if (beautyTab === 'skincare') {
+      return (
+        text.includes('serum') ||
+        text.includes('sunscreen') ||
+        text.includes('mist') ||
+        text.includes('brush') ||
+        text.includes('sponge') ||
+        text.includes('blender') ||
+        text.includes('perfume') ||
+        text.includes('cleansing') ||
+        text.includes('remover') ||
+        text.includes('mask') ||
+        text.includes('vanity') ||
+        text.includes('bridal')
+      )
+    }
+    return true
+  })
 
   return (
     <>
@@ -591,21 +809,60 @@ export default function HomePage() {
       {/* STYLIO Dedicated Beauty & Cosmetics Atelier Section */}
       <section className="beauty-atelier-section">
         <div className="container">
-          <div className="section-head" style={{ marginBottom: 0 }}>
+          <div className="section-head" style={{ marginBottom: 8 }}>
             <div>
               <div className="eyebrow" style={{ color: 'var(--color-gold)' }}>
-                L'ATELIER BEAUTÉ &bull; COSMETICS &amp; HAUTE PARFUMERIE
+                L'ATELIER BEAUTÉ &bull; COMPLETE MAKEUP &amp; BEAUTY COLLECTION
               </div>
               <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', margin: '4px 0 6px' }}>
                 Beauty &amp; Cosmetics Atelier
               </h2>
-              <p className="text-muted" style={{ margin: 0, fontSize: '0.9rem', maxWidth: 640 }}>
-                A sensory curation of velvety matte rouges, luminous silk formulas, and artisanal rare fragrances crafted to complete your signature presence.
+              <p className="text-muted" style={{ margin: 0, fontSize: '0.9rem', maxWidth: 680 }}>
+                Every makeup essential you need in Indian Rupees (₹) — smudge-proof herbal kajal, volumizing mascara, silk foundations, matte lipsticks, primers, setting sprays, beauty blenders, and luxury bridal vanity kits.
               </p>
             </div>
             <Link to="/shop?category=Beauty" className="btn btn-ghost" style={{ fontSize: '0.8rem', letterSpacing: '0.14em' }}>
-              Explore Beauty Edit (12 Pieces) →
+              Explore All Beauty ({beautyCatalog.length} Items) →
             </Link>
+          </div>
+
+          {/* Beauty Sub-Category Navigation Pills */}
+          <div className="beauty-filter-tabs">
+            <button
+              type="button"
+              className={`beauty-filter-tab ${beautyTab === 'all' ? 'active' : ''}`}
+              onClick={() => setBeautyTab('all')}
+            >
+              ✦ All Makeup &amp; Beauty ({beautyCatalog.length})
+            </button>
+            <button
+              type="button"
+              className={`beauty-filter-tab ${beautyTab === 'face' ? 'active' : ''}`}
+              onClick={() => setBeautyTab('face')}
+            >
+              ✨ Face, Base &amp; Glow
+            </button>
+            <button
+              type="button"
+              className={`beauty-filter-tab ${beautyTab === 'eyes' ? 'active' : ''}`}
+              onClick={() => setBeautyTab('eyes')}
+            >
+              👁️ Eyes, Kajal &amp; Brows
+            </button>
+            <button
+              type="button"
+              className={`beauty-filter-tab ${beautyTab === 'lips' ? 'active' : ''}`}
+              onClick={() => setBeautyTab('lips')}
+            >
+              💄 Lips &amp; Nails
+            </button>
+            <button
+              type="button"
+              className={`beauty-filter-tab ${beautyTab === 'skincare' ? 'active' : ''}`}
+              onClick={() => setBeautyTab('skincare')}
+            >
+              🧴 Skincare &amp; Vanity Kits
+            </button>
           </div>
 
           <div className="beauty-editorial-row">
@@ -618,75 +875,23 @@ export default function HomePage() {
               <div className="beauty-hero-card__overlay" />
               <div className="beauty-hero-card__content">
                 <span style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--color-gold-light)', fontWeight: 700, display: 'block', marginBottom: 8 }}>
-                  ✨ ATELIER COUTURE SCENT
+                  ✨ ALL INDIAN BEAUTY &amp; MAKEUP
                 </span>
                 <h3 style={{ fontSize: '1.6rem', color: '#ffffff', margin: '0 0 10px', lineHeight: 1.25, fontFamily: 'var(--font-display)' }}>
-                  The Scent &amp; Glow of Modern Couture
+                  Complete Vanity &amp; Bridal Glamour
                 </h3>
                 <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.5, marginBottom: 18 }}>
-                  Cold-pressed organic marula, hyaluronic peptides, and smoked Damascus rose distilled into pure timeless allure.
+                  Curated formulas designed for Indian skin tones — waterproof kajals, 16H primers, non-cakey foundations &amp; transfer-proof lipsticks starting at ₹249.
                 </p>
                 <span className="btn btn-gold" style={{ alignSelf: 'flex-start', display: 'inline-flex', fontSize: '0.82rem' }}>
-                  Shop The Beauty Studio →
+                  Open Full Beauty Studio →
                 </span>
               </div>
             </Link>
 
             {/* Right: Curated Beauty & Makeup Grid */}
             <div className="beauty-products-grid">
-              {(beautyProducts.length > 0
-                ? beautyProducts
-                : [
-                    {
-                      _id: 'b-rouge',
-                      name: 'Velvet Matte Rouge Lipstick',
-                      price: 1299,
-                      imageUrl: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=800&q=80&auto=format&fit=crop',
-                      tags: ['lipstick'],
-                      colors: ['Rouge Noir', 'Rose Petal', 'Terracotta']
-                    },
-                    {
-                      _id: 'b-foundation',
-                      name: 'Luminous Silk Flawless Foundation',
-                      price: 2199,
-                      imageUrl: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=800&q=80&auto=format&fit=crop',
-                      tags: ['foundation'],
-                      colors: ['Ivory Glow', 'Warm Almond', 'Golden Caramel']
-                    },
-                    {
-                      _id: 'b-perfume',
-                      name: 'Atelier Noir Eau De Parfum (100ml)',
-                      price: 3499,
-                      imageUrl: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&q=80&auto=format&fit=crop',
-                      tags: ['perfume'],
-                      colors: ['Amber Noir']
-                    },
-                    {
-                      _id: 'b-serum',
-                      name: 'Dewy Glass-Skin Peptide Serum',
-                      price: 1699,
-                      imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80&auto=format&fit=crop',
-                      tags: ['serum'],
-                      colors: ['Crystal Clear']
-                    },
-                    {
-                      _id: 'b-palette',
-                      name: 'Gilded Horizon 12-Pan Palette',
-                      price: 2499,
-                      imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80&auto=format&fit=crop',
-                      tags: ['eyeshadow'],
-                      colors: ['Warm Metallics']
-                    },
-                    {
-                      _id: 'b-lipoil',
-                      name: 'Hydra-Glaze Peptide Lip Oil',
-                      price: 899,
-                      imageUrl: 'https://images.unsplash.com/photo-1608248597359-0027f32906eb?w=800&q=80&auto=format&fit=crop',
-                      tags: ['lip oil'],
-                      colors: ['Berry Glaze', 'Honey Peach']
-                    }
-                  ]
-              ).map((item) => (
+              {beautyFiltered.slice(0, 10).map((item) => (
                 <div key={item._id || item.id} className="beauty-item-card">
                   <div className="beauty-item-thumb">
                     <span className="beauty-tag-pill">
@@ -710,7 +915,7 @@ export default function HomePage() {
                     </span>
                   </div>
 
-                  <h4 className="beauty-name">
+                  <h4 className="beauty-name" title={item.name}>
                     <Link to={`/product/${item._id || item.id}`}>{item.name}</Link>
                   </h4>
 
@@ -735,6 +940,24 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Quick Footer for Beauty section */}
+          <div style={{ textAlign: 'center', marginTop: 28 }}>
+            <Link
+              to="/shop?category=Beauty"
+              className="btn btn-outline"
+              style={{
+                borderColor: 'var(--color-gold)',
+                color: 'var(--color-ink)',
+                padding: '12px 28px',
+                fontSize: '0.86rem',
+                fontWeight: 600,
+                letterSpacing: '0.06em'
+              }}
+            >
+              Explore All {beautyCatalog.length}+ Makeup &amp; Beauty Essentials (₹ INR) →
+            </Link>
           </div>
         </div>
       </section>

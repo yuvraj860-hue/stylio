@@ -264,8 +264,9 @@ const seedDatabase = async () => {
   console.log(`[seed] Admin ready: admin@stylio.com / admin123 (${admin._id})`);
 
   await Product.deleteMany({});
-  const inserted = await Product.insertMany(products);
-  console.log(`[seed] Inserted ${inserted.length} products`);
+  const allProducts = [...products, ...(Array.isArray(newProducts) ? newProducts : [])];
+  const inserted = await Product.insertMany(allProducts);
+  console.log(`[seed] Inserted ${inserted.length} total products (including all Beauty & Cosmetics)`);
 
   await indexProductsInML(inserted);
 

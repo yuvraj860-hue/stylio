@@ -52,7 +52,7 @@ export default function ShopPage() {
       minPrice: minPrice > 0 ? minPrice : undefined,
       maxPrice: maxPrice < 15000 ? maxPrice : undefined,
       sort: sort === 'new' ? 'newest' : sort === 'price_asc' ? 'price_asc' : sort === 'price_desc' ? 'price_desc' : sort === 'top_rated' ? 'rating' : undefined,
-      limit: 60
+      limit: 120
     }
     productApi
       .list(params)
