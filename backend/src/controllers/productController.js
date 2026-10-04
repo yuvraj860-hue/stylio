@@ -123,7 +123,7 @@ export const listProducts = asyncHandler(async (req, res) => {
   else sortQuery = { createdAt: -1 };
 
   const pageNum = Math.max(parseInt(page, 10) || 1, 1);
-  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 12, 1), 100);
+  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 12, 1), 200);
   const skip = (pageNum - 1) * limitNum;
 
   const [products, total] = await Promise.all([

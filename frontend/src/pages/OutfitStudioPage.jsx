@@ -34,6 +34,7 @@ export default function OutfitStudioPage() {
   const [selectedTop, setSelectedTop] = useState(null);
   const [selectedBottom, setSelectedBottom] = useState(null);
   const [selectedFootwear, setSelectedFootwear] = useState(null);
+  const [selectedBeauty, setSelectedBeauty] = useState(null);
   const [presetIndex, setPresetIndex] = useState(0);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function OutfitStudioPage() {
     setLoading(true);
 
     productApi
-      .list({ limit: 40 })
+      .list({ limit: 120 })
       .then((res) => {
         if (cancelled) return;
         const list = res?.products || res?.data || (Array.isArray(res) ? res : []);
@@ -63,9 +64,16 @@ export default function OutfitStudioPage() {
           return c.includes('sneaker') || c.includes('shoe') || c.includes('boot');
         }) || list[2];
 
+        const beauty = list.find((p) => {
+          const c = (p.category || '').toLowerCase();
+          const t = (p.tags || []).map((x) => x.toLowerCase());
+          return c === 'beauty' || t.includes('beauty') || t.includes('lipstick') || t.includes('kajal') || t.includes('perfume');
+        }) || null;
+
         setSelectedTop(top || null);
         setSelectedBottom(bottom || null);
         setSelectedFootwear(shoe || null);
+        setSelectedBeauty(beauty);
       })
       .catch(() => {})
       .finally(() => {
@@ -81,21 +89,29 @@ export default function OutfitStudioPage() {
     return products.filter((p) => {
       const c = (p.category || '').toLowerCase();
       return c.includes('shirt') || c.includes('t-shirt') || c.includes('jacket') || c.includes('top') || c.includes('dress');
-    }).slice(0, 8);
+    }).slice(0, 10);
   }, [products]);
 
   const bottoms = useMemo(() => {
     return products.filter((p) => {
       const c = (p.category || '').toLowerCase();
       return c.includes('pant') || c.includes('jean') || c.includes('cargo') || c.includes('trouser') || c.includes('short');
-    }).slice(0, 8);
+    }).slice(0, 10);
   }, [products]);
 
   const footwear = useMemo(() => {
     return products.filter((p) => {
       const c = (p.category || '').toLowerCase();
       return c.includes('sneaker') || c.includes('shoe') || c.includes('boot') || c.includes('accessories');
-    }).slice(0, 8);
+    }).slice(0, 10);
+  }, [products]);
+
+  const beautyItems = useMemo(() => {
+    return products.filter((p) => {
+      const c = (p.category || '').toLowerCase();
+      const t = (p.tags || []).map((x) => x.toLowerCase());
+      return c === 'beauty' || t.includes('beauty') || t.includes('makeup') || t.includes('lipstick') || t.includes('perfume') || t.includes('kajal');
+    }).slice(0, 10);
   }, [products]);
 
   const handleShuffle = () => {
@@ -108,12 +124,15 @@ export default function OutfitStudioPage() {
     if (footwear.length > 0) {
       setSelectedFootwear(footwear[Math.floor(Math.random() * footwear.length)]);
     }
+    if (beautyItems.length > 0) {
+      setSelectedBeauty(beautyItems[Math.floor(Math.random() * beautyItems.length)]);
+    }
     setPresetIndex((prev) => (prev + 1) % AI_STYLE_PRESETS.length);
 
     if (window.dispatchEvent) {
       window.dispatchEvent(
         new CustomEvent('stylio:toast', {
-          detail: { message: '✨ AI synthesized a new curated outfit!' }
+          detail: { message: '✨ AI synthesized a new curated look with matching beauty & scent!' }
         })
       );
     }
@@ -121,7 +140,7 @@ export default function OutfitStudioPage() {
 
   const currentPreset = AI_STYLE_PRESETS[presetIndex];
 
-  const totalRawPrice = (selectedTop?.price || 0) + (selectedBottom?.price || 0) + (selectedFootwear?.price || 0);
+  const totalRawPrice = (selectedTop?.price || 0) + (selectedBottom?.price || 0) + (selectedFootwear?.price || 0) + (selectedBeauty?.price || 0);
   const bundleDiscount = Math.round(totalRawPrice * 0.12);
   const finalBundlePrice = totalRawPrice - bundleDiscount;
 
@@ -137,6 +156,10 @@ export default function OutfitStudioPage() {
     }
     if (selectedFootwear) {
       addItem(selectedFootwear, 1);
+      addedCount++;
+    }
+    if (selectedBeauty) {
+      addItem(selectedBeauty, 1);
       addedCount++;
     }
 
@@ -252,6 +275,31 @@ export default function OutfitStudioPage() {
               </div>
             ))}
           </div>
+
+          {/* Slot 4: Finishing Beauty & Scent */}
+          <div className="studio-section-title">
+            <span>4. Finishing Touch (Beauty, Scent &amp; Makeup)</span>
+            {selectedBeauty && (
+              <span style={{ fontSize: '0.82rem', color: 'var(--color-gold)', fontWeight: 600 }}>
+                {fmt(selectedBeauty.price)}
+              </span>
+            )}
+          </div>
+          <div className="studio-selector-row">
+            {beautyItems.map((item) => (
+              <div
+                key={item._id || item.id}
+                className={`studio-item-option ${selectedBeauty?._id === item._id || selectedBeauty?.id === item.id ? 'selected' : ''}`}
+                onClick={() => setSelectedBeauty(item)}
+              >
+                <div className="studio-item-thumb">
+                  <SafeImage src={item.imageUrl || item.image} alt={item.name} />
+                </div>
+                <span className="studio-item-name">{item.name}</span>
+                <span className="studio-item-price">{fmt(item.price)}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Right column: Interactive Preview & AI Compatibility */}
@@ -325,6 +373,27 @@ export default function OutfitStudioPage() {
                   </div>
                   <div style={{ fontSize: '0.82rem', color: 'var(--color-gold-light)' }}>
                     {fmt(selectedFootwear.price)}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedBeauty && (
+              <div className="mannequin-slot">
+                <img
+                  src={selectedBeauty.imageUrl || selectedBeauty.image}
+                  alt={selectedBeauty.name}
+                  className="mannequin-thumb"
+                />
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase' }}>
+                    Atelier Beauty &amp; Scent
+                  </div>
+                  <div style={{ fontSize: '0.86rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {selectedBeauty.name}
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--color-gold-light)' }}>
+                    {fmt(selectedBeauty.price)}
                   </div>
                 </div>
               </div>
