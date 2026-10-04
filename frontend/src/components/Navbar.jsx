@@ -104,6 +104,12 @@ export default function Navbar() {
           >
             New In
           </Link>
+          <Link
+            to="/shop?category=Beauty"
+            className={`nav-link ${location.search.includes('category=Beauty') ? 'nav-link-active' : ''}`}
+          >
+            Beauty 💄
+          </Link>
           <NavLink to="/lookbook" end className={linkClass}>
             Lookbook
           </NavLink>
@@ -293,6 +299,9 @@ export default function Navbar() {
         </Link>
         <Link to="/shop?sort=new" onClick={() => setMobileOpen(false)}>
           New In
+        </Link>
+        <Link to="/shop?category=Beauty" onClick={() => setMobileOpen(false)} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+          Beauty &amp; Cosmetics 💄
         </Link>
         <Link to="/lookbook" onClick={() => setMobileOpen(false)}>
           Editorial Lookbook

@@ -90,6 +90,12 @@ const CATEGORIES = [
     query: 'category=Sneakers',
     subtitle: 'Italian Leather Craft',
     image: categoryImage('photo-1549298916-b41d501d3772')
+  },
+  {
+    name: 'Beauty & Cosmetics',
+    query: 'category=Beauty',
+    subtitle: 'Lipsticks, Serums & Scents',
+    image: categoryImage('photo-1522337360788-8b13dee7a37e')
   }
 ]
 
@@ -189,6 +195,11 @@ export default function HomePage() {
   // Filter products according to active tab
   const displayedProducts = (featured || []).filter((p) => {
     if (activeTab === 'all') return true
+    if (activeTab === 'beauty') {
+      const c = (p.category || '').toLowerCase()
+      const t = (p.tags || []).map((x) => x.toLowerCase())
+      return c === 'beauty' || t.includes('beauty') || t.includes('makeup') || t.includes('cosmetics') || t.includes('lipstick') || t.includes('perfume') || t.includes('skincare')
+    }
     if (activeTab === 'women') {
       const c = (p.category || '').toLowerCase()
       const t = (p.tags || []).map((x) => x.toLowerCase())
@@ -202,6 +213,12 @@ export default function HomePage() {
     }
     return true
   }).slice(0, 8)
+
+  const beautyProducts = (featured || []).filter((p) => {
+    const c = (p.category || '').toLowerCase()
+    const t = (p.tags || []).map((x) => x.toLowerCase())
+    return c === 'beauty' || t.includes('beauty') || t.includes('makeup') || t.includes('cosmetics')
+  }).slice(0, 6)
 
   return (
     <>
@@ -538,6 +555,13 @@ export default function HomePage() {
             >
               👖 Pants & Trousers
             </button>
+            <button
+              type="button"
+              className={`home-filter-tab ${activeTab === 'beauty' ? 'active' : ''}`}
+              onClick={() => setActiveTab('beauty')}
+            >
+              💄 Beauty &amp; Makeup
+            </button>
           </div>
 
           {error && (
@@ -561,6 +585,157 @@ export default function HomePage() {
               </Link>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* STYLIO Dedicated Beauty & Cosmetics Atelier Section */}
+      <section className="beauty-atelier-section">
+        <div className="container">
+          <div className="section-head" style={{ marginBottom: 0 }}>
+            <div>
+              <div className="eyebrow" style={{ color: 'var(--color-gold)' }}>
+                L'ATELIER BEAUTÉ &bull; COSMETICS &amp; HAUTE PARFUMERIE
+              </div>
+              <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', margin: '4px 0 6px' }}>
+                Beauty &amp; Cosmetics Atelier
+              </h2>
+              <p className="text-muted" style={{ margin: 0, fontSize: '0.9rem', maxWidth: 640 }}>
+                A sensory curation of velvety matte rouges, luminous silk formulas, and artisanal rare fragrances crafted to complete your signature presence.
+              </p>
+            </div>
+            <Link to="/shop?category=Beauty" className="btn btn-ghost" style={{ fontSize: '0.8rem', letterSpacing: '0.14em' }}>
+              Explore Beauty Edit (12 Pieces) →
+            </Link>
+          </div>
+
+          <div className="beauty-editorial-row">
+            {/* Left: Editorial Hero Card */}
+            <Link to="/shop?category=Beauty" className="beauty-hero-card">
+              <SafeImage
+                src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1200&q=85"
+                alt="Haute Parfumerie & Pure Botanical Beauty"
+              />
+              <div className="beauty-hero-card__overlay" />
+              <div className="beauty-hero-card__content">
+                <span style={{ fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--color-gold-light)', fontWeight: 700, display: 'block', marginBottom: 8 }}>
+                  ✨ ATELIER COUTURE SCENT
+                </span>
+                <h3 style={{ fontSize: '1.6rem', color: '#ffffff', margin: '0 0 10px', lineHeight: 1.25, fontFamily: 'var(--font-display)' }}>
+                  The Scent &amp; Glow of Modern Couture
+                </h3>
+                <p style={{ fontSize: '0.86rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.5, marginBottom: 18 }}>
+                  Cold-pressed organic marula, hyaluronic peptides, and smoked Damascus rose distilled into pure timeless allure.
+                </p>
+                <span className="btn btn-gold" style={{ alignSelf: 'flex-start', display: 'inline-flex', fontSize: '0.82rem' }}>
+                  Shop The Beauty Studio →
+                </span>
+              </div>
+            </Link>
+
+            {/* Right: Curated Beauty & Makeup Grid */}
+            <div className="beauty-products-grid">
+              {(beautyProducts.length > 0
+                ? beautyProducts
+                : [
+                    {
+                      _id: 'b-rouge',
+                      name: 'Velvet Matte Rouge Lipstick',
+                      price: 1299,
+                      imageUrl: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=800&q=80&auto=format&fit=crop',
+                      tags: ['lipstick'],
+                      colors: ['Rouge Noir', 'Rose Petal', 'Terracotta']
+                    },
+                    {
+                      _id: 'b-foundation',
+                      name: 'Luminous Silk Flawless Foundation',
+                      price: 2199,
+                      imageUrl: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=800&q=80&auto=format&fit=crop',
+                      tags: ['foundation'],
+                      colors: ['Ivory Glow', 'Warm Almond', 'Golden Caramel']
+                    },
+                    {
+                      _id: 'b-perfume',
+                      name: 'Atelier Noir Eau De Parfum (100ml)',
+                      price: 3499,
+                      imageUrl: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&q=80&auto=format&fit=crop',
+                      tags: ['perfume'],
+                      colors: ['Amber Noir']
+                    },
+                    {
+                      _id: 'b-serum',
+                      name: 'Dewy Glass-Skin Peptide Serum',
+                      price: 1699,
+                      imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80&auto=format&fit=crop',
+                      tags: ['serum'],
+                      colors: ['Crystal Clear']
+                    },
+                    {
+                      _id: 'b-palette',
+                      name: 'Gilded Horizon 12-Pan Palette',
+                      price: 2499,
+                      imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80&auto=format&fit=crop',
+                      tags: ['eyeshadow'],
+                      colors: ['Warm Metallics']
+                    },
+                    {
+                      _id: 'b-lipoil',
+                      name: 'Hydra-Glaze Peptide Lip Oil',
+                      price: 899,
+                      imageUrl: 'https://images.unsplash.com/photo-1608248597359-0027f32906eb?w=800&q=80&auto=format&fit=crop',
+                      tags: ['lip oil'],
+                      colors: ['Berry Glaze', 'Honey Peach']
+                    }
+                  ]
+              ).map((item) => (
+                <div key={item._id || item.id} className="beauty-item-card">
+                  <div className="beauty-item-thumb">
+                    <span className="beauty-tag-pill">
+                      {item.tags?.[0] || 'Beauty'}
+                    </span>
+                    <Link to={`/product/${item._id || item.id}`}>
+                      <SafeImage
+                        src={item.imageUrl || item.image}
+                        alt={item.name}
+                        fallbackText="BEAUTY"
+                      />
+                    </Link>
+                  </div>
+
+                  <div className="beauty-swatches">
+                    {['#800020', '#c2410c', '#eab308'].map((c, i) => (
+                      <span key={i} className="beauty-swatch-dot" style={{ background: c }} />
+                    ))}
+                    <span style={{ fontSize: '0.68rem', color: 'var(--color-ink-muted)', marginLeft: 3 }}>
+                      {item.colors?.length || 3} shades
+                    </span>
+                  </div>
+
+                  <h4 className="beauty-name">
+                    <Link to={`/product/${item._id || item.id}`}>{item.name}</Link>
+                  </h4>
+
+                  <div className="beauty-price">{fmt(item.price)}</div>
+
+                  <button
+                    type="button"
+                    className="btn btn-dark btn-block beauty-add-btn"
+                    onClick={() => {
+                      addItem(item, 1)
+                      if (window.dispatchEvent) {
+                        window.dispatchEvent(
+                          new CustomEvent('stylio:toast', {
+                            detail: { message: `💄 Added ${item.name} to vanity bag!` }
+                          })
+                        )
+                      }
+                    }}
+                  >
+                    + Add to Bag
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

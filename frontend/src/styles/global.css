@@ -5145,4 +5145,176 @@ button:disabled {
 .cl-userPreviewAvatarImage {
   border: 2px solid var(--color-gold) !important;
   box-shadow: 0 2px 10px rgba(197, 160, 89, 0.3) !important;
+}
+
+/* ==========================================================================
+   STYLIO Beauty & Cosmetics Atelier Section
+   ========================================================================== */
+.beauty-atelier-section {
+  background: radial-gradient(circle at 90% 10%, #fdfbf7 0%, #f5eee2 100%);
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
+  padding: clamp(40px, 6vw, 72px) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.beauty-editorial-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+@media (min-width: 992px) {
+  .beauty-editorial-row {
+    grid-template-columns: 380px 1fr;
+    align-items: stretch;
+  }
+}
+
+.beauty-hero-card {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #141210;
+  color: #ffffff;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(24px, 4vw, 36px);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+
+.beauty-hero-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+  z-index: 1;
+}
+
+.beauty-hero-card:hover img {
+  transform: scale(1.06);
+}
+
+.beauty-hero-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.06) 0%, rgba(18,15,12,0.92) 100%);
+  z-index: 2;
+}
+
+.beauty-hero-card__content {
+  position: relative;
+  z-index: 3;
+}
+
+.beauty-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .beauty-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+.beauty-item-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.beauty-item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
+  border-color: var(--color-gold);
+}
+
+.beauty-item-thumb {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-paper-deep);
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.beauty-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.beauty-item-card:hover .beauty-item-thumb img {
+  transform: scale(1.06);
+}
+
+.beauty-tag-pill {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(17, 17, 17, 0.88);
+  backdrop-filter: blur(4px);
+  color: var(--color-gold-light);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.beauty-swatches {
+  display: flex;
+  gap: 5px;
+  margin: 4px 0 6px;
+  align-items: center;
+}
+
+.beauty-swatch-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.beauty-name {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 2px 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.beauty-price {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  margin-bottom: 10px;
+}
+
+.beauty-add-btn {
+  margin-top: auto;
+  padding: 9px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
