@@ -25,10 +25,20 @@ export default function UserProfilePage() {
   return (
     <section className="section">
       <div className="container">
-        <div className="section-head" style={{ marginBottom: 'var(--space-4)' }}>
+        <div className="section-head" style={{ marginBottom: 'var(--space-4)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 14 }}>
           <div>
-            <div className="eyebrow">Account</div>
-            <h2>My Profile &amp; Account <span className="logo-version-badge">v1.1.0</span></h2>
+            <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span>Client Concierge</span>
+              <span className="version-pill-lux">
+                <span className="version-pill-lux__dot" />
+                STYLIO v1.1.0 ATELIER
+              </span>
+            </div>
+            <h2 style={{ margin: '6px 0 0' }}>My Profile &amp; Account</h2>
+          </div>
+          <div className="version-meta-tag">
+            <span className="version-meta-tag__glow">✦ Edition 1.1.0 Live</span>
+            <span className="version-meta-tag__sub">Official Production Release</span>
           </div>
         </div>
 

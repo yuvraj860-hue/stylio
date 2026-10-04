@@ -4855,30 +4855,117 @@ button:disabled {
   100% { transform: scale(0.9); opacity: 0.7; }
 }
 
-/* Version Display Badges */
+/* ==========================================================================
+   STYLIO Luxury Version Badges & Highlights
+   ========================================================================== */
 .logo-version-badge {
-  font-size: 0.62rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  background: rgba(197, 160, 89, 0.18);
-  color: var(--color-gold, #c5a059);
-  border: 1px solid rgba(197, 160, 89, 0.45);
-  padding: 2px 6px;
+  letter-spacing: 0.08em;
+  background: linear-gradient(135deg, #181714 0%, #28241d 100%);
+  color: var(--color-gold-light, #e4c88a);
+  border: 1px solid rgba(197, 160, 89, 0.6);
+  padding: 2px 8px;
   border-radius: 999px;
   vertical-align: middle;
   text-transform: uppercase;
-  margin-left: 4px;
+  margin-left: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logo-version-badge:hover {
+  transform: translateY(-1px) scale(1.04);
+  border-color: var(--color-gold, #c5a059);
+  box-shadow: 0 4px 12px rgba(197, 160, 89, 0.25);
+}
+
+.version-pill-lux {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #1a1815 0%, #11100e 100%);
+  color: var(--color-gold-light, #e4c88a);
+  border: 1px solid rgba(197, 160, 89, 0.5);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.version-pill-lux::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  animation: badgeShimmer 4s infinite ease-in-out;
+}
+
+@keyframes badgeShimmer {
+  0% { left: -100%; }
+  30% { left: 150%; }
+  100% { left: 150%; }
+}
+
+.version-pill-lux__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: pulse-dot 1.8s infinite;
+}
+
+.version-meta-tag {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-line);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.version-meta-tag__glow {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: 0.04em;
+}
+
+.version-meta-tag__sub {
+  font-size: 0.68rem;
+  color: var(--color-gold);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .footer-version-tag {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   font-size: 0.72rem;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.06em;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
   color: var(--color-gold-light, #e4c88a);
-  border: 1px solid rgba(197, 160, 89, 0.3);
-  padding: 2px 7px;
-  border-radius: 4px;
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  padding: 2px 8px;
+  border-radius: 999px;
   margin: 0 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }

@@ -88,7 +88,7 @@ export default function Navbar() {
           <Link to="/" className="navbar__logo" aria-label="STYLIO home" style={{ display: 'inline-flex', alignItems: 'center', gap: 9 }}>
             <StylioLogo size={24} />
             <span>STYL<span>IO</span></span>
-            <span className="logo-version-badge" title="STYLIO v1.1.0 Edition">v1.1.0</span>
+            <span className="logo-version-badge" title="STYLIO v1.1.0 Edition">✦ v1.1.0</span>
           </Link>
 
         <nav className="navbar__links" aria-label="Primary">
