@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { productApi } from '../services/api'
+import { useCart } from '../context/CartContext'
+import { fmt } from '../utils/format'
 import ProductCard from '../components/ProductCard'
 import SafeImage from '../components/SafeImage'
 import ProductGridSkeleton from '../components/ProductGridSkeleton'
-import { ChevronLeftIcon, ChevronRightIcon } from '../components/icons'
+import { ChevronLeftIcon, ChevronRightIcon, SparklesIcon } from '../components/icons'
 
 const HERO_SLIDES = [
   {
@@ -111,12 +113,26 @@ const VALUE_PROPS = [
 ]
 
 export default function HomePage() {
+  const { addItem } = useCart()
   const [featured, setFeatured] = useState(null)
   const [error, setError] = useState(null)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 })
   const [touchEndPos, setTouchEndPos] = useState({ x: 0, y: 0 })
   const [activeTab, setActiveTab] = useState('all')
+  const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 28, seconds: 15 })
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 }
+        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 }
+        if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 }
+        return { hours: 6, minutes: 0, seconds: 0 }
+      })
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   // Auto-play continuous cycle: strictly slides automatically every 5 seconds (5000ms)
   useEffect(() => {
@@ -371,6 +387,110 @@ export default function HomePage() {
                 </span>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* STYLIO v1.1.0 Flash Sale & Deal of the Day with Live Countdown */}
+      <section className="section" style={{ paddingTop: 0, paddingBottom: 0 }}>
+        <div className="container">
+          <div className="flash-sale-section">
+            <div className="flash-sale-head">
+              <div className="flash-sale-title-wrap">
+                <span className="flash-sale-badge">
+                  ⚡ Flash Atelier Sale · Ends Tonight
+                </span>
+                <h2 style={{ color: '#ffffff', margin: '8px 0 4px', fontSize: 'clamp(1.5rem, 2.8vw, 2.2rem)' }}>
+                  Deals of the Day &amp; Rare Archive
+                </h2>
+                <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.86rem', margin: 0 }}>
+                  Limited quantities released from our flagship atelier. Automatic 30% savings applied at checkout.
+                </p>
+              </div>
+
+              {/* Live Ticking Countdown Clock */}
+              <div className="flash-countdown">
+                <div className="flash-time-block">
+                  <span className="flash-time-num">
+                    {String(timeLeft.hours).padStart(2, '0')}
+                  </span>
+                  <span className="flash-time-lbl">Hours</span>
+                </div>
+                <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-gold)' }}>:</span>
+                <div className="flash-time-block">
+                  <span className="flash-time-num">
+                    {String(timeLeft.minutes).padStart(2, '0')}
+                  </span>
+                  <span className="flash-time-lbl">Mins</span>
+                </div>
+                <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-gold)' }}>:</span>
+                <div className="flash-time-block">
+                  <span className="flash-time-num">
+                    {String(timeLeft.seconds).padStart(2, '0')}
+                  </span>
+                  <span className="flash-time-lbl">Secs</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Flash Deals Product Grid */}
+            <div className="flash-sale-grid">
+              {(featured || []).slice(0, 4).map((p, idx) => {
+                const discount = 30
+                const salePrice = Math.round(p.price * 0.7)
+                const stockLeft = (idx % 3) + 2
+
+                return (
+                  <div key={p._id || p.id} className="flash-card">
+                    <div className="flash-card__img-wrap">
+                      <span className="flash-discount-tag">-{discount}%</span>
+                      <Link to={`/product/${p._id || p.id}`}>
+                        <SafeImage
+                          src={p.imageUrl || p.image}
+                          alt={p.name}
+                          fallbackText={p.name?.slice(0, 4)}
+                        />
+                      </Link>
+                    </div>
+
+                    <div className="flash-urgency-tag">
+                      <span>🔥 Only {stockLeft} left in stock</span>
+                    </div>
+
+                    <h4 style={{ fontSize: '0.92rem', margin: '2px 0 6px', color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <Link to={`/product/${p._id || p.id}`} style={{ color: '#ffffff' }}>{p.name}</Link>
+                    </h4>
+
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
+                      <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-gold-light)' }}>
+                        {fmt(salePrice)}
+                      </span>
+                      <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', textDecoration: 'line-through' }}>
+                        {fmt(p.price)}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="btn btn-gold btn-block"
+                      style={{ marginTop: 'auto', fontSize: '0.82rem', padding: '10px' }}
+                      onClick={() => {
+                        addItem(p, 1)
+                        if (window.dispatchEvent) {
+                          window.dispatchEvent(
+                            new CustomEvent('stylio:toast', {
+                              detail: { message: `⚡ Added ${p.name} to bag at 30% Flash Discount!` }
+                            })
+                          )
+                        }
+                      }}
+                    >
+                      + Quick Grab Deal
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
       </section>

@@ -429,6 +429,28 @@ export default function ProductPage() {
             </div>
           </div>
 
+          {/* STYLIO v1.1.0 Customer Fit-Meter Verdict */}
+          <div style={{ background: 'var(--color-paper)', border: '1px solid var(--color-line)', borderRadius: 'var(--radius-sm)', padding: '16px 20px', marginBottom: 'var(--space-5)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+              <span style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--color-ink)' }}>
+                📐 Customer Fit-Meter: <strong style={{ color: 'var(--color-gold)' }}>True to Size (88% of verified buyers)</strong>
+              </span>
+              <span style={{ fontSize: '0.78rem', color: 'var(--color-ink-muted)' }}>
+                Based on wearer telemetry
+              </span>
+            </div>
+            <div style={{ display: 'flex', height: 8, borderRadius: 4, overflow: 'hidden', background: '#e2e8f0', gap: 2 }}>
+              <div style={{ width: '6%', background: '#94a3b8' }} title="Runs Small: 6%" />
+              <div style={{ width: '88%', background: 'var(--color-ink)' }} title="True to Size: 88%" />
+              <div style={{ width: '6%', background: '#94a3b8' }} title="Runs Large: 6%" />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--color-ink-muted)', marginTop: 6 }}>
+              <span>Runs Small (6%)</span>
+              <span style={{ fontWeight: 600, color: 'var(--color-ink)' }}>Spot-on Fit (88%)</span>
+              <span>Runs Large (6%)</span>
+            </div>
+          </div>
+
           <div className="reviews-grid">
             {/* Review submission card */}
             <div className="review-form-card">

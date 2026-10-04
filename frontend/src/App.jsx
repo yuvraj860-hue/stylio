@@ -18,6 +18,7 @@ import SignUpPage from './pages/SignUpPage';
 import UserProfilePage from './pages/UserProfilePage';
 import OrdersPage from './pages/OrdersPage';
 import WishlistPage from './pages/WishlistPage';
+import OutfitStudioPage from './pages/OutfitStudioPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
@@ -291,6 +292,7 @@ export default function App() {
           <Route path="/orders" element={<AuthGuard><OrdersPage /></AuthGuard>} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/lookbook" element={<LandingPage />} />
+          <Route path="/studio" element={<OutfitStudioPage />} />
           <Route path="/landing" element={<LandingPage />} />
           
           {/* Admin Routes */}

@@ -106,6 +106,9 @@ export default function Navbar() {
           <NavLink to="/lookbook" end className={linkClass}>
             Lookbook
           </NavLink>
+          <NavLink to="/studio" className={linkClass}>
+            AI Studio ✨
+          </NavLink>
           {isSignedIn && ['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
             <NavLink to="/admin" className="nav-portal-badge" title="Access Admin Panel">
               Admin ↗
@@ -292,6 +295,9 @@ export default function Navbar() {
         </Link>
         <Link to="/lookbook" onClick={() => setMobileOpen(false)}>
           Editorial Lookbook
+        </Link>
+        <Link to="/studio" onClick={() => setMobileOpen(false)} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+          AI Outfit Studio ✨
         </Link>
         <Link to="/wishlist" onClick={() => setMobileOpen(false)}>
           Wishlist ({wishlistCount})

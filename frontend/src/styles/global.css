@@ -4393,4 +4393,464 @@ button:disabled {
   color: #ffffff;
   border-color: #111111;
   font-weight: 600;
+}
+
+/* ==========================================================================
+   STYLIO v1.1.0 Feature Styles
+   ========================================================================== */
+
+/* 1. Voice Search Pulse Animation */
+@keyframes voice-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    transform: scale(1.1);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    transform: scale(1);
+  }
+}
+
+/* 2. Flash Sale Section & Countdown Timer */
+.flash-sale-section {
+  background: radial-gradient(circle at 10% 20%, #1a1815 0%, #0d0c0a 100%);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: clamp(24px, 4vw, 44px);
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-7);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.flash-sale-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(197, 160, 89, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.flash-sale-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 20px;
+}
+
+.flash-sale-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flash-sale-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  width: fit-content;
+}
+
+.flash-countdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flash-time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  border-radius: 8px;
+  padding: 6px 12px;
+  min-width: 54px;
+}
+
+.flash-time-num {
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-family: monospace;
+  color: var(--color-gold-light, #e4c88a);
+  line-height: 1;
+}
+
+.flash-time-lbl {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+
+.flash-sale-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.flash-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.flash-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(197, 160, 89, 0.5);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.flash-card__img-wrap {
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.flash-card__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.flash-card:hover img {
+  transform: scale(1.04);
+}
+
+.flash-discount-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+.flash-urgency-tag {
+  font-size: 0.72rem;
+  color: #f87171;
+  font-weight: 600;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 3. AI Outfit Studio Styles */
+.outfit-studio {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5) var(--space-9);
+}
+
+.studio-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto var(--space-7);
+}
+
+.studio-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 960px) {
+  .studio-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+}
+
+.studio-builder-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.studio-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.studio-selector-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.studio-item-option {
+  border: 2px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  cursor: pointer;
+  background: var(--color-paper);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.studio-item-option:hover {
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+.studio-item-option.selected {
+  border-color: var(--color-ink);
+  background: var(--color-white);
+  box-shadow: 0 0 0 2px var(--color-ink);
+}
+
+.studio-item-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.studio-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.studio-item-name {
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.studio-item-price {
+  font-size: 0.74rem;
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+.studio-preview-card {
+  background: #121212;
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  position: sticky;
+  top: 100px;
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.mannequin-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 18px 0;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.mannequin-slot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.mannequin-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.compatibility-meter {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 3px solid var(--color-gold);
+}
+
+.compatibility-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 8px 0 6px;
+}
+
+.compatibility-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-gold), #22c55e);
+  transition: width 0.5s ease;
+}
+
+/* 4. Scratch Card Modal */
+.scratch-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.25s ease;
+}
+
+.scratch-modal-box {
+  background: linear-gradient(145deg, #1c1a17, #11100e);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+  text-align: center;
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.scratch-card-canvas-wrap {
+  position: relative;
+  width: 280px;
+  height: 140px;
+  margin: 18px auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  border: 2px dashed rgba(197, 160, 89, 0.6);
+  background: #ffffff;
+}
+
+.scratch-prize-reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  color: #1e293b;
+  padding: 12px;
+  user-select: none;
+}
+
+.scratch-prize-code {
+  font-family: monospace;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #92400e;
+  letter-spacing: 3px;
+  border: 1px dashed #d97706;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
+.scratch-canvas {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+  z-index: 2;
+  touch-action: none;
+}
+
+/* 5. Live GPS Rider Simulator in Orders */
+.live-tracker-panel {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.rider-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rider-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.rider-status-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-right: 6px;
+  animation: pulse-dot 1.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
 }

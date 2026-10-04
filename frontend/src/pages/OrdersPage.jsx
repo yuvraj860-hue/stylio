@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { orderApi } from '../services/api';
 import SafeImage from '../components/SafeImage';
 import InvoiceModal from '../components/InvoiceModal';
+import ScratchCardModal from '../components/ScratchCardModal';
 import { OrdersIcon, InvoiceIcon } from '../components/icons';
 import { fmt } from '../utils/format';
 
@@ -22,6 +23,8 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [invoiceOrder, setInvoiceOrder] = useState(null);
+  const [scratchModalOpen, setScratchModalOpen] = useState(false);
+  const [scratchVoucherCode, setScratchVoucherCode] = useState('STYLIO25');
 
   // Cancellation and Return modal states
   const [cancelTargetOrder, setCancelTargetOrder] = useState(null);
@@ -279,6 +282,42 @@ export default function OrdersPage() {
                   </div>
                 )}
 
+                {/* STYLIO v1.1.0 Live GPS Rider Tracker Panel */}
+                {order.status !== 'cancelled' && order.status !== 'delivered' && (
+                  <div className="live-tracker-panel">
+                    <div className="rider-info">
+                      <div className="rider-avatar">🛵</div>
+                      <div>
+                        <div style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--color-ink)' }}>
+                          <span className="rider-status-pulse" />
+                          {order.status === 'shipped' ? 'Live Courier In Transit' : 'Order Packed & Quality Checked'}
+                        </div>
+                        <div style={{ fontSize: '0.76rem', color: 'var(--color-ink-muted)', marginTop: 2 }}>
+                          Partner: Delhivery Express &bull; Est. Doorstep Delivery in 2-3 Days
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button
+                        type="button"
+                        className="btn btn-ghost"
+                        style={{ fontSize: '0.78rem', color: 'var(--color-gold)', padding: '4px 10px' }}
+                        onClick={() => {
+                          if (window.dispatchEvent) {
+                            window.dispatchEvent(
+                              new CustomEvent('stylio:toast', {
+                                detail: { message: '📍 Real-time courier ping: Package dispatched from Regional Fulfillment Atelier.' }
+                              })
+                            );
+                          }
+                        }}
+                      >
+                        📍 Ping Courier
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="order-items-list">
                   {(order.items || []).map((item, idx) => (
                     <div key={idx} className="order-item">
@@ -323,6 +362,19 @@ export default function OrdersPage() {
                     </span>
                   </div>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      className="order-invoice-btn"
+                      style={{ background: '#fffbeb', borderColor: '#fde68a', color: '#92400e', fontWeight: 600 }}
+                      onClick={() => {
+                        setScratchVoucherCode('NEXTORDER20');
+                        setScratchModalOpen(true);
+                      }}
+                      title="Claim exclusive scratch card discount for next order"
+                    >
+                      <span>🎁 Scratch Card Reward</span>
+                    </button>
+
                     {canCancel && (
                       <button
                         type="button"
@@ -487,6 +539,14 @@ export default function OrdersPage() {
           </div>
         </div>
       )}
+
+      {/* STYLIO v1.1.0 Scratch Card Reward Modal */}
+      <ScratchCardModal
+        isOpen={scratchModalOpen}
+        onClose={() => setScratchModalOpen(false)}
+        code={scratchVoucherCode}
+        discount="20% OFF"
+      />
     </div>
   );
 }

@@ -38,6 +38,8 @@ const createRazorpayOrderApi = async ({ amount, receipt, notes }) => {
 
 export const PROMO_CODES = {
   STYLIO10: { type: 'percent', value: 10, minOrder: 0, maxDiscount: 1000, description: '10% Off on entire order' },
+  STYLIO25: { type: 'percent', value: 25, minOrder: 999, maxDiscount: 2500, description: '25% Off VIP Atelier Scratch Reward' },
+  NEXTORDER20: { type: 'percent', value: 20, minOrder: 799, maxDiscount: 2000, description: '20% Off Next Order Voucher' },
   WELCOME500: { type: 'flat', value: 500, minOrder: 1999, description: '₹500 Off on orders above ₹1,999' },
   FESTIVE20: { type: 'percent', value: 20, minOrder: 2500, maxDiscount: 2000, description: '20% Festive Off on orders above ₹2,500' },
   FREESHIP: { type: 'shipping', value: 0, minOrder: 0, description: 'Free Standard Shipping' },
