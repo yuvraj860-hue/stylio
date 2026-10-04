@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function UserProfilePage() {
   const navigate = useNavigate();
-  const { isSignedIn } = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
   const [localUser, setLocalUser] = useState(() => {
     try {
       const saved = localStorage.getItem('stylio_user');
@@ -21,6 +21,17 @@ export default function UserProfilePage() {
     setLocalUser(null);
     navigate('/');
   };
+
+  if (!isLoaded && !localUser) {
+    return (
+      <section className="section">
+        <div className="container" style={{ padding: '80px 0', textAlign: 'center' }}>
+          <div className="spinner" style={{ margin: '0 auto 16px' }} />
+          <p className="text-muted" style={{ fontSize: '0.88rem' }}>Loading Atelier Concierge...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="section">
