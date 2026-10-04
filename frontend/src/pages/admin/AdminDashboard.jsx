@@ -162,9 +162,14 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-      <div className="dashboard-header">
-        <h1>Dashboard</h1>
-        <p className="text-muted">Welcome back! Here's what's happening with your store.</p>
+      <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
+        <div>
+          <h1>Dashboard <span className="logo-version-badge" style={{ fontSize: '0.72rem' }}>v1.1.0</span></h1>
+          <p className="text-muted">Welcome back! Here's what's happening with your store.</p>
+        </div>
+        <span style={{ fontSize: '0.78rem', background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', padding: '4px 10px', borderRadius: 999, fontWeight: 600 }}>
+          ● System Online &bull; v1.1.0
+        </span>
       </div>
 
       <div className="stats-grid">

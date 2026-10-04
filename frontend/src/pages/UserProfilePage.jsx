@@ -28,7 +28,7 @@ export default function UserProfilePage() {
         <div className="section-head" style={{ marginBottom: 'var(--space-4)' }}>
           <div>
             <div className="eyebrow">Account</div>
-            <h2>My Profile & Account</h2>
+            <h2>My Profile &amp; Account <span className="logo-version-badge">v1.1.0</span></h2>
           </div>
         </div>
 

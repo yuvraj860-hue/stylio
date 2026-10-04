@@ -229,7 +229,7 @@ function Footer() {
           </div>
 
           <div className="footer__copyright">
-            © 2026 STYLIO. All rights reserved. | Designed &amp; Developed by{' '}
+            © 2026 STYLIO <span className="footer-version-tag">v1.1.0</span> &bull; All rights reserved. | Designed &amp; Developed by{' '}
             <strong className="footer__copyright-name">MR.Yuvraj.Rajput</strong>{' '}
             <span className="footer__copyright-heart">💖</span>
           </div>
