@@ -49,8 +49,9 @@ export default function Navbar() {
     };
   }, [userMenuOpen]);
 
-  const isShopActive = location.pathname === '/shop' && !location.search.includes('sort=new');
-  const isNewInActive = location.pathname === '/shop' && location.search.includes('sort=new');
+  const isBeautyActive = location.pathname === '/shop' && location.search.toLowerCase().includes('category=beauty');
+  const isNewInActive = location.pathname === '/shop' && location.search.includes('sort=new') && !isBeautyActive;
+  const isShopActive = location.pathname === '/shop' && !isBeautyActive && !isNewInActive;
 
   const linkClass = ({ isActive }) =>
     `nav-link ${isActive ? 'nav-link-active' : ''}`;
@@ -106,7 +107,7 @@ export default function Navbar() {
           </Link>
           <Link
             to="/shop?category=Beauty"
-            className={`nav-link ${location.search.includes('category=Beauty') ? 'nav-link-active' : ''}`}
+            className={`nav-link ${isBeautyActive ? 'nav-link-active' : ''}`}
           >
             Beauty 💄
           </Link>
@@ -294,13 +295,25 @@ export default function Navbar() {
         id="mobile-menu"
         className={`navbar__mobile-menu ${mobileOpen ? 'open' : ''}`}
       >
-        <Link to="/shop" onClick={() => setMobileOpen(false)}>
+        <Link
+          to="/shop"
+          onClick={() => setMobileOpen(false)}
+          style={{ fontWeight: isShopActive ? 700 : 500, color: isShopActive ? 'var(--color-gold)' : undefined }}
+        >
           Shop
         </Link>
-        <Link to="/shop?sort=new" onClick={() => setMobileOpen(false)}>
-          New In
+        <Link
+          to="/shop?sort=new"
+          onClick={() => setMobileOpen(false)}
+          style={{ fontWeight: isNewInActive ? 700 : 500, color: isNewInActive ? 'var(--color-gold)' : undefined }}
+        >
+          New In (Apparel)
         </Link>
-        <Link to="/shop?category=Beauty" onClick={() => setMobileOpen(false)} style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+        <Link
+          to="/shop?category=Beauty"
+          onClick={() => setMobileOpen(false)}
+          style={{ color: 'var(--color-gold)', fontWeight: isBeautyActive ? 800 : 600, background: isBeautyActive ? 'rgba(197,160,89,0.1)' : undefined, borderRadius: 6, padding: '4px 8px' }}
+        >
           Beauty &amp; Cosmetics 💄
         </Link>
         <Link to="/lookbook" onClick={() => setMobileOpen(false)}>

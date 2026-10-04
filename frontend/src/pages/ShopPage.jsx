@@ -88,6 +88,14 @@ export default function ShopPage() {
     setSearchParams(next, { replace: true, preventScrollReset: true })
   }
 
+  const selectQuickCategory = (cat) => {
+    if (activeCategories.length === 1 && activeCategories[0].toLowerCase() === cat.toLowerCase()) {
+      updateParams({ category: undefined })
+    } else {
+      updateParams({ category: cat })
+    }
+  }
+
   const toggleCategory = (cat) => {
     const has = activeCategories.includes(cat)
     const next = has
@@ -107,18 +115,71 @@ export default function ShopPage() {
     setSearchParams({}, { replace: true, preventScrollReset: true })
   }
 
-  const resultCount = products ? products.length : 0
+  const isBeautyOnly = activeCategories.length === 1 && activeCategories[0].toLowerCase() === 'beauty'
+  const isNewInApparel = sort === 'new' && !activeCategories.includes('Beauty')
+
+  const displayedProducts = useMemo(() => {
+    if (!products) return null
+    return products.filter((p) => {
+      const c = (p.category || '').toLowerCase()
+      const tags = (p.tags || []).map((t) => t.toLowerCase())
+      const isBeautyItem =
+        c === 'beauty' ||
+        tags.includes('beauty') ||
+        tags.includes('makeup') ||
+        tags.includes('cosmetics') ||
+        tags.includes('lipstick') ||
+        tags.includes('kajal') ||
+        tags.includes('mascara') ||
+        tags.includes('skincare') ||
+        tags.includes('perfume')
+
+      // If user selected Beauty specifically: strictly only show beauty items
+      if (isBeautyOnly) {
+        return isBeautyItem
+      }
+
+      // If user selected other specific categories (not Beauty): match those
+      if (activeCategories.length > 0 && !activeCategories.includes('Beauty')) {
+        const lowerCats = activeCategories.map((x) => x.toLowerCase())
+        return lowerCats.includes(c)
+      }
+
+      // If user clicked "New In" from navbar/filters: show new apparel/clothing, exclude makeup
+      if (isNewInApparel) {
+        return !isBeautyItem
+      }
+
+      return true
+    })
+  }, [products, isBeautyOnly, isNewInApparel, activeCategories])
+
+  const resultCount = displayedProducts ? displayedProducts.length : 0
 
   return (
     <section className="section">
       <div className="container">
         <div className="section-head">
           <div>
-            <div className="eyebrow">The Collection</div>
-            <h2>Shop</h2>
+            <div className="eyebrow" style={{ color: isBeautyOnly ? 'var(--color-gold)' : undefined }}>
+              {isBeautyOnly
+                ? "L'Atelier Beauté • Complete Makeup"
+                : isNewInApparel
+                  ? 'Fresh Season Drops • New In'
+                  : 'The Collection'}
+            </div>
+            <h2>
+              {isBeautyOnly
+                ? 'Beauty & Cosmetics Atelier'
+                : isNewInApparel
+                  ? 'New In (Apparel & Fashion)'
+                  : activeCategories.length === 1
+                    ? activeCategories[0]
+                    : 'Shop'}
+            </h2>
           </div>
-          <div className="text-muted" style={{ fontSize: '0.85rem' }}>
-            {products ? `${resultCount} ${resultCount === 1 ? 'piece' : 'pieces'}` : 'Loading…'}
+          <div className="text-muted" style={{ fontSize: '0.85rem', fontWeight: isBeautyOnly ? 600 : 400, color: isBeautyOnly ? 'var(--color-gold)' : undefined }}>
+            {displayedProducts ? `${resultCount} ${resultCount === 1 ? 'piece' : 'pieces'}` : 'Loading…'}
           </div>
         </div>
 
@@ -152,7 +213,7 @@ export default function ShopPage() {
                 key={cat}
                 type="button"
                 className={`category-pill ${isActive ? 'active' : ''}`}
-                onClick={() => toggleCategory(cat)}
+                onClick={() => selectQuickCategory(cat)}
               >
                 {cat}
               </button>
@@ -271,18 +332,20 @@ export default function ShopPage() {
                 We couldn't load the collection. {error}
               </div>
             )}
-            {!error && products === null && <ProductGridSkeleton count={8} />}
-            {!error && products !== null && (
+            {!error && displayedProducts === null && <ProductGridSkeleton count={8} />}
+            {!error && displayedProducts !== null && (
               <div style={{ opacity: loading ? 0.6 : 1, transition: 'opacity 0.2s ease' }}>
                 <ProductGrid
-                  products={products}
+                  products={displayedProducts}
                   emptyMessage={
-                    location.pathname === '/shop'
-                      ? 'No pieces found in this price range. Try widening your price range.'
-                      : 'No pieces found.'
+                    isBeautyOnly
+                      ? 'No beauty or cosmetics items found matching this filter.'
+                      : isNewInApparel
+                        ? 'No new apparel items found matching this filter.'
+                        : 'No pieces found in this price range. Try widening your price range.'
                   }
                 />
-                {products.length === 0 && (
+                {displayedProducts.length === 0 && (
                   <div style={{ textAlign: 'center', marginTop: 24 }}>
                     <button
                       type="button"

@@ -71,9 +71,12 @@ export const listProducts = asyncHandler(async (req, res) => {
   }
 
   if (category) {
-    const categories = Array.isArray(category) ? category : [category];
+    const rawCategories = Array.isArray(category) ? category : [category];
+    const categories = rawCategories
+      .flatMap((c) => String(c).split(','))
+      .map((c) => c.trim())
+      .filter(Boolean);
     const escaped = categories
-      .filter(Boolean)
       .map((c) => new RegExp(`^${c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'));
     if (escaped.length === 1) {
       query.category = escaped[0];
