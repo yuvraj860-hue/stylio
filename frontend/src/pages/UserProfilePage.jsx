@@ -58,6 +58,50 @@ export default function UserProfilePage() {
           </Link>
         </div>
 
+        {/* VIP Atelier Client Status Ribbon */}
+        <div className="member-vip-banner">
+          <div className="member-vip-info">
+            {user?.imageUrl ? (
+              <img src={user.imageUrl} alt={user.fullName || 'User'} className="member-vip-avatar" />
+            ) : (
+              <div className="member-vip-avatar-fallback">
+                {(user?.firstName || user?.fullName || localUser?.name || 'U').charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className="eyebrow" style={{ color: 'var(--color-gold-light)', margin: 0 }}>
+                  👑 Atelier Elite Client
+                </span>
+                <span style={{ fontSize: '0.68rem', background: 'rgba(197, 160, 89, 0.25)', color: '#e4c88a', padding: '1px 6px', borderRadius: 4, fontWeight: 700 }}>
+                  VIP GOLD
+                </span>
+              </div>
+              <h3 style={{ margin: '4px 0 2px', fontSize: '1.35rem', color: '#ffffff' }}>
+                {user?.fullName || user?.firstName || localUser?.name || 'Valued Client'}
+              </h3>
+              <p style={{ margin: 0, fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+                {user?.primaryEmailAddress?.emailAddress || localUser?.phone || 'Private Stylio Atelier Member'}
+              </p>
+            </div>
+          </div>
+
+          <div className="member-vip-perks">
+            <div className="member-perk-pill">
+              <span>💎</span>
+              <span><strong>500</strong> Crown Pts</span>
+            </div>
+            <div className="member-perk-pill">
+              <span>🚚</span>
+              <span><strong>Free</strong> Express Delivery</span>
+            </div>
+            <div className="member-perk-pill">
+              <span>🏷️</span>
+              <span><strong>10%</strong> Seasonal Privilege</span>
+            </div>
+          </div>
+        </div>
+
         {!isSignedIn && localUser ? (
           <div className="account-card" style={{ background: '#ffffff', borderRadius: 12, padding: 32, maxWidth: 500, boxShadow: '0 4px 20px rgba(0,0,0,0.06)', border: '1px solid #e5e7eb' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
@@ -101,17 +145,26 @@ export default function UserProfilePage() {
                 socialButtonsVariant: 'iconButton',
                 socialButtonsPlacement: 'bottom',
               },
-              elements: {
-                card: 'user-profile-card',
-              },
               variables: {
-                colorPrimary: '#111111',
+                colorPrimary: '#c5a059',
                 colorBackground: '#ffffff',
-                colorInputBackground: '#ffffff',
+                colorInputBackground: '#fdfbf7',
                 colorInputText: '#111111',
                 colorText: '#111111',
-                colorTextSecondary: '#666666',
-                colorDanger: '#dc2626',
+                colorTextSecondary: '#71717a',
+                borderRadius: '12px',
+              },
+              elements: {
+                rootBox: 'stylio-profile-root',
+                card: 'stylio-profile-card',
+                navbar: 'stylio-profile-nav',
+                navbarButton: 'stylio-profile-nav-btn',
+                headerTitle: 'stylio-profile-title',
+                profileSection: 'stylio-profile-section',
+                profileSectionTitleText: 'stylio-profile-section-title',
+                profileSectionPrimaryButton: 'stylio-profile-action-btn',
+                badge: 'stylio-profile-badge',
+                userPreviewAvatarImage: 'stylio-profile-avatar',
               },
             }}
           />

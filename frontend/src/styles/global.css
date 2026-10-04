@@ -4968,4 +4968,181 @@ button:disabled {
   border-radius: 999px;
   margin: 0 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+/* ==========================================================================
+   STYLIO Bespoke Luxury Profile Card & Member Atelier
+   ========================================================================== */
+.member-vip-banner {
+  background: radial-gradient(circle at 10% 20%, #1e1b16 0%, #0d0c0a 100%);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: clamp(20px, 3vw, 30px);
+  margin-bottom: var(--space-6);
+  border: 1px solid rgba(197, 160, 89, 0.45);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.member-vip-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(197, 160, 89, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.member-vip-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  z-index: 1;
+}
+
+.member-vip-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--color-gold);
+  box-shadow: 0 0 16px rgba(197, 160, 89, 0.35);
+  object-fit: cover;
+}
+
+.member-vip-avatar-fallback {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--color-gold);
+  background: #111111;
+  color: var(--color-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  box-shadow: 0 0 16px rgba(197, 160, 89, 0.35);
+}
+
+.member-vip-perks {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  z-index: 1;
+}
+
+.member-perk-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.member-perk-pill strong {
+  color: var(--color-gold-light);
+}
+
+/* Clerk UserProfile Luxury Styling */
+.stylio-profile-root {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.stylio-profile-card,
+.cl-userProfile-root .cl-card,
+.cl-card {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid rgba(197, 160, 89, 0.3) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07) !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+}
+
+.stylio-profile-nav,
+.cl-navbar {
+  background: #fdfbf7 !important;
+  border-right: 1px solid #ede7dc !important;
+  padding: 24px 16px !important;
+}
+
+.stylio-profile-nav-btn,
+.cl-navbarButton {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  font-size: 0.88rem !important;
+  padding: 10px 14px !important;
+  transition: all 0.2s ease !important;
+  color: var(--color-ink-muted) !important;
+}
+
+.stylio-profile-nav-btn[data-active='true'],
+.cl-navbarButton[data-active='true'],
+.cl-navbarButton:hover {
+  background: #111111 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+.stylio-profile-title,
+.cl-headerTitle {
+  font-family: var(--font-display, serif) !important;
+  font-size: 1.45rem !important;
+  color: var(--color-ink) !important;
+  font-weight: 700 !important;
+}
+
+.stylio-profile-section,
+.cl-profileSection {
+  border-bottom: 1px solid #f1ece4 !important;
+  padding: 20px 0 !important;
+}
+
+.stylio-profile-section-title,
+.cl-profileSectionTitleText {
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: var(--color-ink) !important;
+}
+
+.stylio-profile-action-btn,
+.cl-profileSectionPrimaryButton {
+  color: var(--color-gold, #c5a059) !important;
+  font-weight: 600 !important;
+  font-size: 0.84rem !important;
+  transition: color 0.15s ease !important;
+}
+
+.stylio-profile-action-btn:hover,
+.cl-profileSectionPrimaryButton:hover {
+  color: #a88339 !important;
+  text-decoration: underline !important;
+}
+
+.stylio-profile-badge,
+.cl-badge {
+  background: #fefce8 !important;
+  color: #854d0e !important;
+  border: 1px solid #fef08a !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  font-size: 0.72rem !important;
+}
+
+.stylio-profile-avatar,
+.cl-userPreviewAvatarImage {
+  border: 2px solid var(--color-gold) !important;
+  box-shadow: 0 2px 10px rgba(197, 160, 89, 0.3) !important;
 }
