@@ -11,6 +11,25 @@ import './styles/admin.css';
 import { ClerkProvider, useClerk } from '@clerk/clerk-react';
 import { setClerkTokenGetter } from './services/api';
 
+// Suppress third-party development instance & browser policy notices in console
+if (typeof window !== 'undefined') {
+  const _origWarn = console.warn;
+  console.warn = function (...args) {
+    const msg = String(args[0] || '');
+    if (
+      msg.includes('Clerk has been loaded with development keys') ||
+      msg.includes('Permissions-Policy') ||
+      msg.includes('attribution-reporting') ||
+      msg.includes('private-aggregation') ||
+      msg.includes('join-ad-interest-group') ||
+      msg.includes('run-ad-auction')
+    ) {
+      return;
+    }
+    _origWarn.apply(console, args);
+  };
+}
+
 function ClerkTokenProvider({ children }) {
   const clerk = useClerk();
   React.useEffect(() => {
@@ -66,13 +85,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 );
 
 // ── Service Worker (PWA) ──────────────────────────────────────────────
-if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+if ('serviceWorker' in navigator && (process.env.NODE_ENV === 'production' || window.location.protocol === 'https:')) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/service-worker.js', { scope: '/' })
       .then((registration) => {
         registration.onupdatefound = () => {
           const installingWorker = registration.installing;
+          if (!installingWorker) return;
           installingWorker.onstatechange = () => {
             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
               window.dispatchEvent(
@@ -84,6 +104,8 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
           };
         };
       })
-      .catch((err) => console.error('SW registration failed: ', err));
+      .catch(() => {
+        // Silently handle service worker registration if unsupported or blocked
+      });
   });
 }
