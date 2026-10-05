@@ -55,6 +55,7 @@ const syncEmbeddingId = async (productId, embeddingId) => {
 export const listProducts = asyncHandler(async (req, res) => {
   const {
     category,
+    gender,
     search,
     minPrice,
     maxPrice,
@@ -68,6 +69,36 @@ export const listProducts = asyncHandler(async (req, res) => {
 
   if (featured === 'true' || featured === true) {
     query.featured = true;
+  }
+
+  if (gender) {
+    const g = String(gender).toLowerCase().trim();
+    if (g === 'men' || g === 'male') {
+      query.$and = query.$and || [];
+      query.$and.push({
+        $or: [
+          { gender: 'men' },
+          { tags: { $in: ['men', 'mens', "men's", 'male'] } },
+          {
+            gender: { $nin: ['women'] },
+            category: { $in: ['Shirts', 'Pants', 'T-Shirts', 'Hoodies', 'Jackets', 'Sneakers'] },
+            tags: { $nin: ['women', 'womens', "women's", 'female', 'dress', 'blouse', 'crop top', 'skirt', 'beauty', 'makeup', 'lipstick'] }
+          }
+        ]
+      });
+    } else if (g === 'women' || g === 'female') {
+      query.$and = query.$and || [];
+      query.$and.push({
+        $or: [
+          { gender: 'women' },
+          { tags: { $in: ['women', 'womens', "women's", 'female'] } },
+          { category: 'Dresses' },
+          {
+            tags: { $in: ['dress', 'blouse', 'crop top', 'skirt', 'milkmaid', 'cottagecore', 'co-ord'] }
+          }
+        ]
+      });
+    }
   }
 
   if (category) {

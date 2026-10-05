@@ -163,7 +163,7 @@ const FALLBACK_BEAUTY_PRODUCTS = [
     _id: 'b-lip-gloss',
     name: 'High-Shine Glass Plumping Lip Gloss',
     price: 449,
-    imageUrl: 'https://images.unsplash.com/photo-1608248597359-0027f32906eb?w=800&q=80&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?w=800&q=80&auto=format&fit=crop',
     tags: ['lip gloss', 'lips', 'makeup'],
     colors: ['Crystal Diamond', 'Glazed Cinnamon']
   },
@@ -195,7 +195,7 @@ const FALLBACK_BEAUTY_PRODUCTS = [
     _id: 'b-compact',
     name: 'Velvet Compact Powder with SPF 30',
     price: 599,
-    imageUrl: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=800&q=80&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1515688594390-b649af70d282?w=800&q=80&auto=format&fit=crop',
     tags: ['compact', 'face', 'makeup'],
     colors: ['Natural Ivory', 'Warm Sand', 'Golden Bronze']
   },
@@ -203,7 +203,7 @@ const FALLBACK_BEAUTY_PRODUCTS = [
     _id: 'b-setting-spray',
     name: '24H Long-Lasting Makeup Setting Spray',
     price: 549,
-    imageUrl: 'https://images.unsplash.com/photo-1608248597359-0027f32906eb?w=800&q=80&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80&auto=format&fit=crop',
     tags: ['setting spray', 'face', 'makeup'],
     colors: ['Dewy Mist']
   },
@@ -219,7 +219,7 @@ const FALLBACK_BEAUTY_PRODUCTS = [
     _id: 'b-brushes',
     name: 'Professional 10-Piece Luxury Makeup Brush Set',
     price: 999,
-    imageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80&auto=format&fit=crop',
     tags: ['brushes', 'tools', 'makeup'],
     colors: ['Rose Gold & Matte Black']
   },
@@ -243,7 +243,7 @@ const FALLBACK_BEAUTY_PRODUCTS = [
     _id: 'b-serum',
     name: '10% Vitamin C Radiance Glow Face Serum',
     price: 899,
-    imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80&auto=format&fit=crop',
     tags: ['serum', 'skincare', 'glow'],
     colors: ['Clear Golden Dropper']
   },
@@ -259,7 +259,7 @@ const FALLBACK_BEAUTY_PRODUCTS = [
     _id: 'b-bridal-box',
     name: 'Royal Bridal 24K Gold All-in-One Makeup Vanity Box',
     price: 2999,
-    imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80&auto=format&fit=crop',
     tags: ['bridal kit', 'vanity box', 'luxury', 'makeup'],
     colors: ['Royal Gold Edition']
   }
@@ -343,15 +343,61 @@ export default function HomePage() {
   // Filter products according to active tab
   const displayedProducts = (featured || []).filter((p) => {
     if (activeTab === 'all') return true
+    if (activeTab === 'men') {
+      const g = (p.gender || '').toLowerCase()
+      const c = (p.category || '').toLowerCase()
+      const t = (p.tags || []).map((x) => x.toLowerCase())
+      const isWomen =
+        g === 'women' ||
+        c === 'dresses' ||
+        t.includes('women') ||
+        t.includes('womens') ||
+        t.includes("women's") ||
+        t.includes('female') ||
+        t.includes('blouse') ||
+        t.includes('crop top') ||
+        t.includes('skirt') ||
+        c === 'beauty' ||
+        t.includes('beauty') ||
+        t.includes('makeup')
+      if (isWomen) return false
+      return (
+        g === 'men' ||
+        t.includes('men') ||
+        t.includes('mens') ||
+        ['shirts', 't-shirts', 'pants', 'jeans', 'hoodies', 'jackets'].includes(c)
+      )
+    }
+    if (activeTab === 'women') {
+      const g = (p.gender || '').toLowerCase()
+      const c = (p.category || '').toLowerCase()
+      const t = (p.tags || []).map((x) => x.toLowerCase())
+      return (
+        g === 'women' ||
+        c === 'dresses' ||
+        t.includes('women') ||
+        t.includes('womens') ||
+        t.includes("women's") ||
+        t.includes('female') ||
+        t.includes('blouse') ||
+        t.includes('crop top') ||
+        t.includes('skirt') ||
+        t.includes('milkmaid') ||
+        t.includes('cottagecore')
+      )
+    }
     if (activeTab === 'beauty') {
       const c = (p.category || '').toLowerCase()
       const t = (p.tags || []).map((x) => x.toLowerCase())
-      return c === 'beauty' || t.includes('beauty') || t.includes('makeup') || t.includes('cosmetics') || t.includes('lipstick') || t.includes('perfume') || t.includes('skincare')
-    }
-    if (activeTab === 'women') {
-      const c = (p.category || '').toLowerCase()
-      const t = (p.tags || []).map((x) => x.toLowerCase())
-      return c === 'dresses' || t.includes('women') || t.includes('blouse') || t.includes('crop top')
+      return (
+        c === 'beauty' ||
+        t.includes('beauty') ||
+        t.includes('makeup') ||
+        t.includes('cosmetics') ||
+        t.includes('lipstick') ||
+        t.includes('perfume') ||
+        t.includes('skincare')
+      )
     }
     if (activeTab === 'shirts-tees') {
       return p.category === 'Shirts' || p.category === 'T-Shirts'
@@ -560,7 +606,7 @@ export default function HomePage() {
 
           <div className="wardrobe-split">
             {/* Women's Card */}
-            <Link to="/shop?category=Dresses" className="wardrobe-card">
+            <Link to="/shop?gender=women" className="wardrobe-card">
               <SafeImage
                 src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1200&q=85"
                 alt="Women's Collection"
@@ -579,7 +625,7 @@ export default function HomePage() {
             </Link>
 
             {/* Men's Card */}
-            <Link to="/shop?category=Shirts,Pants" className="wardrobe-card">
+            <Link to="/shop?gender=men" className="wardrobe-card">
               <SafeImage
                 src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1200&q=85"
                 alt="Men's Collection"
@@ -754,24 +800,31 @@ export default function HomePage() {
             </button>
             <button
               type="button"
+              className={`home-filter-tab ${activeTab === 'men' ? 'active' : ''}`}
+              onClick={() => setActiveTab('men')}
+            >
+              👔 Men's Fashion
+            </button>
+            <button
+              type="button"
               className={`home-filter-tab ${activeTab === 'women' ? 'active' : ''}`}
               onClick={() => setActiveTab('women')}
             >
-              👗 Dresses & Women's
+              👗 Women's Fashion
             </button>
             <button
               type="button"
               className={`home-filter-tab ${activeTab === 'shirts-tees' ? 'active' : ''}`}
               onClick={() => setActiveTab('shirts-tees')}
             >
-              👔 Shirts & T-Shirts
+              👕 Shirts &amp; Tees
             </button>
             <button
               type="button"
               className={`home-filter-tab ${activeTab === 'bottoms' ? 'active' : ''}`}
               onClick={() => setActiveTab('bottoms')}
             >
-              👖 Pants & Trousers
+              👖 Pants &amp; Trousers
             </button>
             <button
               type="button"

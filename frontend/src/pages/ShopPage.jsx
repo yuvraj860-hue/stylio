@@ -22,6 +22,10 @@ export default function ShopPage() {
     () => (searchParams.get('category') || '').split(',').filter(Boolean),
     [searchParams]
   )
+  const genderParam = (searchParams.get('gender') || '').toLowerCase().trim()
+  const isMenSelected = genderParam === 'men'
+  const isWomenSelected = genderParam === 'women'
+
   const minPrice = Number(searchParams.get('minPrice')) || 0
   const maxPrice = Number(searchParams.get('maxPrice')) || 15000
   const sort = searchParams.get('sort') || ''
@@ -48,6 +52,7 @@ export default function ShopPage() {
     setLoading(true)
     const params = {
       category: activeCategories,
+      gender: genderParam || undefined,
       search: searchParams.get('search') || undefined,
       minPrice: minPrice > 0 ? minPrice : undefined,
       maxPrice: maxPrice < 15000 ? maxPrice : undefined,
@@ -68,7 +73,7 @@ export default function ShopPage() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [activeCategories, minPrice, maxPrice, sort, searchParams])
+  }, [activeCategories, genderParam, minPrice, maxPrice, sort, searchParams])
 
   useEffect(() => {
     fetchProducts()
@@ -123,6 +128,9 @@ export default function ShopPage() {
     return products.filter((p) => {
       const c = (p.category || '').toLowerCase()
       const tags = (p.tags || []).map((t) => t.toLowerCase())
+      const pGender = (p.gender || '').toLowerCase()
+      const name = (p.name || '').toLowerCase()
+
       const isBeautyItem =
         c === 'beauty' ||
         tags.includes('beauty') ||
@@ -132,11 +140,83 @@ export default function ShopPage() {
         tags.includes('kajal') ||
         tags.includes('mascara') ||
         tags.includes('skincare') ||
-        tags.includes('perfume')
+        tags.includes('perfume') ||
+        name.includes('lipstick') ||
+        name.includes('perfume') ||
+        name.includes('foundation') ||
+        name.includes('eyeshadow') ||
+        name.includes('serum') ||
+        name.includes('kajal') ||
+        name.includes('mascara')
+
+      const isWomenItem =
+        pGender === 'women' ||
+        c === 'dresses' ||
+        tags.includes('women') ||
+        tags.includes('womens') ||
+        tags.includes("women's") ||
+        tags.includes('female') ||
+        tags.includes('dress') ||
+        tags.includes('blouse') ||
+        tags.includes('crop top') ||
+        tags.includes('skirt') ||
+        tags.includes('milkmaid') ||
+        tags.includes('cottagecore') ||
+        tags.includes('co-ord') ||
+        name.includes('women') ||
+        name.includes('dress') ||
+        name.includes('blouse') ||
+        name.includes('crop top') ||
+        name.includes('skirt') ||
+        name.includes('palazzo') ||
+        name.includes('mom fit') ||
+        name.includes('flared') ||
+        name.includes('milkmaid') ||
+        name.includes('cottagecore') ||
+        name.includes('co-ord') ||
+        name.includes('power blazer') ||
+        name.includes('crossbody bag')
+
+      const isMenItem =
+        !isBeautyItem &&
+        !isWomenItem &&
+        (pGender === 'men' ||
+          tags.includes('men') ||
+          tags.includes('mens') ||
+          tags.includes("men's") ||
+          tags.includes('male') ||
+          name.includes('oxford') ||
+          name.includes('cuban') ||
+          name.includes('chino') ||
+          name.includes('cargo') ||
+          name.includes('jogger') ||
+          name.includes('puffer') ||
+          name.includes('polo') ||
+          ['shirts', 't-shirts', 'pants', 'jeans', 'hoodies', 'jackets'].includes(c))
 
       // If user selected Beauty specifically: strictly only show beauty items
       if (isBeautyOnly) {
         return isBeautyItem
+      }
+
+      // When Men is chosen: strictly show only Men's clothes
+      if (isMenSelected) {
+        if (isBeautyItem || isWomenItem) return false
+        if (activeCategories.length > 0) {
+          const lowerCats = activeCategories.map((x) => x.toLowerCase())
+          if (!lowerCats.includes(c)) return false
+        }
+        return isMenItem || pGender === 'men'
+      }
+
+      // When Women is chosen: strictly show only Women's clothes
+      if (isWomenSelected) {
+        if (isBeautyItem || (!isWomenItem && pGender !== 'women')) return false
+        if (activeCategories.length > 0) {
+          const lowerCats = activeCategories.map((x) => x.toLowerCase())
+          if (!lowerCats.includes(c)) return false
+        }
+        return true
       }
 
       // If user selected other specific categories (not Beauty): match those
@@ -152,7 +232,7 @@ export default function ShopPage() {
 
       return true
     })
-  }, [products, isBeautyOnly, isNewInApparel, activeCategories])
+  }, [products, isMenSelected, isWomenSelected, isBeautyOnly, isNewInApparel, activeCategories])
 
   const resultCount = displayedProducts ? displayedProducts.length : 0
 
@@ -162,20 +242,28 @@ export default function ShopPage() {
         <div className="section-head">
           <div>
             <div className="eyebrow" style={{ color: isBeautyOnly ? 'var(--color-gold)' : undefined }}>
-              {isBeautyOnly
-                ? "L'Atelier Beauté • Complete Makeup"
-                : isNewInApparel
-                  ? 'Fresh Season Drops • New In'
-                  : 'The Collection'}
+              {isMenSelected
+                ? "Men's Atelier • Tailoring & Streetwear"
+                : isWomenSelected
+                  ? "Women's Collection • Couture & Everyday"
+                  : isBeautyOnly
+                    ? "L'Atelier Beauté • Complete Makeup"
+                    : isNewInApparel
+                      ? 'Fresh Season Drops • New In'
+                      : 'The Collection'}
             </div>
             <h2>
-              {isBeautyOnly
-                ? 'Beauty & Cosmetics Atelier'
-                : isNewInApparel
-                  ? 'New In (Apparel & Fashion)'
-                  : activeCategories.length === 1
-                    ? activeCategories[0]
-                    : 'Shop'}
+              {isMenSelected
+                ? "Men's Collection"
+                : isWomenSelected
+                  ? "Women's Collection"
+                  : isBeautyOnly
+                    ? 'Beauty & Cosmetics Atelier'
+                    : isNewInApparel
+                      ? 'New In (Apparel & Fashion)'
+                      : activeCategories.length === 1
+                        ? activeCategories[0]
+                        : 'Shop'}
             </h2>
           </div>
           <div className="text-muted" style={{ fontSize: '0.85rem', fontWeight: isBeautyOnly ? 600 : 400, color: isBeautyOnly ? 'var(--color-gold)' : undefined }}>
@@ -196,6 +284,42 @@ export default function ShopPage() {
             Go
           </button>
         </form>
+
+        {/* Department / Gender Quick Selection */}
+        <div className="gender-pills-bar" style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className={`category-pill ${!isMenSelected && !isWomenSelected && !isBeautyOnly ? 'active' : ''}`}
+            onClick={() => updateParams({ gender: undefined, category: undefined })}
+            style={{ fontWeight: 600 }}
+          >
+            ✦ All Departments
+          </button>
+          <button
+            type="button"
+            className={`category-pill ${isMenSelected ? 'active' : ''}`}
+            onClick={() => updateParams({ gender: isMenSelected ? undefined : 'men' })}
+            style={{ fontWeight: 600 }}
+          >
+            👔 Men's Collection
+          </button>
+          <button
+            type="button"
+            className={`category-pill ${isWomenSelected ? 'active' : ''}`}
+            onClick={() => updateParams({ gender: isWomenSelected ? undefined : 'women' })}
+            style={{ fontWeight: 600 }}
+          >
+            👗 Women's Collection
+          </button>
+          <button
+            type="button"
+            className={`category-pill ${isBeautyOnly ? 'active' : ''}`}
+            onClick={() => updateParams({ category: isBeautyOnly ? undefined : 'Beauty', gender: undefined })}
+            style={{ fontWeight: 600 }}
+          >
+            💄 Beauty &amp; Makeup
+          </button>
+        </div>
 
         {/* Quick Category Selection Pills */}
         <div className="category-pills-bar">
@@ -237,6 +361,37 @@ export default function ShopPage() {
             className={`filter-panel ${filtersOpen ? 'open' : ''}`}
             aria-label="Filters"
           >
+            <div className="filter-group">
+              <h4>Department</h4>
+              <label className="filter-option">
+                <input
+                  type="radio"
+                  name="deptRadio"
+                  checked={!isMenSelected && !isWomenSelected}
+                  onChange={() => updateParams({ gender: undefined })}
+                />
+                All Fashion
+              </label>
+              <label className="filter-option">
+                <input
+                  type="radio"
+                  name="deptRadio"
+                  checked={isMenSelected}
+                  onChange={() => updateParams({ gender: 'men' })}
+                />
+                👔 Men's Wear
+              </label>
+              <label className="filter-option">
+                <input
+                  type="radio"
+                  name="deptRadio"
+                  checked={isWomenSelected}
+                  onChange={() => updateParams({ gender: 'women' })}
+                />
+                👗 Women's Wear
+              </label>
+            </div>
+
             <div className="filter-group">
               <h4>Category</h4>
               {CATEGORIES.map((cat) => (

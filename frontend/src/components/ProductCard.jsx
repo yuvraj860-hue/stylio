@@ -55,9 +55,35 @@ export default function ProductCard({ product }) {
         </div>
       </div>
       <div className="product-card__body">
-        <h3 className="product-card__name">{product.name}</h3>
-        <div className="product-card__price">
-          {Number.isFinite(price) ? fmt(price) : '—'}
+        <div className="product-card__meta" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '4px' }}>
+          {product.brand && (
+            <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-ink-muted)' }}>
+              {product.brand}
+            </span>
+          )}
+          {product.category && (
+            <>
+              <span style={{ fontSize: '0.65rem', color: 'var(--color-ink-muted)' }}>•</span>
+              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-gold)', fontWeight: 600 }}>
+                {product.gender === 'men' ? "Men's " : product.gender === 'women' ? "Women's " : ''}{product.category}
+              </span>
+            </>
+          )}
+        </div>
+        <h3 className="product-card__name">
+          <Link to={`/product/${product._id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+            {product.name}
+          </Link>
+        </h3>
+        <div className="product-card__price-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
+          <div className="product-card__price">
+            {Number.isFinite(price) ? fmt(price) : '—'}
+          </div>
+          {product.rating && (
+            <span style={{ fontSize: '0.75rem', color: '#e6a100', display: 'inline-flex', alignItems: 'center', gap: '2px', fontWeight: 600 }}>
+              ★ {product.rating}
+            </span>
+          )}
         </div>
       </div>
     </article>

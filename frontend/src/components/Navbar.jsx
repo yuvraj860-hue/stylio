@@ -49,9 +49,12 @@ export default function Navbar() {
     };
   }, [userMenuOpen]);
 
-  const isBeautyActive = location.pathname === '/shop' && location.search.toLowerCase().includes('category=beauty');
+  const searchLower = location.search.toLowerCase();
+  const isMenActive = location.pathname === '/shop' && searchLower.includes('gender=men');
+  const isWomenActive = location.pathname === '/shop' && searchLower.includes('gender=women');
+  const isBeautyActive = location.pathname === '/shop' && searchLower.includes('category=beauty');
   const isNewInActive = location.pathname === '/shop' && location.search.includes('sort=new') && !isBeautyActive;
-  const isShopActive = location.pathname === '/shop' && !isBeautyActive && !isNewInActive;
+  const isShopActive = location.pathname === '/shop' && !isMenActive && !isWomenActive && !isBeautyActive && !isNewInActive;
 
   const linkClass = ({ isActive }) =>
     `nav-link ${isActive ? 'nav-link-active' : ''}`;
@@ -98,6 +101,18 @@ export default function Navbar() {
             className={`nav-link ${isShopActive ? 'nav-link-active' : ''}`}
           >
             Shop
+          </Link>
+          <Link
+            to="/shop?gender=men"
+            className={`nav-link ${isMenActive ? 'nav-link-active' : ''}`}
+          >
+            Men
+          </Link>
+          <Link
+            to="/shop?gender=women"
+            className={`nav-link ${isWomenActive ? 'nav-link-active' : ''}`}
+          >
+            Women
           </Link>
           <Link
             to="/shop?sort=new"
@@ -300,7 +315,21 @@ export default function Navbar() {
           onClick={() => setMobileOpen(false)}
           style={{ fontWeight: isShopActive ? 700 : 500, color: isShopActive ? 'var(--color-gold)' : undefined }}
         >
-          Shop
+          All Shop
+        </Link>
+        <Link
+          to="/shop?gender=men"
+          onClick={() => setMobileOpen(false)}
+          style={{ fontWeight: isMenActive ? 700 : 500, color: isMenActive ? 'var(--color-gold)' : undefined }}
+        >
+          Men's Fashion 👔
+        </Link>
+        <Link
+          to="/shop?gender=women"
+          onClick={() => setMobileOpen(false)}
+          style={{ fontWeight: isWomenActive ? 700 : 500, color: isWomenActive ? 'var(--color-gold)' : undefined }}
+        >
+          Women's Fashion 👗
         </Link>
         <Link
           to="/shop?sort=new"

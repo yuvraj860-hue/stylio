@@ -18,6 +18,12 @@ const productSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
+    gender: {
+      type: String,
+      enum: ['men', 'women', 'unisex', 'all'],
+      default: 'unisex',
+      index: true,
+    },
     price: {
       type: Number,
       required: [true, 'Price is required'],
