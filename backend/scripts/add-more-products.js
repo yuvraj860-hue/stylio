@@ -1108,4 +1108,7 @@ async function run() {
   }
 }
 
-run();
+const isDirectRun = process.argv[1] && import.meta.url.endsWith(process.argv[1].split(/[\\/]/).pop());
+if (isDirectRun) {
+  run();
+}
