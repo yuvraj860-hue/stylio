@@ -76,14 +76,13 @@ export const listProducts = asyncHandler(async (req, res) => {
     if (g === 'men' || g === 'male') {
       query.$and = query.$and || [];
       query.$and.push({
+        gender: { $nin: ['women'] },
+        category: { $nin: ['Dresses', 'Beauty'] },
+        tags: { $nin: ['women', 'womens', "women's", 'female', 'dress', 'blouse', 'crop top', 'skirt', 'milkmaid', 'cottagecore', 'co-ord', 'beauty', 'makeup', 'lipstick', 'palazzo', 'flared', 'mom fit'] },
         $or: [
           { gender: 'men' },
           { tags: { $in: ['men', 'mens', "men's", 'male'] } },
-          {
-            gender: { $nin: ['women'] },
-            category: { $in: ['Shirts', 'Pants', 'T-Shirts', 'Hoodies', 'Jackets', 'Sneakers'] },
-            tags: { $nin: ['women', 'womens', "women's", 'female', 'dress', 'blouse', 'crop top', 'skirt', 'beauty', 'makeup', 'lipstick'] }
-          }
+          { category: { $in: ['Shirts', 'Pants', 'T-Shirts', 'Hoodies', 'Jackets', 'Sneakers', 'Shoes'] } }
         ]
       });
     } else if (g === 'women' || g === 'female') {
@@ -103,10 +102,16 @@ export const listProducts = asyncHandler(async (req, res) => {
 
   if (category) {
     const rawCategories = Array.isArray(category) ? category : [category];
-    const categories = rawCategories
+    let categories = rawCategories
       .flatMap((c) => String(c).split(','))
       .map((c) => c.trim())
       .filter(Boolean);
+
+    // If user filtered for Shoes or Sneakers, include both footwear categories
+    if (categories.some((c) => /^shoes$/i.test(c) || /^sneakers$/i.test(c))) {
+      categories = Array.from(new Set([...categories, 'Shoes', 'Sneakers']));
+    }
+
     const escaped = categories
       .map((c) => new RegExp(`^${c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'));
     if (escaped.length === 1) {

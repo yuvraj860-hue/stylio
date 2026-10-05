@@ -52,9 +52,10 @@ export default function Navbar() {
   const searchLower = location.search.toLowerCase();
   const isMenActive = location.pathname === '/shop' && searchLower.includes('gender=men');
   const isWomenActive = location.pathname === '/shop' && searchLower.includes('gender=women');
+  const isShoesActive = location.pathname === '/shop' && (searchLower.includes('category=shoes') || searchLower.includes('category=sneakers'));
   const isBeautyActive = location.pathname === '/shop' && searchLower.includes('category=beauty');
   const isNewInActive = location.pathname === '/shop' && location.search.includes('sort=new') && !isBeautyActive;
-  const isShopActive = location.pathname === '/shop' && !isMenActive && !isWomenActive && !isBeautyActive && !isNewInActive;
+  const isShopActive = location.pathname === '/shop' && !isMenActive && !isWomenActive && !isShoesActive && !isBeautyActive && !isNewInActive;
 
   const linkClass = ({ isActive }) =>
     `nav-link ${isActive ? 'nav-link-active' : ''}`;
@@ -115,16 +116,22 @@ export default function Navbar() {
             Women
           </Link>
           <Link
-            to="/shop?sort=new"
-            className={`nav-link ${isNewInActive ? 'nav-link-active' : ''}`}
+            to="/shop?category=Shoes"
+            className={`nav-link ${isShoesActive ? 'nav-link-active' : ''}`}
           >
-            New In
+            Shoes 👟
           </Link>
           <Link
             to="/shop?category=Beauty"
             className={`nav-link ${isBeautyActive ? 'nav-link-active' : ''}`}
           >
             Beauty 💄
+          </Link>
+          <Link
+            to="/shop?sort=new"
+            className={`nav-link ${isNewInActive ? 'nav-link-active' : ''}`}
+          >
+            New In
           </Link>
           <NavLink to="/lookbook" end className={linkClass}>
             Lookbook
@@ -330,6 +337,13 @@ export default function Navbar() {
           style={{ fontWeight: isWomenActive ? 700 : 500, color: isWomenActive ? 'var(--color-gold)' : undefined }}
         >
           Women's Fashion 👗
+        </Link>
+        <Link
+          to="/shop?category=Shoes"
+          onClick={() => setMobileOpen(false)}
+          style={{ fontWeight: isShoesActive ? 700 : 500, color: isShoesActive ? 'var(--color-gold)' : undefined }}
+        >
+          Shoes &amp; Sneakers 👟
         </Link>
         <Link
           to="/shop?sort=new"

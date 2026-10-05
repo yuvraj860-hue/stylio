@@ -399,6 +399,23 @@ export default function HomePage() {
         t.includes('skincare')
       )
     }
+    if (activeTab === 'shoes') {
+      const c = (p.category || '').toLowerCase()
+      const t = (p.tags || []).map((x) => x.toLowerCase())
+      const n = (p.name || '').toLowerCase()
+      return (
+        c === 'shoes' ||
+        c === 'sneakers' ||
+        t.includes('shoes') ||
+        t.includes('sneakers') ||
+        t.includes('footwear') ||
+        t.includes('boots') ||
+        n.includes('sneaker') ||
+        n.includes('shoe') ||
+        n.includes('boot') ||
+        n.includes('trainer')
+      )
+    }
     if (activeTab === 'shirts-tees') {
       return p.category === 'Shirts' || p.category === 'T-Shirts'
     }
@@ -811,6 +828,13 @@ export default function HomePage() {
               onClick={() => setActiveTab('women')}
             >
               👗 Women's Fashion
+            </button>
+            <button
+              type="button"
+              className={`home-filter-tab ${activeTab === 'shoes' ? 'active' : ''}`}
+              onClick={() => setActiveTab('shoes')}
+            >
+              👟 Shoes &amp; Footwear
             </button>
             <button
               type="button"
