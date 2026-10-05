@@ -33,21 +33,31 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileQuery, setMobileQuery] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [exploreOpen, setExploreOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const exploreRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
         setUserMenuOpen(false);
       }
+      if (exploreRef.current && !exploreRef.current.contains(e.target)) {
+        setExploreOpen(false);
+      }
     };
-    if (userMenuOpen) {
+    if (userMenuOpen || exploreOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [userMenuOpen]);
+  }, [userMenuOpen, exploreOpen]);
+
+  useEffect(() => {
+    setExploreOpen(false);
+    setUserMenuOpen(false);
+  }, [location.pathname, location.search]);
 
   const searchLower = location.search.toLowerCase();
   const isMenActive = location.pathname === '/shop' && searchLower.includes('gender=men');
@@ -93,69 +103,117 @@ export default function Navbar() {
           <Link to="/" className="navbar__logo" aria-label="STYLIO home" style={{ display: 'inline-flex', alignItems: 'center', gap: 9 }}>
             <StylioLogo size={24} />
             <span>STYL<span>IO</span></span>
-            <span className="logo-version-badge" title="STYLIO v1.1.0 Edition">✦ v1.1.0</span>
           </Link>
 
-        <nav className="navbar__links" aria-label="Primary">
-          <Link
-            to="/shop"
-            className={`nav-link ${isShopActive ? 'nav-link-active' : ''}`}
-          >
-            Shop
-          </Link>
-          <Link
-            to="/shop?gender=men"
-            className={`nav-link ${isMenActive ? 'nav-link-active' : ''}`}
-          >
-            Men
-          </Link>
-          <Link
-            to="/shop?gender=women"
-            className={`nav-link ${isWomenActive ? 'nav-link-active' : ''}`}
-          >
-            Women
-          </Link>
-          <Link
-            to="/shop?category=Shoes"
-            className={`nav-link ${isShoesActive ? 'nav-link-active' : ''}`}
-          >
-            Shoes 👟
-          </Link>
-          <Link
-            to="/shop?category=Beauty"
-            className={`nav-link ${isBeautyActive ? 'nav-link-active' : ''}`}
-          >
-            Beauty 💄
-          </Link>
-          <Link
-            to="/shop?sort=new"
-            className={`nav-link ${isNewInActive ? 'nav-link-active' : ''}`}
-          >
-            New In
-          </Link>
-          <NavLink to="/lookbook" end className={linkClass}>
-            Lookbook
-          </NavLink>
-          <NavLink to="/studio" className={linkClass}>
-            AI Studio ✨
-          </NavLink>
-          {isSignedIn && ['admin', 'warehouse'].includes(user?.publicMetadata?.role) && (
-            <NavLink to="/admin" className="nav-portal-badge" title="Access Admin Panel">
-              Admin ↗
+          <nav className="navbar__links" aria-label="Primary">
+            <Link
+              to="/shop"
+              className={`nav-link ${isShopActive ? 'nav-link-active' : ''}`}
+            >
+              Shop
+            </Link>
+            <Link
+              to="/shop?gender=men"
+              className={`nav-link ${isMenActive ? 'nav-link-active' : ''}`}
+            >
+              Men
+            </Link>
+            <Link
+              to="/shop?gender=women"
+              className={`nav-link ${isWomenActive ? 'nav-link-active' : ''}`}
+            >
+              Women
+            </Link>
+            <Link
+              to="/shop?sort=new"
+              className={`nav-link ${isNewInActive ? 'nav-link-active' : ''}`}
+            >
+              New In
+            </Link>
+            <NavLink to="/studio" className={linkClass}>
+              AI Studio
             </NavLink>
-          )}
-          {isSignedIn && user?.publicMetadata?.role === 'delivery' && (
-            <NavLink to="/delivery" className="nav-portal-badge" title="Access Delivery Portal">
-              Delivery ↗
-            </NavLink>
-          )}
-        </nav>
 
-        <div className="navbar__search">
-          <SearchBar />
-        </div>
+            <div
+              className="nav-dropdown-wrapper"
+              ref={exploreRef}
+              onMouseEnter={() => setExploreOpen(true)}
+              onMouseLeave={() => setExploreOpen(false)}
+            >
+              <button
+                type="button"
+                className={`nav-link nav-dropdown-trigger ${isShoesActive || isBeautyActive || location.pathname === '/lookbook' ? 'nav-link-active' : ''}`}
+                onClick={() => setExploreOpen((v) => !v)}
+                aria-expanded={exploreOpen}
+                aria-label="Explore collections"
+              >
+                <span>Explore</span>
+                <svg
+                  className={`nav-dropdown-chevron ${exploreOpen ? 'open' : ''}`}
+                  width="10"
+                  height="6"
+                  viewBox="0 0 10 6"
+                  fill="none"
+                >
+                  <path
+                    d="M1 1L5 5L9 1"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
 
-        <div className="navbar__actions">
+              {exploreOpen && (
+                <div className="nav-dropdown-menu">
+                  <Link
+                    to="/shop?category=Shoes"
+                    className={`nav-dropdown-item ${isShoesActive ? 'active' : ''}`}
+                    onClick={() => setExploreOpen(false)}
+                  >
+                    <span className="nav-dropdown-item-title">Shoes &amp; Footwear</span>
+                    <span className="nav-dropdown-item-desc">Luxury sneakers, loafers &amp; boots</span>
+                  </Link>
+                  <Link
+                    to="/shop?category=Beauty"
+                    className={`nav-dropdown-item ${isBeautyActive ? 'active' : ''}`}
+                    onClick={() => setExploreOpen(false)}
+                  >
+                    <span className="nav-dropdown-item-title">Beauty &amp; Fragrances</span>
+                    <span className="nav-dropdown-item-desc">Cosmetics, skincare &amp; wellness</span>
+                  </Link>
+                  <div className="nav-dropdown-divider" />
+                  <Link
+                    to="/lookbook"
+                    className={`nav-dropdown-item ${location.pathname === '/lookbook' ? 'active' : ''}`}
+                    onClick={() => setExploreOpen(false)}
+                  >
+                    <span className="nav-dropdown-item-title">Editorial Lookbook</span>
+                    <span className="nav-dropdown-item-desc">Seasonal curation &amp; styling</span>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </nav>
+
+          <div className="navbar__search">
+            <SearchBar />
+          </div>
+
+          <div className="navbar__actions">
+            {((isSignedIn && ['admin', 'warehouse'].includes(user?.publicMetadata?.role)) || ['admin', 'warehouse'].includes(localUser?.role)) && (
+              <NavLink to="/admin" className="nav-action-admin-btn" title="Access Admin Panel">
+                <span>Admin</span>
+                <span style={{ fontSize: '0.68rem' }}>↗</span>
+              </NavLink>
+            )}
+            {((isSignedIn && user?.publicMetadata?.role === 'delivery') || localUser?.role === 'delivery') && (
+              <NavLink to="/delivery" className="nav-action-admin-btn" title="Access Delivery Portal">
+                <span>Delivery</span>
+                <span style={{ fontSize: '0.68rem' }}>↗</span>
+              </NavLink>
+            )}
           <Link
             to="/wishlist"
             className="icon-btn"

@@ -74,29 +74,11 @@ export const listProducts = asyncHandler(async (req, res) => {
   if (gender) {
     const g = String(gender).toLowerCase().trim();
     if (g === 'men' || g === 'male') {
-      query.$and = query.$and || [];
-      query.$and.push({
-        gender: { $nin: ['women'] },
-        category: { $nin: ['Dresses', 'Beauty'] },
-        tags: { $nin: ['women', 'womens', "women's", 'female', 'dress', 'blouse', 'crop top', 'skirt', 'milkmaid', 'cottagecore', 'co-ord', 'beauty', 'makeup', 'lipstick', 'palazzo', 'flared', 'mom fit'] },
-        $or: [
-          { gender: 'men' },
-          { tags: { $in: ['men', 'mens', "men's", 'male'] } },
-          { category: { $in: ['Shirts', 'Pants', 'T-Shirts', 'Hoodies', 'Jackets', 'Sneakers', 'Shoes'] } }
-        ]
-      });
+      query.gender = 'men';
+      query.category = { $ne: 'Beauty' };
     } else if (g === 'women' || g === 'female') {
-      query.$and = query.$and || [];
-      query.$and.push({
-        $or: [
-          { gender: 'women' },
-          { tags: { $in: ['women', 'womens', "women's", 'female'] } },
-          { category: 'Dresses' },
-          {
-            tags: { $in: ['dress', 'blouse', 'crop top', 'skirt', 'milkmaid', 'cottagecore', 'co-ord'] }
-          }
-        ]
-      });
+      query.gender = 'women';
+      query.category = { $ne: 'Beauty' };
     }
   }
 

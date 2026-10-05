@@ -4,7 +4,7 @@ import Product from './models/Product.js';
 import connectDB from './config/db.js';
 import env from './config/env.js';
 import apiClient from './utils/apiClient.js';
-import { newProducts } from '../scripts/add-more-products.js';
+import { catalog } from '../scripts/seed_perfect_catalog.js';
 
 const indexProductsInML = async (products) => {
   const payload = products.map((product) => ({
@@ -300,7 +300,7 @@ const seedDatabase = async () => {
   console.log(`[seed] Admin ready: admin@stylio.com / admin123 (${admin._id})`);
 
   await Product.deleteMany({});
-  const inserted = await Product.insertMany(products);
+  const inserted = await Product.insertMany(catalog);
   console.log(`[seed] Inserted ${inserted.length} total products (including all Men's, Women's, and Beauty collections)`);
 
   await indexProductsInML(inserted);

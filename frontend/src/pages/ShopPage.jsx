@@ -3,7 +3,7 @@ import { useLocation, useSearchParams } from 'react-router-dom'
 import { productApi } from '../services/api'
 import ProductGrid from '../components/ProductGrid'
 import ProductGridSkeleton from '../components/ProductGridSkeleton'
-import { SearchIcon, FilterIcon } from '../components/icons'
+import { FilterIcon } from '../components/icons'
 import { fmt } from '../utils/format'
 
 const CATEGORIES = ['Shoes', 'Beauty', 'Shirts', 'T-Shirts', 'Pants', 'Jeans', 'Dresses', 'Jackets', 'Hoodies', 'Sneakers', 'Accessories']
@@ -15,7 +15,6 @@ export default function ShopPage() {
   const [products, setProducts] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [textQuery, setTextQuery] = useState(searchParams.get('search') || '')
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   const activeCategories = useMemo(
@@ -128,139 +127,50 @@ export default function ShopPage() {
     if (!products) return null
     return products.filter((p) => {
       const c = (p.category || '').toLowerCase()
-      const tags = (p.tags || []).map((t) => t.toLowerCase())
       const pGender = (p.gender || '').toLowerCase()
-      const name = (p.name || '').toLowerCase()
 
-      const isBeautyItem =
-        c === 'beauty' ||
-        tags.includes('beauty') ||
-        tags.includes('makeup') ||
-        tags.includes('cosmetics') ||
-        tags.includes('lipstick') ||
-        tags.includes('kajal') ||
-        tags.includes('mascara') ||
-        tags.includes('skincare') ||
-        tags.includes('perfume') ||
-        name.includes('lipstick') ||
-        name.includes('perfume') ||
-        name.includes('foundation') ||
-        name.includes('eyeshadow') ||
-        name.includes('serum') ||
-        name.includes('kajal') ||
-        name.includes('mascara') ||
-        name.includes('eyeliner') ||
-        name.includes('blush')
-
-      const isFootwearItem =
-        c === 'shoes' ||
-        c === 'sneakers' ||
-        tags.includes('shoes') ||
-        tags.includes('sneakers') ||
-        tags.includes('footwear') ||
-        tags.includes('boots') ||
-        tags.includes('loafers') ||
-        name.includes('sneaker') ||
-        name.includes('shoes') ||
-        name.includes('boot') ||
-        name.includes('loafer') ||
-        name.includes('trainer')
-
-      const isWomenItem =
-        pGender === 'women' ||
-        c === 'dresses' ||
-        tags.includes('women') ||
-        tags.includes('womens') ||
-        tags.includes("women's") ||
-        tags.includes('female') ||
-        tags.includes('dress') ||
-        tags.includes('blouse') ||
-        tags.includes('crop top') ||
-        tags.includes('skirt') ||
-        tags.includes('milkmaid') ||
-        tags.includes('cottagecore') ||
-        tags.includes('co-ord') ||
-        name.includes('women') ||
-        name.includes('dress') ||
-        name.includes('blouse') ||
-        name.includes('crop top') ||
-        name.includes('skirt') ||
-        name.includes('palazzo') ||
-        name.includes('mom fit') ||
-        name.includes('flared') ||
-        name.includes('milkmaid') ||
-        name.includes('cottagecore') ||
-        name.includes('co-ord') ||
-        name.includes('power blazer') ||
-        name.includes('crossbody bag')
-
-      const isMenItem =
-        !isBeautyItem &&
-        !isWomenItem &&
-        (pGender === 'men' ||
-          tags.includes('men') ||
-          tags.includes('mens') ||
-          tags.includes("men's") ||
-          tags.includes('male') ||
-          name.includes('oxford') ||
-          name.includes('cuban') ||
-          name.includes('chino') ||
-          name.includes('cargo') ||
-          name.includes('jogger') ||
-          name.includes('puffer') ||
-          name.includes('polo') ||
-          ['shirts', 't-shirts', 'pants', 'jeans', 'hoodies', 'jackets'].includes(c))
+      const isBeauty = c === 'beauty'
+      const isShoes = c === 'shoes' || c === 'sneakers'
 
       // If user selected Beauty specifically: strictly only show beauty items
       if (isBeautyOnly) {
-        return isBeautyItem
+        return isBeauty
       }
 
       // If user selected Shoes specifically: strictly only show footwear items
       if (isShoesOnly) {
-        return isFootwearItem
+        return isShoes
       }
 
       // When Men is chosen: strictly show only Men's clothes
       if (isMenSelected) {
-        if (isBeautyItem || isWomenItem) return false
+        if (isBeauty || pGender === 'women') return false
         if (activeCategories.length > 0) {
           const lowerCats = activeCategories.map((x) => x.toLowerCase())
-          const matches = lowerCats.some((cat) => {
-            if (cat === 'shoes' || cat === 'sneakers') return isFootwearItem
-            return c === cat
-          })
-          if (!matches) return false
+          return lowerCats.some((cat) => (cat === 'shoes' || cat === 'sneakers') ? isShoes : c === cat)
         }
-        return isMenItem || pGender === 'men'
+        return pGender === 'men'
       }
 
       // When Women is chosen: strictly show only Women's clothes
       if (isWomenSelected) {
-        if (isBeautyItem || (!isWomenItem && pGender !== 'women')) return false
+        if (isBeauty || pGender === 'men') return false
         if (activeCategories.length > 0) {
           const lowerCats = activeCategories.map((x) => x.toLowerCase())
-          const matches = lowerCats.some((cat) => {
-            if (cat === 'shoes' || cat === 'sneakers') return isFootwearItem
-            return c === cat
-          })
-          if (!matches) return false
+          return lowerCats.some((cat) => (cat === 'shoes' || cat === 'sneakers') ? isShoes : c === cat)
         }
-        return true
+        return pGender === 'women'
       }
 
-      // If user selected other specific categories (not Beauty, not Shoes): match those
-      if (activeCategories.length > 0 && !activeCategories.includes('Beauty')) {
+      // If user selected other specific categories (not Beauty, not Shoes):
+      if (activeCategories.length > 0) {
         const lowerCats = activeCategories.map((x) => x.toLowerCase())
-        return lowerCats.some((cat) => {
-          if (cat === 'shoes' || cat === 'sneakers') return isFootwearItem
-          return c === cat
-        })
+        return lowerCats.some((cat) => (cat === 'shoes' || cat === 'sneakers') ? isShoes : c === cat)
       }
 
       // If user clicked "New In" from navbar/filters: show new apparel/clothing, exclude makeup
       if (isNewInApparel) {
-        return !isBeautyItem
+        return !isBeauty
       }
 
       return true
@@ -293,11 +203,11 @@ export default function ShopPage() {
                 : isWomenSelected
                   ? "Women's Collection"
                   : isShoesOnly
-                    ? 'Shoes & Footwear 👟'
+                    ? 'Shoes & Footwear'
                     : isBeautyOnly
-                      ? 'Beauty & Cosmetics Atelier 💄'
+                      ? 'Beauty & Cosmetics'
                       : isNewInApparel
-                        ? 'New In (Apparel & Fashion)'
+                        ? 'New In'
                         : activeCategories.length === 1
                           ? activeCategories[0]
                           : 'Shop'}
@@ -308,65 +218,7 @@ export default function ShopPage() {
           </div>
         </div>
 
-        <form className="search-bar" style={{ maxWidth: 420, marginBottom: 'var(--space-6)' }} onSubmit={handleTextSearch}>
-          <span className="search-icon"><SearchIcon /></span>
-          <input
-            type="text"
-            placeholder="Search this collection…"
-            value={textQuery}
-            onChange={(e) => setTextQuery(e.target.value)}
-            aria-label="Search the shop"
-          />
-          <button type="submit" className="upload-btn" style={{ letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.72rem' }}>
-            Go
-          </button>
-        </form>
-
-        {/* Department / Gender Quick Selection */}
-        <div className="gender-pills-bar" style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
-          <button
-            type="button"
-            className={`category-pill ${!isMenSelected && !isWomenSelected && !isBeautyOnly && !isShoesOnly ? 'active' : ''}`}
-            onClick={() => updateParams({ gender: undefined, category: undefined })}
-            style={{ fontWeight: 600 }}
-          >
-            ✦ All Departments
-          </button>
-          <button
-            type="button"
-            className={`category-pill ${isMenSelected ? 'active' : ''}`}
-            onClick={() => updateParams({ gender: isMenSelected ? undefined : 'men', category: undefined })}
-            style={{ fontWeight: 600 }}
-          >
-            👔 Men's Collection
-          </button>
-          <button
-            type="button"
-            className={`category-pill ${isWomenSelected ? 'active' : ''}`}
-            onClick={() => updateParams({ gender: isWomenSelected ? undefined : 'women', category: undefined })}
-            style={{ fontWeight: 600 }}
-          >
-            👗 Women's Collection
-          </button>
-          <button
-            type="button"
-            className={`category-pill ${isShoesOnly ? 'active' : ''}`}
-            onClick={() => updateParams({ category: isShoesOnly ? undefined : 'Shoes', gender: undefined })}
-            style={{ fontWeight: 600 }}
-          >
-            👟 Shoes &amp; Footwear
-          </button>
-          <button
-            type="button"
-            className={`category-pill ${isBeautyOnly ? 'active' : ''}`}
-            onClick={() => updateParams({ category: isBeautyOnly ? undefined : 'Beauty', gender: undefined })}
-            style={{ fontWeight: 600 }}
-          >
-            💄 Beauty &amp; Makeup
-          </button>
-        </div>
-
-        {/* Quick Category Selection Pills */}
+        {/* Clean Category Selection Chips */}
         <div className="category-pills-bar">
           <button
             type="button"

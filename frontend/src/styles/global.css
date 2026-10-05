@@ -500,7 +500,7 @@ button:disabled {
 .navbar__links {
   display: flex;
   align-items: center;
-  gap: clamp(12px, 1.8vw, 22px);
+  gap: clamp(14px, 1.8vw, 24px);
   margin-left: var(--space-4);
   white-space: nowrap;
   flex-shrink: 0;
@@ -509,16 +509,20 @@ button:disabled {
 .nav-link {
   position: relative;
   white-space: nowrap !important;
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-ink-soft);
   text-decoration: none;
   font-weight: 500;
-  padding: 4px 0;
-  transition: color 0.2s;
+  padding: 6px 0;
+  transition: color 0.2s ease;
   display: inline-flex;
   align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .nav-link:hover {
@@ -527,6 +531,7 @@ button:disabled {
 
 .nav-link-active {
   color: var(--color-gold) !important;
+  font-weight: 600;
 }
 
 .nav-link-active::after {
@@ -534,17 +539,105 @@ button:disabled {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -4px;
-  height: 1.5px;
+  bottom: 0px;
+  height: 2px;
   background: var(--color-gold);
+  border-radius: 1px;
 }
 
-.nav-portal-badge {
+/* Navigation Dropdown (Explore) */
+.nav-dropdown-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-dropdown-trigger {
+  gap: 5px;
+}
+
+.nav-dropdown-chevron {
+  transition: transform 0.2s ease;
+  color: currentColor;
+}
+
+.nav-dropdown-chevron.open {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+  background: #ffffff;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.12);
+  padding: 8px;
+  z-index: 100;
+  animation: navDropdownFade 0.2s ease;
+}
+
+@keyframes navDropdownFade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.nav-dropdown-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+.nav-dropdown-item:hover,
+.nav-dropdown-item.active {
+  background: rgba(197, 160, 89, 0.08);
+}
+
+.nav-dropdown-item-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  transition: color 0.18s ease;
+}
+
+.nav-dropdown-item:hover .nav-dropdown-item-title,
+.nav-dropdown-item.active .nav-dropdown-item-title {
+  color: var(--color-gold);
+}
+
+.nav-dropdown-item-desc {
+  font-size: 0.72rem;
+  color: var(--color-ink-muted);
+  line-height: 1.3;
+}
+
+.nav-dropdown-divider {
+  height: 1px;
+  background: var(--color-line);
+  margin: 6px 8px;
+}
+
+.nav-action-admin-btn {
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 9999px;
   background: rgba(197, 160, 89, 0.12);
   color: var(--color-gold, #c5a059);
@@ -553,27 +646,28 @@ button:disabled {
   white-space: nowrap !important;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   transition: all 0.2s ease;
 }
 
-.nav-portal-badge:hover {
+.nav-action-admin-btn:hover {
   background: var(--color-gold, #c5a059);
   color: #000000;
   border-color: var(--color-gold, #c5a059);
 }
 
 .navbar__links a {
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .navbar__search {
-  flex: 0 1 260px;
-  min-width: 140px;
-  margin: 0 var(--space-2);
+  flex: 1 1 260px;
+  max-width: 320px;
+  min-width: 200px;
+  margin: 0 var(--space-3);
 }
 
 .navbar__actions {
@@ -4066,26 +4160,30 @@ button:disabled {
 }
 
 .category-pill {
-  padding: 7px 16px;
-  font-size: 0.82rem;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
   font-weight: 500;
   border-radius: var(--radius-pill);
-  background: var(--color-paper);
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--color-line);
   color: var(--color-ink);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.18s ease;
+  transition: all 0.2s ease;
 }
 
 .category-pill:hover {
-  background: var(--color-line);
+  background: #ffffff;
+  border-color: var(--color-gold);
+  color: var(--color-gold);
 }
 
 .category-pill.active {
   background: var(--color-ink);
-  color: var(--color-white);
+  color: #ffffff;
   border-color: var(--color-ink);
+  font-weight: 600;
 }
 
 /* ==========================================================================
